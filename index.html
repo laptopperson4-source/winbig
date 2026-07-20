@@ -1,0 +1,472 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<title>WinBig — Watch. Earn. Withdraw.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root{
+    --ink:#0E1512;
+    --panel:#16211C;
+    --panel-2:#1D2A23;
+    --line:rgba(184,196,190,0.12);
+    --green:#3ADC7C;
+    --green-dim:rgba(58,220,124,0.14);
+    --gold:#E8B84B;
+    --gold-dim:rgba(232,184,75,0.14);
+    --text:#F2F7F4;
+    --text-soft:#9FB0A9;
+    --danger:#E8674B;
+    --radius:16px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--ink); color:var(--text);
+    font-family:'Inter',sans-serif; -webkit-font-smoothing:antialiased;
+    min-height:100vh; padding-bottom:84px;
+  }
+  h1,h2,h3,.display{ font-family:'Space Grotesk',sans-serif; }
+  .mono{ font-family:'IBM Plex Mono',monospace; }
+
+  header.top{
+    padding:20px 18px 14px; display:flex; align-items:center; justify-content:space-between;
+  }
+  header.top .brand{ display:flex; align-items:center; gap:8px; }
+  header.top .brand .dot{ width:10px; height:10px; border-radius:3px; background:var(--green); box-shadow:0 0 12px var(--green); }
+  header.top .brand span{ font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:19px; letter-spacing:-0.02em; }
+
+  main{ padding:0 16px; max-width:520px; margin:0 auto; }
+  .screen{ display:none; }
+  .screen.active{ display:block; animation:fade .25s ease; }
+  @keyframes fade{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:none;} }
+
+  /* Balance card */
+  .balance-card{
+    background:linear-gradient(160deg, var(--panel-2), var(--panel));
+    border:1px solid var(--line); border-radius:var(--radius);
+    padding:22px 20px; margin-bottom:16px; position:relative; overflow:hidden;
+  }
+  .balance-card::after{
+    content:""; position:absolute; top:-40%; right:-20%; width:180px; height:180px;
+    background:radial-gradient(circle, var(--green-dim), transparent 70%);
+  }
+  .balance-card .label{ color:var(--text-soft); font-size:13px; margin-bottom:6px; }
+  .balance-card .amount{ font-size:40px; font-weight:700; letter-spacing:-0.02em; }
+  .balance-card .amount span{ font-size:22px; color:var(--text-soft); font-weight:500; }
+  .balance-card .sub{ display:flex; gap:16px; margin-top:14px; font-size:13px; color:var(--text-soft); }
+  .balance-card .sub b{ color:var(--gold); font-family:'IBM Plex Mono',monospace; }
+
+  .progress-wrap{ margin-top:16px; }
+  .progress-track{ height:8px; border-radius:99px; background:rgba(255,255,255,0.06); overflow:hidden; }
+  .progress-fill{ height:100%; background:linear-gradient(90deg, var(--green), var(--gold)); border-radius:99px; transition:width .4s ease; }
+  .progress-label{ display:flex; justify-content:space-between; font-size:12px; color:var(--text-soft); margin-top:6px; }
+
+  /* Watch ad button */
+  .watch-btn{
+    width:100%; padding:18px; border:none; border-radius:var(--radius);
+    background:var(--green); color:#0B1210; font-family:'Space Grotesk',sans-serif;
+    font-weight:700; font-size:17px; margin:6px 0 18px; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; gap:10px;
+  }
+  .watch-btn:disabled{ background:var(--panel-2); color:var(--text-soft); }
+  .watch-btn .pulse{ width:8px; height:8px; border-radius:50%; background:#0B1210; animation:pulse 1.4s infinite; }
+  @keyframes pulse{ 0%,100%{opacity:1;} 50%{opacity:.3;} }
+  .cooldown-note{ text-align:center; font-size:12px; color:var(--text-soft); margin-top:-10px; margin-bottom:18px; }
+
+  /* Alert feed (credit-alert styled activity) */
+  .section-title{ font-size:13px; text-transform:uppercase; letter-spacing:.06em; color:var(--text-soft); margin:22px 0 10px; }
+  .alert{
+    display:flex; gap:12px; align-items:flex-start; padding:14px; background:var(--panel);
+    border:1px solid var(--line); border-left:3px solid var(--green); border-radius:12px; margin-bottom:10px;
+  }
+  .alert .icon{ font-size:18px; }
+  .alert .body{ flex:1; }
+  .alert .body .title{ font-size:14px; font-weight:600; }
+  .alert .body .meta{ font-size:12px; color:var(--text-soft); margin-top:2px; }
+  .alert .amt{ font-family:'IBM Plex Mono',monospace; color:var(--green); font-weight:500; font-size:14px; }
+  .empty-note{ color:var(--text-soft); font-size:13px; padding:18px 0; text-align:center; }
+
+  /* Task cards */
+  .task-card{
+    background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
+    padding:16px; margin-bottom:12px;
+  }
+  .task-card .row{ display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+  .task-card .name{ font-weight:600; font-size:15px; }
+  .task-card .reward{ font-family:'IBM Plex Mono',monospace; color:var(--gold); font-size:13px; }
+  .task-card .progress-track{ height:6px; }
+
+  /* Forms */
+  .field{ margin-bottom:14px; }
+  .field label{ display:block; font-size:12px; color:var(--text-soft); margin-bottom:6px; }
+  .field input{
+    width:100%; padding:13px 14px; border-radius:12px; border:1px solid var(--line);
+    background:var(--panel); color:var(--text); font-size:15px; font-family:'Inter',sans-serif;
+  }
+  .field input:focus{ outline:none; border-color:var(--green); }
+  .primary-btn{
+    width:100%; padding:16px; border:none; border-radius:12px; background:var(--gold);
+    color:#0B1210; font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:15px; cursor:pointer;
+  }
+  .ghost-btn{
+    width:100%; padding:14px; border:1px solid var(--line); border-radius:12px; background:transparent;
+    color:var(--text-soft); font-size:14px; margin-top:10px; cursor:pointer;
+  }
+  .note{ font-size:12px; color:var(--text-soft); line-height:1.5; margin-top:10px; }
+
+  /* Auth screen */
+  .auth-wrap{ min-height:100vh; display:flex; flex-direction:column; justify-content:center; padding:24px; max-width:420px; margin:0 auto; }
+  .auth-wrap .display{ font-size:30px; font-weight:700; margin-bottom:4px; letter-spacing:-0.02em; }
+  .auth-wrap .tag{ color:var(--text-soft); font-size:14px; margin-bottom:28px; }
+  .toggle-row{ text-align:center; margin-top:14px; font-size:13px; color:var(--text-soft); }
+  .toggle-row a{ color:var(--green); text-decoration:none; font-weight:600; }
+  .error-msg{ background:rgba(232,103,75,0.12); border:1px solid rgba(232,103,75,0.3); color:var(--danger); font-size:13px; padding:10px 12px; border-radius:10px; margin-bottom:14px; display:none; }
+
+  /* Bottom nav */
+  nav.tabs{
+    position:fixed; bottom:0; left:0; right:0; background:var(--panel);
+    border-top:1px solid var(--line); display:flex; padding:8px 6px calc(8px + env(safe-area-inset-bottom));
+    max-width:520px; margin:0 auto;
+  }
+  nav.tabs button{
+    flex:1; background:none; border:none; color:var(--text-soft); font-family:'Inter',sans-serif;
+    font-size:11px; padding:8px 4px; display:flex; flex-direction:column; align-items:center; gap:4px; cursor:pointer;
+  }
+  nav.tabs button .ic{ font-size:19px; }
+  nav.tabs button.active{ color:var(--green); }
+  h2.page-title{ font-size:20px; margin:18px 0 4px; }
+  p.page-sub{ color:var(--text-soft); font-size:13px; margin:0 0 18px; }
+</style>
+</head>
+<body>
+
+<!-- AUTH SCREEN -->
+<div id="authScreen" class="auth-wrap">
+  <div class="display">WinBig</div>
+  <div class="tag">Watch ads, play games, get alerted every time you earn.</div>
+  <div id="authError" class="error-msg"></div>
+  <div class="field">
+    <label>Phone number</label>
+    <input id="authPhone" type="tel" placeholder="080XXXXXXXX" />
+  </div>
+  <div class="field">
+    <label>Password</label>
+    <input id="authPassword" type="password" placeholder="••••••••" />
+  </div>
+  <button class="primary-btn" id="authSubmit">Create account</button>
+  <div class="toggle-row">
+    <span id="authToggleText">Already have an account?</span>
+    <a href="#" id="authToggleLink">Log in</a>
+  </div>
+</div>
+
+<!-- APP SHELL -->
+<div id="appShell" style="display:none;">
+  <header class="top">
+    <div class="brand"><div class="dot"></div><span>WinBig</span></div>
+    <div class="mono" id="pointsPill" style="font-size:12px; background:var(--gold-dim); color:var(--gold); padding:6px 10px; border-radius:99px;">0 pts</div>
+  </header>
+
+  <main>
+    <!-- HOME / EARN -->
+    <section class="screen active" id="screen-earn">
+      <div class="balance-card">
+        <div class="label">Wallet balance</div>
+        <div class="amount">₦<span id="balanceAmount">0.00</span></div>
+        <div class="sub">
+          <div>Points: <b id="pointsAmount">0</b></div>
+          <div>Today: <b id="adsToday">0</b> ads</div>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-track"><div class="progress-fill" id="withdrawProgress" style="width:0%"></div></div>
+          <div class="progress-label"><span>Withdrawal progress</span><span id="withdrawProgressLabel">₦0 / ₦3,000</span></div>
+        </div>
+      </div>
+
+      <button class="watch-btn" id="watchAdBtn">▶ Watch Ad & Earn</button>
+      <div class="cooldown-note" id="cooldownNote"></div>
+
+      <div class="section-title">Recent alerts</div>
+      <div id="alertFeed"><div class="empty-note">Your credit alerts will show up here once you start watching ads.</div></div>
+    </section>
+
+    <!-- TASKS -->
+    <section class="screen" id="screen-tasks">
+      <h2 class="page-title">Daily Tasks</h2>
+      <p class="page-sub">Hit these goals for bonus points.</p>
+      <div id="tasksList"></div>
+    </section>
+
+    <!-- DASHBOARD -->
+    <section class="screen" id="screen-dashboard">
+      <h2 class="page-title">Dashboard</h2>
+      <p class="page-sub">Your full earning history.</p>
+      <div class="balance-card">
+        <div class="label">Total earned (all time)</div>
+        <div class="amount">₦<span id="dashTotalEarned">0.00</span></div>
+      </div>
+      <div class="section-title">History</div>
+      <div id="historyFeed"><div class="empty-note">No history yet.</div></div>
+    </section>
+
+    <!-- WITHDRAW -->
+    <section class="screen" id="screen-withdraw">
+      <h2 class="page-title">Withdraw</h2>
+      <p class="page-sub">Minimum withdrawal: ₦<span id="minWithdrawLabel">3,000</span></p>
+      <div id="withdrawLocked" class="task-card">
+        <div class="row"><span class="name">Keep earning</span><span class="reward" id="withdrawShortfall">—</span></div>
+        <div class="progress-track"><div class="progress-fill" id="withdrawProgress2" style="width:0%"></div></div>
+      </div>
+      <form id="withdrawForm" style="display:none;">
+        <div class="field"><label>Bank name</label><input id="wBank" required placeholder="e.g. GTBank"></div>
+        <div class="field"><label>Account number</label><input id="wAcct" required inputmode="numeric" placeholder="10-digit account number"></div>
+        <div class="field"><label>Account name</label><input id="wName" required placeholder="Must match your bank account"></div>
+        <button class="primary-btn" type="submit">Request withdrawal</button>
+        <div class="note">Withdrawals are reviewed manually right now and paid within 24–48 hours while we finish automated payouts.</div>
+      </form>
+      <div id="withdrawStatus"></div>
+    </section>
+  </main>
+
+  <nav class="tabs">
+    <button class="tab-btn active" data-screen="earn"><span class="ic">🏠</span>Earn</button>
+    <button class="tab-btn" data-screen="tasks"><span class="ic">🎯</span>Tasks</button>
+    <button class="tab-btn" data-screen="dashboard"><span class="ic">📊</span>Dashboard</button>
+    <button class="tab-btn" data-screen="withdraw"><span class="ic">💸</span>Withdraw</button>
+  </nav>
+</div>
+
+<script>
+/* ============ CONFIG — fill in the placeholders below ============ */
+const SUPABASE_URL = "https://ysztokoesjurgkeiooui.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlzenRva29lc2p1cmdrZWlvb3VpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI1OTg3NjYsImV4cCI6MjA5ODE3NDc2Nn0.HnVH4XV09sZHdv9OQ4XCsVugzjhPC8XW22o4q0U5Xmc";
+const MONETAG_ZONE_ID = "REPLACE_WITH_YOUR_MONETAG_ZONE_ID"; // from your Monetag dashboard
+/* =================================================================== */
+
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+let currentUser = null;
+let settings = { points_per_ad: 10, naira_per_point: 0.1, withdrawal_minimum_naira: 3000, ad_cooldown_seconds: 120 };
+let cooldownTimer = null;
+
+// ---------- AUTH ----------
+let authMode = "signup";
+document.getElementById("authToggleLink").onclick = (e) => {
+  e.preventDefault();
+  authMode = authMode === "signup" ? "login" : "signup";
+  document.getElementById("authSubmit").textContent = authMode === "signup" ? "Create account" : "Log in";
+  document.getElementById("authToggleText").textContent = authMode === "signup" ? "Already have an account?" : "New to WinBig?";
+  document.getElementById("authToggleLink").textContent = authMode === "signup" ? "Log in" : "Create account";
+};
+
+function phoneToEmail(phone){ return phone.replace(/\D/g,"") + "@winbig.local"; }
+
+document.getElementById("authSubmit").onclick = async () => {
+  const phone = document.getElementById("authPhone").value.trim();
+  const password = document.getElementById("authPassword").value;
+  const errBox = document.getElementById("authError");
+  errBox.style.display = "none";
+  if(!phone || password.length < 6){
+    errBox.textContent = "Enter a valid phone number and a password of at least 6 characters.";
+    errBox.style.display = "block";
+    return;
+  }
+  const email = phoneToEmail(phone);
+  let result;
+  if(authMode === "signup"){
+    result = await sb.auth.signUp({ email, password });
+    if(!result.error && result.data.user){
+      await sb.from("profiles").insert({ id: result.data.user.id, phone });
+    }
+  } else {
+    result = await sb.auth.signInWithPassword({ email, password });
+  }
+  if(result.error){
+    errBox.textContent = result.error.message;
+    errBox.style.display = "block";
+    return;
+  }
+  initApp();
+};
+
+// ---------- APP INIT ----------
+async function initApp(){
+  const { data: { user } } = await sb.auth.getUser();
+  if(!user){ return; }
+  currentUser = user;
+  document.getElementById("authScreen").style.display = "none";
+  document.getElementById("appShell").style.display = "block";
+
+  await loadSettings();
+  await refreshProfile();
+  await loadAlertFeed();
+  setupWatchButton();
+}
+
+async function loadSettings(){
+  const { data } = await sb.from("app_settings").select("key,value");
+  if(data){
+    data.forEach(row => {
+      if(row.key === "withdrawal_minimum_naira" || row.key === "ad_cooldown_seconds"){
+        settings[row.key] = parseFloat(row.value);
+      } else {
+        settings[row.key] = row.value;
+      }
+    });
+  }
+  document.getElementById("minWithdrawLabel").textContent = Number(settings.withdrawal_minimum_naira).toLocaleString();
+}
+
+async function refreshProfile(){
+  const { data: profile } = await sb.from("profiles").select("*").eq("id", currentUser.id).single();
+  if(!profile) return;
+  document.getElementById("balanceAmount").textContent = Number(profile.naira_balance).toFixed(2);
+  document.getElementById("pointsAmount").textContent = profile.points;
+  document.getElementById("pointsPill").textContent = profile.points + " pts";
+  document.getElementById("dashTotalEarned").textContent = Number(profile.naira_balance).toFixed(2);
+  const today = new Date().toISOString().slice(0,10);
+  const adsToday = profile.last_ad_date === today ? profile.ads_watched_today : 0;
+  document.getElementById("adsToday").textContent = adsToday;
+
+  const min = settings.withdrawal_minimum_naira;
+  const pct = Math.min(100, (Number(profile.naira_balance) / min) * 100);
+  document.getElementById("withdrawProgress").style.width = pct + "%";
+  document.getElementById("withdrawProgress2").style.width = pct + "%";
+  document.getElementById("withdrawProgressLabel").textContent =
+    `₦${Number(profile.naira_balance).toFixed(0)} / ₦${min.toLocaleString()}`;
+
+  if(Number(profile.naira_balance) >= min){
+    document.getElementById("withdrawLocked").style.display = "none";
+    document.getElementById("withdrawForm").style.display = "block";
+  } else {
+    document.getElementById("withdrawLocked").style.display = "block";
+    document.getElementById("withdrawForm").style.display = "none";
+    document.getElementById("withdrawShortfall").textContent =
+      `₦${(min - Number(profile.naira_balance)).toFixed(0)} to go`;
+  }
+  return profile;
+}
+
+async function loadAlertFeed(){
+  const { data } = await sb.from("ad_views").select("*").eq("user_id", currentUser.id).order("created_at", { ascending:false }).limit(15);
+  const feed = document.getElementById("alertFeed");
+  const history = document.getElementById("historyFeed");
+  if(!data || data.length === 0) return;
+  feed.innerHTML = "";
+  history.innerHTML = "";
+  data.forEach(row => {
+    const time = new Date(row.created_at).toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"});
+    const html = `<div class="alert">
+        <div class="icon">✅</div>
+        <div class="body">
+          <div class="title">WinBig Alert: Wallet credited</div>
+          <div class="meta">${time} · +${row.points_awarded} pts</div>
+        </div>
+        <div class="amt">+₦${Number(row.naira_awarded).toFixed(2)}</div>
+      </div>`;
+    feed.innerHTML += html;
+    history.innerHTML += html;
+  });
+}
+
+// ---------- WATCH AD ----------
+function setupWatchButton(){
+  const btn = document.getElementById("watchAdBtn");
+  btn.onclick = () => {
+    if(typeof show_ === "undefined" && typeof window.show_9999999 === "undefined"){
+      // Monetag SDK function names follow the pattern show_<ZONE_ID>()
+      alert("Monetag SDK isn't loaded yet — add your Monetag script tag with your zone ID before this goes live.");
+      return;
+    }
+    const fnName = "show_" + MONETAG_ZONE_ID;
+    if(typeof window[fnName] === "function"){
+      window[fnName]().then(() => {
+        // Ad finished client-side. Points are NOT credited here —
+        // Monetag's server-to-server postback (see the monetag-postback Edge Function)
+        // is the only thing that credits real points, so this can't be faked from devtools.
+        startCooldown();
+        setTimeout(async () => { await refreshProfile(); await loadAlertFeed(); }, 4000);
+      }).catch(() => {
+        alert("Ad didn't finish — no reward for partial views.");
+      });
+    } else {
+      alert("Monetag zone not configured yet.");
+    }
+  };
+}
+
+function startCooldown(){
+  const btn = document.getElementById("watchAdBtn");
+  const note = document.getElementById("cooldownNote");
+  let remaining = settings.ad_cooldown_seconds;
+  btn.disabled = true;
+  clearInterval(cooldownTimer);
+  cooldownTimer = setInterval(() => {
+    remaining--;
+    note.textContent = remaining > 0 ? `Next ad available in ${remaining}s` : "";
+    if(remaining <= 0){
+      clearInterval(cooldownTimer);
+      btn.disabled = false;
+    }
+  }, 1000);
+}
+
+// ---------- TASKS (derived from today's ad count) ----------
+function renderTasks(adsToday){
+  const goals = [
+    { name: "Watch 1 Ad", target: 1, reward: "10 pts" },
+    { name: "Watch 10 Ads", target: 10, reward: "100 pts" },
+    { name: "Watch 30 Ads", target: 30, reward: "300 pts + ₦10 bonus" },
+  ];
+  const list = document.getElementById("tasksList");
+  list.innerHTML = goals.map(g => {
+    const pct = Math.min(100, (adsToday / g.target) * 100);
+    return `<div class="task-card">
+      <div class="row"><span class="name">${g.name}</span><span class="reward">${g.reward}</span></div>
+      <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
+    </div>`;
+  }).join("");
+}
+
+// ---------- WITHDRAW ----------
+document.getElementById("withdrawForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const profile = await refreshProfile();
+  const { error } = await sb.from("withdrawals").insert({
+    user_id: currentUser.id,
+    amount_naira: profile.naira_balance,
+    bank_name: document.getElementById("wBank").value,
+    account_number: document.getElementById("wAcct").value,
+    account_name: document.getElementById("wName").value,
+  });
+  const status = document.getElementById("withdrawStatus");
+  status.innerHTML = error
+    ? `<div class="note" style="color:var(--danger)">Something went wrong: ${error.message}</div>`
+    : `<div class="note" style="color:var(--green)">Withdrawal requested — you'll be paid within 24–48 hours.</div>`;
+});
+
+// ---------- NAV ----------
+document.querySelectorAll(".tab-btn").forEach(btn => {
+  btn.onclick = async () => {
+    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+    document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+    btn.classList.add("active");
+    document.getElementById("screen-" + btn.dataset.screen).classList.add("active");
+    if(btn.dataset.screen === "tasks"){
+      const profile = await refreshProfile();
+      const today = new Date().toISOString().slice(0,10);
+      renderTasks(profile.last_ad_date === today ? profile.ads_watched_today : 0);
+    }
+  };
+});
+
+// ---------- BOOTSTRAP ----------
+(async () => {
+  const { data: { session } } = await sb.auth.getSession();
+  if(session) initApp();
+})();
+</script>
+</body>
+</html>
