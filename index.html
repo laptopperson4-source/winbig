@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 <title>WinBig — Watch. Earn. Withdraw.</title>
 <meta name="monetag" content="18b18dfeb1836e1a068eed1a6e0db2bb">
-<script>(function(s){s.dataset.zone='11353339',s.src='https://al5sm.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -188,20 +187,18 @@
         </div>
       </div>
 
-      <button class="watch-btn" id="watchAdBtn">▶ Tap Ad & Earn</button>
+      <button class="watch-btn" id="watchAdBtn">🎯 Complete Tasks & Earn</button>
       <div class="cooldown-note" id="cooldownNote"></div>
 
       <div class="section-title">Recent alerts</div>
-      <div id="alertFeed"><div class="empty-note">Your credit alerts will show up here once you start watching ads.</div></div>
+      <div id="alertFeed"><div class="empty-note">Your credit alerts will show up here once you complete a task.</div></div>
     </section>
 
     <!-- TASKS -->
     <section class="screen" id="screen-tasks">
       <h2 class="page-title">Daily Tasks</h2>
-      <p class="page-sub">Complete offers below for points, or hit these ad goals.</p>
+      <p class="page-sub">Complete offers below to earn.</p>
       <div id="offerWallContainer"></div>
-      <div class="section-title">Ad goals</div>
-      <div id="tasksList"></div>
     </section>
 
     <!-- DASHBOARD -->
@@ -374,65 +371,12 @@ async function loadAlertFeed(){
   });
 }
 
-// ---------- WATCH AD ----------
+// ---------- EARN BUTTON — routes to real earning mechanism (offer wall) ----------
 function setupWatchButton(){
   const btn = document.getElementById("watchAdBtn");
-  btn.onclick = async () => {
-    // The click itself is what triggers Monetag's popunder (it listens globally for clicks).
-    // There's no completion signal from Monetag for this ad format, so crediting is handled
-    // entirely by the credit_tap_ad() Postgres function, which enforces cooldown + daily cap
-    // server-side (see winbig_tap_ad_credit_fn migration).
-    btn.disabled = true;
-    const { data, error } = await sb.rpc("credit_tap_ad");
-    if(error){
-      alert("Something went wrong: " + error.message);
-      btn.disabled = false;
-      return;
-    }
-    if(data.error === "cooldown"){
-      startCooldown(data.retry_after);
-    } else if(data.error === "daily_cap_reached"){
-      document.getElementById("cooldownNote").textContent = "Daily ad limit reached — come back tomorrow.";
-      btn.disabled = true;
-    } else if(data.status === "credited"){
-      startCooldown();
-      await refreshProfile();
-      await loadAlertFeed();
-    }
+  btn.onclick = () => {
+    document.querySelector('.tab-btn[data-screen="tasks"]').click();
   };
-}
-
-function startCooldown(overrideSeconds){
-  const btn = document.getElementById("watchAdBtn");
-  const note = document.getElementById("cooldownNote");
-  let remaining = overrideSeconds ?? settings.ad_cooldown_seconds;
-  btn.disabled = true;
-  clearInterval(cooldownTimer);
-  cooldownTimer = setInterval(() => {
-    remaining--;
-    note.textContent = remaining > 0 ? `Next ad available in ${remaining}s` : "";
-    if(remaining <= 0){
-      clearInterval(cooldownTimer);
-      btn.disabled = false;
-    }
-  }, 1000);
-}
-
-// ---------- TASKS (derived from today's ad count) ----------
-function renderTasks(adsToday){
-  const goals = [
-    { name: "Watch 1 Ad", target: 1, reward: "10 pts" },
-    { name: "Watch 10 Ads", target: 10, reward: "100 pts" },
-    { name: "Watch 30 Ads", target: 30, reward: "300 pts + ₦10 bonus" },
-  ];
-  const list = document.getElementById("tasksList");
-  list.innerHTML = goals.map(g => {
-    const pct = Math.min(100, (adsToday / g.target) * 100);
-    return `<div class="task-card">
-      <div class="row"><span class="name">${g.name}</span><span class="reward">${g.reward}</span></div>
-      <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
-    </div>`;
-  }).join("");
 }
 
 // ---------- WITHDRAW ----------
@@ -457,10 +401,22 @@ function loadOfferWall(){
   if(offerWallLoaded || !currentUser) return;
   offerWallLoaded = true;
   const container = document.getElementById("offerWallContainer");
-  const script = document.createElement("script");
-  script.type = "text/javascript";
-  script.src = "https://singingfiles.com/script_include.php?id=1905622&tracking_id=" + encodeURIComponent(currentUser.id);
-  container.appendChild(script);
+  // CPAGrip's script uses document.write(), which breaks (or silently no-ops)
+  // when appended to a page that already finished loading. Running it inside
+  // a fresh iframe document sidesteps that -- document.write() works normally
+  // there since that document hasn't "finished loading" yet.
+  const iframe = document.createElement("iframe");
+  iframe.style.width = "100%";
+  iframe.style.border = "none";
+  iframe.style.minHeight = "700px";
+  container.appendChild(iframe);
+  const doc = iframe.contentWindow.document;
+  doc.open();
+  doc.write(
+    '<script src="https://singingfiles.com/script_include.php?id=1905622&tracking_id=' +
+    encodeURIComponent(currentUser.id) + '"></' + 'script>'
+  );
+  doc.close();
 }
 
 // ---------- NAV ----------
@@ -472,9 +428,6 @@ document.querySelectorAll(".tab-btn").forEach(btn => {
     document.getElementById("screen-" + btn.dataset.screen).classList.add("active");
     if(btn.dataset.screen === "tasks"){
       loadOfferWall();
-      const profile = await refreshProfile();
-      const today = new Date().toISOString().slice(0,10);
-      renderTasks(profile.last_ad_date === today ? profile.ads_watched_today : 0);
     }
   };
 });
