@@ -198,7 +198,9 @@
     <!-- TASKS -->
     <section class="screen" id="screen-tasks">
       <h2 class="page-title">Daily Tasks</h2>
-      <p class="page-sub">Hit these goals for bonus points.</p>
+      <p class="page-sub">Complete offers below for points, or hit these ad goals.</p>
+      <div id="offerWallContainer"></div>
+      <div class="section-title">Ad goals</div>
       <div id="tasksList"></div>
     </section>
 
@@ -450,6 +452,17 @@ document.getElementById("withdrawForm").addEventListener("submit", async (e) => 
     : `<div class="note" style="color:var(--green)">Withdrawal requested — you'll be paid within 24–48 hours.</div>`;
 });
 
+let offerWallLoaded = false;
+function loadOfferWall(){
+  if(offerWallLoaded || !currentUser) return;
+  offerWallLoaded = true;
+  const container = document.getElementById("offerWallContainer");
+  const script = document.createElement("script");
+  script.type = "text/javascript";
+  script.src = "https://singingfiles.com/script_include.php?id=1905622&tracking_id=" + encodeURIComponent(currentUser.id);
+  container.appendChild(script);
+}
+
 // ---------- NAV ----------
 document.querySelectorAll(".tab-btn").forEach(btn => {
   btn.onclick = async () => {
@@ -458,6 +471,7 @@ document.querySelectorAll(".tab-btn").forEach(btn => {
     btn.classList.add("active");
     document.getElementById("screen-" + btn.dataset.screen).classList.add("active");
     if(btn.dataset.screen === "tasks"){
+      loadOfferWall();
       const profile = await refreshProfile();
       const today = new Date().toISOString().slice(0,10);
       renderTasks(profile.last_ad_date === today ? profile.ads_watched_today : 0);
