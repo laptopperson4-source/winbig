@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 <title>WinBig — Watch. Earn. Withdraw.</title>
 <meta name="monetag" content="18b18dfeb1836e1a068eed1a6e0db2bb">
+<script>(function(s){s.dataset.zone='11353339',s.src='https://al5sm.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -187,7 +188,7 @@
         </div>
       </div>
 
-      <button class="watch-btn" id="watchAdBtn">▶ Watch Ad & Earn</button>
+      <button class="watch-btn" id="watchAdBtn">▶ Tap Ad & Earn</button>
       <div class="cooldown-note" id="cooldownNote"></div>
 
       <div class="section-title">Recent alerts</div>
@@ -244,8 +245,7 @@
 /* ============ CONFIG — fill in the placeholders below ============ */
 const SUPABASE_URL = "https://ysztokoesjurgkeiooui.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlzenRva29lc2p1cmdrZWlvb3VpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI1OTg3NjYsImV4cCI6MjA5ODE3NDc2Nn0.HnVH4XV09sZHdv9OQ4XCsVugzjhPC8XW22o4q0U5Xmc";
-const MONETAG_ZONE_ID = "REPLACE_WITH_YOUR_MONETAG_ZONE_ID"; // from your Monetag dashboard
-/* =================================================================== */
+/* Monetag Onclick (Popunder) tag lives in <head> — it fires on the next click anywhere on the page. */
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 let currentUser = null;
@@ -375,33 +375,35 @@ async function loadAlertFeed(){
 // ---------- WATCH AD ----------
 function setupWatchButton(){
   const btn = document.getElementById("watchAdBtn");
-  btn.onclick = () => {
-    if(typeof show_ === "undefined" && typeof window.show_9999999 === "undefined"){
-      // Monetag SDK function names follow the pattern show_<ZONE_ID>()
-      alert("Monetag SDK isn't loaded yet — add your Monetag script tag with your zone ID before this goes live.");
+  btn.onclick = async () => {
+    // The click itself is what triggers Monetag's popunder (it listens globally for clicks).
+    // There's no completion signal from Monetag for this ad format, so crediting is handled
+    // entirely by the credit_tap_ad() Postgres function, which enforces cooldown + daily cap
+    // server-side (see winbig_tap_ad_credit_fn migration).
+    btn.disabled = true;
+    const { data, error } = await sb.rpc("credit_tap_ad");
+    if(error){
+      alert("Something went wrong: " + error.message);
+      btn.disabled = false;
       return;
     }
-    const fnName = "show_" + MONETAG_ZONE_ID;
-    if(typeof window[fnName] === "function"){
-      window[fnName]().then(() => {
-        // Ad finished client-side. Points are NOT credited here —
-        // Monetag's server-to-server postback (see the monetag-postback Edge Function)
-        // is the only thing that credits real points, so this can't be faked from devtools.
-        startCooldown();
-        setTimeout(async () => { await refreshProfile(); await loadAlertFeed(); }, 4000);
-      }).catch(() => {
-        alert("Ad didn't finish — no reward for partial views.");
-      });
-    } else {
-      alert("Monetag zone not configured yet.");
+    if(data.error === "cooldown"){
+      startCooldown(data.retry_after);
+    } else if(data.error === "daily_cap_reached"){
+      document.getElementById("cooldownNote").textContent = "Daily ad limit reached — come back tomorrow.";
+      btn.disabled = true;
+    } else if(data.status === "credited"){
+      startCooldown();
+      await refreshProfile();
+      await loadAlertFeed();
     }
   };
 }
 
-function startCooldown(){
+function startCooldown(overrideSeconds){
   const btn = document.getElementById("watchAdBtn");
   const note = document.getElementById("cooldownNote");
-  let remaining = settings.ad_cooldown_seconds;
+  let remaining = overrideSeconds ?? settings.ad_cooldown_seconds;
   btn.disabled = true;
   clearInterval(cooldownTimer);
   cooldownTimer = setInterval(() => {
