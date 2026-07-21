@@ -4,24 +4,24 @@ Watch-ads-earn-naira site. Single-file front end (`index.html`), Supabase backen
 
 ## What's already wired up
 - **Supabase project**: `ysztokoesjurgkeiooui` (URL + anon key already in `index.html`)
-- **Tables**: `profiles`, `ad_views`, `withdrawals`, `app_settings` (RLS enabled — see migration `winbig_init_schema`)
-- **Ad format: Monetag Onclick (Popunder)**, zone `11353339`. Important: Monetag's self-serve website accounts don't offer a true rewarded-video format with server-verified completion — that only exists for their Telegram Mini App SDK. A regular popunder has no "ad finished" signal at all, so:
-  - The tag in `<head>` fires a popunder on the *next click anywhere on the page* (this is how the ad format inherently works, not something we control)
-  - Crediting is handled by the `credit_tap_ad()` Postgres function (see migration `winbig_tap_ad_credit_fn`), called via `sb.rpc("credit_tap_ad")` when the "Tap Ad & Earn" button is clicked
-  - That function enforces cooldown + daily cap **server-side**, so spam-clicking is capped even without real ad-completion verification. This is weaker than a true rewarded-ads postback, but it's the honest ceiling of what this ad format supports.
-- The unused `monetag-postback` Edge Function is still deployed from an earlier plan (real rewarded-video SDK) — harmless to leave, but not part of the current flow. Safe to delete later if you don't plan to also ship this as a Telegram Mini App.
-- **Front end**: auth (phone + password), Earn tab with tap-ad button, alert-feed styled activity log, Tasks, Dashboard, Withdraw request form.
+- **Tables**: `profiles`, `ad_views`, `withdrawals`, `app_settings`, `game_sessions` (RLS enabled)
+- **Earn mechanic: Play a game for N minutes.** No ad network verifies this for a plain website, so it's enforced with our own server-side timing: `start_game_session()` records when a session begins, `complete_game_session()` (both Postgres functions, callable via `sb.rpc`) only pays out once real wall-clock time ≥ the target has passed. This is a heuristic, not proof of engagement — someone determined could still get around it — but it can't be beaten by simply calling the "claim" function instantly.
+- Two earlier approaches were tried and abandoned for this site (Monetag popunder — kept hijacking every click; CPAGrip offer wall — worked, but you wanted custom play-based tasks instead of a preset offer catalog). Both the `monetag-postback` and `cpagrip-postback` Edge Functions are still deployed but unused — safe to delete later.
+- **Front end**: auth (phone + password), Earn tab, Play tab (game + session timer), Dashboard, Withdraw request form.
 
 ## What you still need to do manually
 
-### 1. Paystack (withdrawals)
-Not wired yet — withdrawal requests currently just land in the `withdrawals` table as `pending` for manual payout. Once you have a Paystack business account, we'll add a Transfers API call (as a Supabase Edge Function using the secret key, never client-side) to automate payouts.
+### 1. Add a real game
+Sign up as a publisher at **gamedistribution.com**, grab an embed link for a game from their catalog (legally licensed for third-party embedding — do NOT hotlink games from itch.io or CrazyGames directly, most don't allow that), and paste the URL into `GAME_EMBED_URL` in `index.html`.
 
-### 2. Tune the payout rate
-`app_settings` table controls economics — change `points_per_ad` / `naira_per_point` there once you have real revenue data from Monetag, rather than editing code.
+### 2. Add the banner ad
+In Monetag, create an **In-Page Push (Banner)** or **Vignette Banner** tag (ambient, no click required — unlike the popunder we removed). Paste the script tag into `GAME_BANNER_TAG` in `index.html`.
 
-### 3. Fraud watch
-Since ad completion isn't verifiable for this format, keep an eye on `ad_views` for unnaturally fast/regular patterns per user once real traffic starts — that's the main signal something's being gamed.
+### 3. Paystack (withdrawals)
+Not wired yet — withdrawal requests currently just land in the `withdrawals` table as `pending` for manual payout.
+
+### 4. Tune the payout rate
+`app_settings` controls the economics: `game_session_target_seconds` (how long they must play), `game_session_points` (reward per session), `game_session_daily_cap` (sessions/day per user), `naira_per_point`.
 
 ## Deploying
 Drag `index.html` into Cloudflare Pages, or connect this repo for auto-deploy on push.

@@ -187,18 +187,22 @@
         </div>
       </div>
 
-      <button class="watch-btn" id="watchAdBtn">🎯 Complete Tasks & Earn</button>
+      <button class="watch-btn" id="watchAdBtn">🎮 Play a Game & Earn</button>
       <div class="cooldown-note" id="cooldownNote"></div>
 
       <div class="section-title">Recent alerts</div>
       <div id="alertFeed"><div class="empty-note">Your credit alerts will show up here once you complete a task.</div></div>
     </section>
 
-    <!-- TASKS -->
+    <!-- GAMES -->
     <section class="screen" id="screen-tasks">
-      <h2 class="page-title">Daily Tasks</h2>
-      <p class="page-sub">Complete offers below to earn.</p>
-      <div id="offerWallContainer"></div>
+      <h2 class="page-title">Play & Earn</h2>
+      <p class="page-sub">Play for <span id="gameTargetLabel">5</span> minutes to earn points.</p>
+      <div id="gameBannerSlot"></div>
+      <div id="gameFrameSlot" class="task-card" style="padding:0; overflow:hidden; display:none;"></div>
+      <div id="gameEmptyState" class="empty-note">No games added yet.</div>
+      <button class="watch-btn" id="startGameBtn" style="display:none; margin-top:14px;">▶ Start Session</button>
+      <div class="cooldown-note" id="gameSessionNote"></div>
     </section>
 
     <!-- DASHBOARD -->
@@ -234,7 +238,7 @@
 
   <nav class="tabs">
     <button class="tab-btn active" data-screen="earn"><span class="ic">🏠</span>Earn</button>
-    <button class="tab-btn" data-screen="tasks"><span class="ic">🎯</span>Tasks</button>
+    <button class="tab-btn" data-screen="tasks"><span class="ic">🎮</span>Play</button>
     <button class="tab-btn" data-screen="dashboard"><span class="ic">📊</span>Dashboard</button>
     <button class="tab-btn" data-screen="withdraw"><span class="ic">💸</span>Withdraw</button>
   </nav>
@@ -396,27 +400,80 @@ document.getElementById("withdrawForm").addEventListener("submit", async (e) => 
     : `<div class="note" style="color:var(--green)">Withdrawal requested — you'll be paid within 24–48 hours.</div>`;
 });
 
-let offerWallLoaded = false;
-function loadOfferWall(){
-  if(offerWallLoaded || !currentUser) return;
-  offerWallLoaded = true;
-  const container = document.getElementById("offerWallContainer");
-  // CPAGrip's script uses document.write(), which breaks (or silently no-ops)
-  // when appended to a page that already finished loading. Running it inside
-  // a fresh iframe document sidesteps that -- document.write() works normally
-  // there since that document hasn't "finished loading" yet.
-  const iframe = document.createElement("iframe");
-  iframe.style.width = "100%";
-  iframe.style.border = "none";
-  iframe.style.minHeight = "700px";
-  container.appendChild(iframe);
-  const doc = iframe.contentWindow.document;
-  doc.open();
-  doc.write(
-    '<script src="https://singingfiles.com/script_include.php?id=1905622&tracking_id=' +
-    encodeURIComponent(currentUser.id) + '"></' + 'script>'
-  );
-  doc.close();
+/* ============ GAME CONFIG — fill in once you have both ============ */
+const GAME_EMBED_URL = ""; // paste the GameDistribution iframe src here, e.g. "https://html5.gamedistribution.com/xxxxx/"
+const GAME_BANNER_TAG = ""; // paste Monetag's In-Page Push (or Vignette Banner) <script> tag here, as a string
+/* ===================================================================== */
+
+let gamesTabInitialized = false;
+let activeSession = null; // { id, target_seconds, startedAt }
+let sessionTimer = null;
+
+function initGamesTab(){
+  if(gamesTabInitialized) return;
+  gamesTabInitialized = true;
+
+  if(GAME_BANNER_TAG){
+    document.getElementById("gameBannerSlot").innerHTML = GAME_BANNER_TAG;
+  }
+
+  const frameSlot = document.getElementById("gameFrameSlot");
+  const emptyState = document.getElementById("gameEmptyState");
+  const startBtn = document.getElementById("startGameBtn");
+
+  if(GAME_EMBED_URL){
+    emptyState.style.display = "none";
+    frameSlot.style.display = "block";
+    frameSlot.innerHTML = `<iframe src="${GAME_EMBED_URL}" style="width:100%; height:420px; border:none;" allow="autoplay"></iframe>`;
+    startBtn.style.display = "block";
+  }
+
+  startBtn.onclick = startGameSession;
+}
+
+async function startGameSession(){
+  const btn = document.getElementById("startGameBtn");
+  const note = document.getElementById("gameSessionNote");
+  btn.disabled = true;
+  const { data, error } = await sb.rpc("start_game_session");
+  if(error || data.error){
+    note.textContent = data?.error === "daily_cap_reached"
+      ? "Daily session limit reached — come back tomorrow."
+      : "Couldn't start session: " + (error?.message || data.error);
+    btn.disabled = false;
+    return;
+  }
+  activeSession = { id: data.session_id, target_seconds: data.target_seconds, startedAt: Date.now() };
+  document.getElementById("gameTargetLabel").textContent = Math.round(data.target_seconds / 60);
+  btn.textContent = "Playing…";
+  clearInterval(sessionTimer);
+  sessionTimer = setInterval(updateSessionCountdown, 1000);
+  updateSessionCountdown();
+}
+
+async function updateSessionCountdown(){
+  if(!activeSession) return;
+  const elapsed = (Date.now() - activeSession.startedAt) / 1000;
+  const remaining = Math.max(0, Math.ceil(activeSession.target_seconds - elapsed));
+  const note = document.getElementById("gameSessionNote");
+  if(remaining > 0){
+    note.textContent = `Keep playing — ${remaining}s left to earn`;
+  } else {
+    clearInterval(sessionTimer);
+    note.textContent = "Claiming reward…";
+    const { data, error } = await sb.rpc("complete_game_session", { p_session_id: activeSession.id });
+    const btn = document.getElementById("startGameBtn");
+    btn.disabled = false;
+    btn.textContent = "▶ Start Session";
+    activeSession = null;
+    if(error || data.error){
+      note.textContent = "Something went wrong claiming your reward.";
+      return;
+    }
+    note.textContent = `+₦${Number(data.naira).toFixed(2)} credited!`;
+    await refreshProfile();
+    await loadAlertFeed();
+  }
 }
 
 // ---------- NAV ----------
@@ -427,7 +484,7 @@ document.querySelectorAll(".tab-btn").forEach(btn => {
     btn.classList.add("active");
     document.getElementById("screen-" + btn.dataset.screen).classList.add("active");
     if(btn.dataset.screen === "tasks"){
-      loadOfferWall();
+      initGamesTab();
     }
   };
 });
