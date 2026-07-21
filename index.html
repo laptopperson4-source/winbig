@@ -140,6 +140,14 @@
   nav.tabs button.active{ color:var(--green); }
   h2.page-title{ font-size:20px; margin:18px 0 4px; }
   p.page-sub{ color:var(--text-soft); font-size:13px; margin:0 0 18px; }
+
+  .game-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px; }
+  .game-tile{
+    background:var(--panel); border:1px solid var(--line); border-radius:12px;
+    padding:14px 12px; text-align:center; cursor:pointer; font-size:13px; font-weight:600;
+  }
+  .game-tile:active{ border-color:var(--green); }
+  .game-tile .emoji{ font-size:26px; display:block; margin-bottom:8px; }
 </style>
 </head>
 <body>
@@ -199,9 +207,12 @@
       <h2 class="page-title">Play & Earn</h2>
       <p class="page-sub">Play for <span id="gameTargetLabel">5</span> minutes to earn points.</p>
       <div id="gameBannerSlot"></div>
+      <div id="gamePicker" class="section-title" style="display:none;">Choose a game</div>
+      <div id="gamePickerGrid"></div>
       <div id="gameFrameSlot" class="task-card" style="padding:0; overflow:hidden; display:none;"></div>
       <div id="gameEmptyState" class="empty-note">No games added yet.</div>
       <button class="watch-btn" id="startGameBtn" style="display:none; margin-top:14px;">▶ Start Session</button>
+      <button class="ghost-btn" id="changeGameBtn" style="display:none;">← Choose a different game</button>
       <div class="cooldown-note" id="gameSessionNote"></div>
     </section>
 
@@ -400,14 +411,17 @@ document.getElementById("withdrawForm").addEventListener("submit", async (e) => 
     : `<div class="note" style="color:var(--green)">Withdrawal requested — you'll be paid within 24–48 hours.</div>`;
 });
 
-/* ============ GAME CONFIG — fill in once you have both ============ */
-const GAME_EMBED_URL = ""; // paste the GameDistribution iframe src here, e.g. "https://html5.gamedistribution.com/xxxxx/"
+/* ============ GAME CONFIG — add as many as you like ============ */
+const GAMES = [
+  // { name: "Game Name", emoji: "🏎️", url: "https://html5.gamemonetize.com/xxxxx/" },
+];
 const GAME_BANNER_TAG = ""; // paste Monetag's In-Page Push (or Vignette Banner) <script> tag here, as a string
-/* ===================================================================== */
+/* ================================================================= */
 
 let gamesTabInitialized = false;
 let activeSession = null; // { id, target_seconds, startedAt }
 let sessionTimer = null;
+let currentGame = null;
 
 function initGamesTab(){
   if(gamesTabInitialized) return;
@@ -417,18 +431,47 @@ function initGamesTab(){
     document.getElementById("gameBannerSlot").innerHTML = GAME_BANNER_TAG;
   }
 
-  const frameSlot = document.getElementById("gameFrameSlot");
   const emptyState = document.getElementById("gameEmptyState");
-  const startBtn = document.getElementById("startGameBtn");
+  const picker = document.getElementById("gamePicker");
+  const grid = document.getElementById("gamePickerGrid");
 
-  if(GAME_EMBED_URL){
-    emptyState.style.display = "none";
-    frameSlot.style.display = "block";
-    frameSlot.innerHTML = `<iframe src="${GAME_EMBED_URL}" style="width:100%; height:420px; border:none;" allow="autoplay"></iframe>`;
-    startBtn.style.display = "block";
+  if(GAMES.length === 0){
+    emptyState.style.display = "block";
+    return;
   }
+  emptyState.style.display = "none";
+  picker.style.display = "block";
+  grid.className = "game-grid";
+  grid.innerHTML = GAMES.map((g, i) => `
+    <div class="game-tile" data-index="${i}">
+      <span class="emoji">${g.emoji || "🎮"}</span>${g.name}
+    </div>`).join("");
+  grid.querySelectorAll(".game-tile").forEach(tile => {
+    tile.onclick = () => selectGame(GAMES[parseInt(tile.dataset.index)]);
+  });
 
-  startBtn.onclick = startGameSession;
+  document.getElementById("changeGameBtn").onclick = () => {
+    currentGame = null;
+    document.getElementById("gameFrameSlot").style.display = "none";
+    document.getElementById("gameFrameSlot").innerHTML = "";
+    document.getElementById("startGameBtn").style.display = "none";
+    document.getElementById("changeGameBtn").style.display = "none";
+    picker.style.display = "block";
+    grid.style.display = "grid";
+  };
+
+  document.getElementById("startGameBtn").onclick = startGameSession;
+}
+
+function selectGame(game){
+  currentGame = game;
+  const frameSlot = document.getElementById("gameFrameSlot");
+  document.getElementById("gamePickerGrid").style.display = "none";
+  document.getElementById("gamePicker").style.display = "none";
+  frameSlot.style.display = "block";
+  frameSlot.innerHTML = `<iframe src="${game.url}" style="width:100%; height:420px; border:none;" allow="autoplay"></iframe>`;
+  document.getElementById("startGameBtn").style.display = "block";
+  document.getElementById("changeGameBtn").style.display = "block";
 }
 
 async function startGameSession(){
