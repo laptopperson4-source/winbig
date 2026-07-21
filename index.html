@@ -144,9 +144,11 @@
   .game-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px; }
   .game-tile{
     background:var(--panel); border:1px solid var(--line); border-radius:12px;
-    padding:14px 12px; text-align:center; cursor:pointer; font-size:13px; font-weight:600;
+    overflow:hidden; text-align:center; cursor:pointer; font-size:13px; font-weight:600;
   }
   .game-tile:active{ border-color:var(--green); }
+  .game-tile img{ width:100%; aspect-ratio:4/3; object-fit:cover; display:block; }
+  .game-tile .tile-name{ padding:10px 8px; }
   .game-tile .emoji{ font-size:26px; display:block; margin-bottom:8px; }
 </style>
 </head>
@@ -413,10 +415,10 @@ document.getElementById("withdrawForm").addEventListener("submit", async (e) => 
 
 /* ============ GAME CONFIG — add as many as you like ============ */
 const GAMES = [
-  { name: "DNA Evolution 3D", emoji: "🧬", url: "https://html5.gamemonetize.co/coqggzygf7rfnv8725r0ckd6rc7xhcm3/" },
-  { name: "Poppy Strike 6", emoji: "🔫", url: "https://html5.gamemonetize.co/5bwd2d7s2dmejcflpe4ywq31hboiq6w1/" },
-  { name: "Counter Craft", emoji: "🎯", url: "https://html5.gamemonetize.co/j6doy20k2ti3aa0vea8g77f14q1vibg1/" },
-  { name: "Russian Taz Driving 2", emoji: "🚗", url: "https://html5.gamemonetize.co/ulqp6jflm90q0hrtvsjtna5zdjocfic9/" },
+  { name: "DNA Evolution 3D", url: "https://html5.gamemonetize.co/coqggzygf7rfnv8725r0ckd6rc7xhcm3/", thumb: "https://img.gamemonetize.com/coqggzygf7rfnv8725r0ckd6rc7xhcm3/512x384.jpg" },
+  { name: "Poppy Strike 6", url: "https://html5.gamemonetize.co/5bwd2d7s2dmejcflpe4ywq31hboiq6w1/", thumb: "https://img.gamemonetize.com/5bwd2d7s2dmejcflpe4ywq31hboiq6w1/512x384.jpg" },
+  { name: "Counter Craft", url: "https://html5.gamemonetize.co/j6doy20k2ti3aa0vea8g77f14q1vibg1/", thumb: "https://img.gamemonetize.com/j6doy20k2ti3aa0vea8g77f14q1vibg1/512x384.jpg" },
+  { name: "Russian Taz Driving 2", url: "https://html5.gamemonetize.co/ulqp6jflm90q0hrtvsjtna5zdjocfic9/", thumb: "https://img.gamemonetize.com/ulqp6jflm90q0hrtvsjtna5zdjocfic9/512x384.jpg" },
 ];
 const GAME_BANNER_TAG = ""; // paste Monetag's In-Page Push (or Vignette Banner) <script> tag here, as a string
 /* ================================================================= */
@@ -447,7 +449,8 @@ function initGamesTab(){
   grid.className = "game-grid";
   grid.innerHTML = GAMES.map((g, i) => `
     <div class="game-tile" data-index="${i}">
-      <span class="emoji">${g.emoji || "🎮"}</span>${g.name}
+      <img src="${g.thumb}" alt="${g.name}" loading="lazy">
+      <div class="tile-name">${g.name}</div>
     </div>`).join("");
   grid.querySelectorAll(".game-tile").forEach(tile => {
     tile.onclick = () => selectGame(GAMES[parseInt(tile.dataset.index)]);
