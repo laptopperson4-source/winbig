@@ -150,6 +150,22 @@
   .game-tile img{ width:100%; aspect-ratio:4/3; object-fit:cover; display:block; }
   .game-tile .tile-name{ padding:10px 8px; }
   .game-tile .emoji{ font-size:26px; display:block; margin-bottom:8px; }
+
+  .game-frame-wrap{ position:relative; border-radius:var(--radius); overflow:hidden; border:1px solid var(--line); }
+  .game-frame-wrap iframe{ width:100%; height:420px; border:none; display:block; }
+  .clock-badge{
+    position:absolute; top:10px; right:10px; z-index:5; pointer-events:none;
+    background:rgba(14,21,18,0.85); backdrop-filter:blur(4px); border:1px solid var(--line);
+    border-radius:99px; padding:6px 12px; font-family:'IBM Plex Mono',monospace;
+    font-size:12px; color:var(--green); display:flex; align-items:center; gap:6px;
+    transition:background .3s, color .3s;
+  }
+  .clock-badge.credited{ background:var(--green); color:#0B1210; }
+  .fullscreen-btn{
+    position:absolute; top:10px; left:10px; z-index:5; background:rgba(14,21,18,0.85);
+    border:1px solid var(--line); border-radius:10px; width:34px; height:34px; color:var(--text);
+    font-size:15px; display:flex; align-items:center; justify-content:center; cursor:pointer;
+  }
 </style>
 </head>
 <body>
@@ -207,15 +223,14 @@
     <!-- GAMES -->
     <section class="screen" id="screen-tasks">
       <h2 class="page-title">Play & Earn</h2>
-      <p class="page-sub">Play for <span id="gameTargetLabel">5</span> minutes to earn points.</p>
+      <p class="page-sub">Play as long as you want — you're credited every few minutes, automatically.</p>
       <div id="gameBannerSlot"></div>
       <div id="gamePicker" class="section-title" style="display:none;">Choose a game</div>
       <div id="gamePickerGrid"></div>
-      <div id="gameFrameSlot" class="task-card" style="padding:0; overflow:hidden; display:none;"></div>
+      <div id="gameFrameSlot" style="display:none;"></div>
       <div id="gameEmptyState" class="empty-note">No games added yet.</div>
-      <button class="watch-btn" id="startGameBtn" style="display:none; margin-top:14px;">▶ Start Session</button>
+      <button class="watch-btn" id="startGameBtn" style="display:none; margin-top:14px;">▶ Start Playing</button>
       <button class="ghost-btn" id="changeGameBtn" style="display:none;">← Choose a different game</button>
-      <div class="cooldown-note" id="gameSessionNote"></div>
     </section>
 
     <!-- DASHBOARD -->
@@ -416,9 +431,14 @@ document.getElementById("withdrawForm").addEventListener("submit", async (e) => 
 /* ============ GAME CONFIG — add as many as you like ============ */
 const GAMES = [
   { name: "DNA Evolution 3D", url: "https://html5.gamemonetize.co/coqggzygf7rfnv8725r0ckd6rc7xhcm3/", thumb: "https://img.gamemonetize.com/coqggzygf7rfnv8725r0ckd6rc7xhcm3/512x384.jpg" },
-  { name: "Poppy Strike 6", url: "https://html5.gamemonetize.co/5bwd2d7s2dmejcflpe4ywq31hboiq6w1/", thumb: "https://img.gamemonetize.com/5bwd2d7s2dmejcflpe4ywq31hboiq6w1/512x384.jpg" },
-  { name: "Counter Craft", url: "https://html5.gamemonetize.co/j6doy20k2ti3aa0vea8g77f14q1vibg1/", thumb: "https://img.gamemonetize.com/j6doy20k2ti3aa0vea8g77f14q1vibg1/512x384.jpg" },
-  { name: "Russian Taz Driving 2", url: "https://html5.gamemonetize.co/ulqp6jflm90q0hrtvsjtna5zdjocfic9/", thumb: "https://img.gamemonetize.com/ulqp6jflm90q0hrtvsjtna5zdjocfic9/512x384.jpg" },
+  { name: "Funny Prank Sounds", url: "https://html5.gamemonetize.co/nzjmfjme4x5y6vvd84fs3c5vlc0zwka5/", thumb: "https://img.gamemonetize.com/nzjmfjme4x5y6vvd84fs3c5vlc0zwka5/512x384.jpg" },
+  { name: "Chess 3D", url: "https://html5.gamemonetize.co/kad9w33p7vtygydqcaeu5acmipv46aok/", thumb: "https://img.gamemonetize.com/kad9w33p7vtygydqcaeu5acmipv46aok/512x384.jpg" },
+  { name: "Super Mario Run - Lep's World", url: "https://html5.gamemonetize.co/lvqn24yzdxrsft9wud7uh488n7rwww3h/", thumb: "https://img.gamemonetize.com/lvqn24yzdxrsft9wud7uh488n7rwww3h/512x384.jpg" },
+  { name: "Prison Escapes", url: "https://html5.gamemonetize.co/ah4xrvjv2t6brdepii7kfc6ke5l8lmas/", thumb: "https://img.gamemonetize.com/ah4xrvjv2t6brdepii7kfc6ke5l8lmas/512x384.jpg" },
+  { name: "Angry Birds Halloween", url: "https://html5.gamemonetize.co/rktauba57zwqt1231p97zqcozvsyb1y3/", thumb: "https://img.gamemonetize.com/rktauba57zwqt1231p97zqcozvsyb1y3/512x384.jpg" },
+  { name: "Rick And Morty Adventure", url: "https://html5.gamemonetize.co/8bumz6k8dg9egs4ds4sp0iodawnq77rf/", thumb: "https://img.gamemonetize.com/8bumz6k8dg9egs4ds4sp0iodawnq77rf/512x384.jpg" },
+  { name: "Friday the 13th", url: "https://html5.gamemonetize.co/kkpefmyk6na21ifxvxkfigsa4km3z95k/", thumb: "https://img.gamemonetize.com/kkpefmyk6na21ifxvxkfigsa4km3z95k/512x384.jpg" },
+  { name: "Ben 10 Alien Force", url: "https://html5.gamemonetize.co/k26c8skafieuipsstgd0yio5k46ejse3/", thumb: "https://img.gamemonetize.com/k26c8skafieuipsstgd0yio5k46ejse3/512x384.jpg" },
 ];
 const GAME_BANNER_TAG = ""; // paste Monetag's In-Page Push (or Vignette Banner) <script> tag here, as a string
 /* ================================================================= */
@@ -458,15 +478,18 @@ function initGamesTab(){
 
   document.getElementById("changeGameBtn").onclick = () => {
     currentGame = null;
+    activeSession = null;
+    clearInterval(sessionTimer);
     document.getElementById("gameFrameSlot").style.display = "none";
     document.getElementById("gameFrameSlot").innerHTML = "";
     document.getElementById("startGameBtn").style.display = "none";
+    document.getElementById("startGameBtn").textContent = "▶ Start Playing";
     document.getElementById("changeGameBtn").style.display = "none";
     picker.style.display = "block";
     grid.style.display = "grid";
   };
 
-  document.getElementById("startGameBtn").onclick = startGameSession;
+  document.getElementById("startGameBtn").onclick = startGameLoop;
 }
 
 function selectGame(game){
@@ -475,53 +498,71 @@ function selectGame(game){
   document.getElementById("gamePickerGrid").style.display = "none";
   document.getElementById("gamePicker").style.display = "none";
   frameSlot.style.display = "block";
-  frameSlot.innerHTML = `<iframe src="${game.url}" style="width:100%; height:420px; border:none;" allow="autoplay"></iframe>`;
+  frameSlot.innerHTML = `
+    <div class="game-frame-wrap" id="gameFrameWrap">
+      <button class="fullscreen-btn" id="fullscreenBtn" title="Fullscreen">⛶</button>
+      <div class="clock-badge" id="clockBadge" style="display:none;">🕒 <span id="clockBadgeText">5:00</span></div>
+      <iframe src="${game.url}" allow="autoplay; fullscreen"></iframe>
+    </div>`;
+  document.getElementById("fullscreenBtn").onclick = () => {
+    const wrap = document.getElementById("gameFrameWrap");
+    if(wrap.requestFullscreen) wrap.requestFullscreen();
+    else if(wrap.webkitRequestFullscreen) wrap.webkitRequestFullscreen();
+  };
   document.getElementById("startGameBtn").style.display = "block";
   document.getElementById("changeGameBtn").style.display = "block";
 }
 
-async function startGameSession(){
+// Starts the continuous earn loop: begins a session, counts down, credits on completion,
+// then immediately starts the next session automatically. No manual restart, no daily cap —
+// it just keeps going as long as the player keeps playing.
+async function startGameLoop(){
   const btn = document.getElementById("startGameBtn");
-  const note = document.getElementById("gameSessionNote");
-  btn.disabled = true;
+  btn.style.display = "none";
+  document.getElementById("clockBadge").style.display = "flex";
+  await beginSession();
+}
+
+async function beginSession(){
   const { data, error } = await sb.rpc("start_game_session");
   if(error || data.error){
-    note.textContent = data?.error === "daily_cap_reached"
-      ? "Daily session limit reached — come back tomorrow."
-      : "Couldn't start session: " + (error?.message || data.error);
-    btn.disabled = false;
+    document.getElementById("clockBadgeText").textContent = "error";
     return;
   }
   activeSession = { id: data.session_id, target_seconds: data.target_seconds, startedAt: Date.now() };
-  document.getElementById("gameTargetLabel").textContent = Math.round(data.target_seconds / 60);
-  btn.textContent = "Playing…";
   clearInterval(sessionTimer);
-  sessionTimer = setInterval(updateSessionCountdown, 1000);
-  updateSessionCountdown();
+  sessionTimer = setInterval(tickSession, 1000);
+  tickSession();
 }
 
-async function updateSessionCountdown(){
+async function tickSession(){
   if(!activeSession) return;
+  const badge = document.getElementById("clockBadgeText");
+  const badgeEl = document.getElementById("clockBadge");
+  if(!badge) { clearInterval(sessionTimer); return; } // frame was closed
   const elapsed = (Date.now() - activeSession.startedAt) / 1000;
   const remaining = Math.max(0, Math.ceil(activeSession.target_seconds - elapsed));
-  const note = document.getElementById("gameSessionNote");
   if(remaining > 0){
-    note.textContent = `Keep playing — ${remaining}s left to earn`;
+    const m = Math.floor(remaining / 60), s = remaining % 60;
+    badge.textContent = `${m}:${s.toString().padStart(2,"0")}`;
   } else {
     clearInterval(sessionTimer);
-    note.textContent = "Claiming reward…";
-    const { data, error } = await sb.rpc("complete_game_session", { p_session_id: activeSession.id });
-    const btn = document.getElementById("startGameBtn");
-    btn.disabled = false;
-    btn.textContent = "▶ Start Session";
+    const sessionId = activeSession.id;
     activeSession = null;
+    const { data, error } = await sb.rpc("complete_game_session", { p_session_id: sessionId });
     if(error || data.error){
-      note.textContent = "Something went wrong claiming your reward.";
+      badge.textContent = "retry…";
+      await beginSession();
       return;
     }
-    note.textContent = `+₦${Number(data.naira).toFixed(2)} credited!`;
+    badgeEl.classList.add("credited");
+    badge.textContent = `+₦${Number(data.naira).toFixed(0)}!`;
     await refreshProfile();
     await loadAlertFeed();
+    setTimeout(() => {
+      badgeEl.classList.remove("credited");
+      beginSession(); // auto-loop: next cycle starts right away, no cap
+    }, 1800);
   }
 }
 
