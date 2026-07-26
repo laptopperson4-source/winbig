@@ -245,6 +245,13 @@
       <div id="historyFeed"><div class="empty-note">No history yet.</div></div>
     </section>
 
+    <!-- SURVEYS -->
+    <section class="screen" id="screen-surveys">
+      <h2 class="page-title">Surveys</h2>
+      <p class="page-sub">Answer a few questions, get paid per survey.</p>
+      <div id="surveyWallSlot" style="min-height:400px;"><div class="empty-note">Loading surveys…</div></div>
+    </section>
+
     <!-- WITHDRAW -->
     <section class="screen" id="screen-withdraw">
       <h2 class="page-title">Withdraw</h2>
@@ -267,6 +274,7 @@
   <nav class="tabs">
     <button class="tab-btn active" data-screen="earn"><span class="ic">🏠</span>Earn</button>
     <button class="tab-btn" data-screen="tasks"><span class="ic">🎮</span>Play</button>
+    <button class="tab-btn" data-screen="surveys"><span class="ic">📝</span>Surveys</button>
     <button class="tab-btn" data-screen="dashboard"><span class="ic">📊</span>Dashboard</button>
     <button class="tab-btn" data-screen="withdraw"><span class="ic">💸</span>Withdraw</button>
   </nav>
@@ -576,8 +584,29 @@ document.querySelectorAll(".tab-btn").forEach(btn => {
     if(btn.dataset.screen === "tasks"){
       initGamesTab();
     }
+    if(btn.dataset.screen === "surveys"){
+      loadSurveyWall();
+    }
   };
 });
+
+let surveyWallLoaded = false;
+async function loadSurveyWall(){
+  if(surveyWallLoaded) return;
+  surveyWallLoaded = true;
+  const slot = document.getElementById("surveyWallSlot");
+  const { data: { session } } = await sb.auth.getSession();
+  const resp = await fetch("https://ysztokoesjurgkeiooui.supabase.co/functions/v1/cpx-wall-url", {
+    headers: { Authorization: "Bearer " + session.access_token }
+  });
+  if(!resp.ok){
+    slot.innerHTML = '<div class="empty-note">Couldn\'t load surveys right now — try again shortly.</div>';
+    surveyWallLoaded = false;
+    return;
+  }
+  const { url } = await resp.json();
+  slot.innerHTML = `<iframe src="${url}" style="width:100%; height:2000px; border:none;"></iframe>`;
+}
 
 // ---------- BOOTSTRAP ----------
 (async () => {
