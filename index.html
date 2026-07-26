@@ -595,17 +595,22 @@ async function loadSurveyWall(){
   if(surveyWallLoaded) return;
   surveyWallLoaded = true;
   const slot = document.getElementById("surveyWallSlot");
-  const { data: { session } } = await sb.auth.getSession();
-  const resp = await fetch("https://ysztokoesjurgkeiooui.supabase.co/functions/v1/cpx-wall-url", {
-    headers: { Authorization: "Bearer " + session.access_token }
-  });
-  if(!resp.ok){
-    slot.innerHTML = '<div class="empty-note">Couldn\'t load surveys right now — try again shortly.</div>';
+  try {
+    const { data: { session } } = await sb.auth.getSession();
+    const resp = await fetch("https://ysztokoesjurgkeiooui.supabase.co/functions/v1/cpx-wall-url", {
+      headers: { Authorization: "Bearer " + session.access_token }
+    });
+    if(!resp.ok){
+      slot.innerHTML = '<div class="empty-note">Couldn\'t load surveys right now — try again shortly.</div>';
+      surveyWallLoaded = false;
+      return;
+    }
+    const { url } = await resp.json();
+    slot.innerHTML = `<iframe src="${url}" style="width:100%; height:2000px; border:none;"></iframe>`;
+  } catch (e) {
+    slot.innerHTML = '<div class="empty-note">Couldn\'t reach the survey service — check your connection and reopen this tab.</div>';
     surveyWallLoaded = false;
-    return;
   }
-  const { url } = await resp.json();
-  slot.innerHTML = `<iframe src="${url}" style="width:100%; height:2000px; border:none;"></iframe>`;
 }
 
 // ---------- BOOTSTRAP ----------
