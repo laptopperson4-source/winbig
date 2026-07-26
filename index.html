@@ -606,7 +606,7 @@ async function loadSurveyWall(){
       return;
     }
     const { url } = await resp.json();
-    slot.innerHTML = `<iframe src="${url}" style="width:100%; height:2000px; border:none;"></iframe>`;
+    slot.innerHTML = `<iframe src="${url}" style="width:100%; height:calc(100vh - 260px); min-height:480px; border:none; border-radius:12px;"></iframe>`;
   } catch (e) {
     slot.innerHTML = '<div class="empty-note">Couldn\'t reach the survey service — check your connection and reopen this tab.</div>';
     surveyWallLoaded = false;
