@@ -3,23 +3,25 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-<title>WinBig — Watch. Earn. Withdraw.</title>
+<title>WinBig — Do Simple Tasks. Get Paid Big.</title>
 <meta name="monetag" content="18b18dfeb1836e1a068eed1a6e0db2bb">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   :root{
-    --ink:#0E1512;
-    --panel:#16211C;
-    --panel-2:#1D2A23;
-    --line:rgba(184,196,190,0.12);
-    --green:#3ADC7C;
-    --green-dim:rgba(58,220,124,0.14);
-    --gold:#E8B84B;
-    --gold-dim:rgba(232,184,75,0.14);
-    --text:#F2F7F4;
-    --text-soft:#9FB0A9;
+    --ink:#000000;
+    --panel:#141414;
+    --panel-2:#1B1B1B;
+    --line:rgba(255,255,255,0.08);
+    --green:#7ED321;
+    --green-dim:rgba(126,211,33,0.14);
+    --purple:#8B5CF6;
+    --orange:#F5A623;
+    --teal:#22B8CF;
+    --gold:#F0B429;
+    --text:#FFFFFF;
+    --text-soft:#9CA3AF;
     --danger:#E8674B;
     --radius:16px;
   }
@@ -32,12 +34,19 @@
   h1,h2,h3,.display{ font-family:'Space Grotesk',sans-serif; }
   .mono{ font-family:'IBM Plex Mono',monospace; }
 
+  /* Logo */
+  .logo{ display:flex; align-items:center; gap:8px; }
+  .logo svg{ width:26px; height:26px; }
+  .logo .wordmark{ font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:20px; letter-spacing:-0.02em; }
+  .logo .wordmark .big{ color:var(--green); }
+
   header.top{
     padding:20px 18px 14px; display:flex; align-items:center; justify-content:space-between;
   }
-  header.top .brand{ display:flex; align-items:center; gap:8px; }
-  header.top .brand .dot{ width:10px; height:10px; border-radius:3px; background:var(--green); box-shadow:0 0 12px var(--green); }
-  header.top .brand span{ font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:19px; letter-spacing:-0.02em; }
+  header.top .icon-btn{ background:var(--panel); border:1px solid var(--line); border-radius:10px; width:36px; height:36px; display:flex; align-items:center; justify-content:center; color:var(--text); font-size:16px; }
+  header.sub{ padding:18px 18px 4px; display:flex; align-items:center; gap:12px; }
+  header.sub .back-btn{ background:var(--panel); border:1px solid var(--line); border-radius:10px; width:36px; height:36px; display:flex; align-items:center; justify-content:center; color:var(--text); font-size:16px; cursor:pointer; }
+  header.sub h2{ margin:0; font-size:19px; }
 
   main{ padding:0 16px; max-width:520px; margin:0 auto; }
   .screen{ display:none; }
@@ -46,39 +55,60 @@
 
   /* Balance card */
   .balance-card{
-    background:linear-gradient(160deg, var(--panel-2), var(--panel));
-    border:1px solid var(--line); border-radius:var(--radius);
-    padding:22px 20px; margin-bottom:16px; position:relative; overflow:hidden;
+    background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
+    padding:22px 20px; margin-bottom:20px; position:relative; overflow:hidden;
   }
   .balance-card::after{
     content:""; position:absolute; top:-40%; right:-20%; width:180px; height:180px;
     background:radial-gradient(circle, var(--green-dim), transparent 70%);
   }
   .balance-card .label{ color:var(--text-soft); font-size:13px; margin-bottom:6px; }
-  .balance-card .amount{ font-size:40px; font-weight:700; letter-spacing:-0.02em; }
-  .balance-card .amount span{ font-size:22px; color:var(--text-soft); font-weight:500; }
-  .balance-card .sub{ display:flex; gap:16px; margin-top:14px; font-size:13px; color:var(--text-soft); }
+  .balance-card .amount{ font-size:36px; font-weight:800; letter-spacing:-0.02em; font-family:'Space Grotesk',sans-serif; }
+  .balance-card .amount span{ font-size:20px; color:var(--text-soft); font-weight:500; }
+  .balance-card .sub{ display:flex; gap:16px; margin-top:10px; font-size:13px; color:var(--text-soft); }
   .balance-card .sub b{ color:var(--gold); font-family:'IBM Plex Mono',monospace; }
 
-  .progress-wrap{ margin-top:16px; }
-  .progress-track{ height:8px; border-radius:99px; background:rgba(255,255,255,0.06); overflow:hidden; }
-  .progress-fill{ height:100%; background:linear-gradient(90deg, var(--green), var(--gold)); border-radius:99px; transition:width .4s ease; }
+  .progress-wrap{ margin-top:14px; }
+  .progress-track{ height:8px; border-radius:99px; background:rgba(255,255,255,0.08); overflow:hidden; }
+  .progress-fill{ height:100%; background:var(--green); border-radius:99px; transition:width .4s ease; }
   .progress-label{ display:flex; justify-content:space-between; font-size:12px; color:var(--text-soft); margin-top:6px; }
 
-  /* Watch ad button */
+  .btn-green{
+    width:100%; padding:16px; border:none; border-radius:12px;
+    background:var(--green); color:#000; font-family:'Space Grotesk',sans-serif;
+    font-weight:700; font-size:15px; margin-top:16px; cursor:pointer;
+  }
+  .btn-green:disabled{ background:var(--panel-2); color:var(--text-soft); }
+
   .watch-btn{
     width:100%; padding:18px; border:none; border-radius:var(--radius);
-    background:var(--green); color:#0B1210; font-family:'Space Grotesk',sans-serif;
+    background:var(--green); color:#000; font-family:'Space Grotesk',sans-serif;
     font-weight:700; font-size:17px; margin:6px 0 18px; cursor:pointer;
     display:flex; align-items:center; justify-content:center; gap:10px;
   }
   .watch-btn:disabled{ background:var(--panel-2); color:var(--text-soft); }
-  .watch-btn .pulse{ width:8px; height:8px; border-radius:50%; background:#0B1210; animation:pulse 1.4s infinite; }
-  @keyframes pulse{ 0%,100%{opacity:1;} 50%{opacity:.3;} }
   .cooldown-note{ text-align:center; font-size:12px; color:var(--text-soft); margin-top:-10px; margin-bottom:18px; }
 
-  /* Alert feed (credit-alert styled activity) */
   .section-title{ font-size:13px; text-transform:uppercase; letter-spacing:.06em; color:var(--text-soft); margin:22px 0 10px; }
+
+  /* Task list (matches mockup) */
+  .task-list-item{
+    display:flex; align-items:center; gap:12px; padding:14px; background:var(--panel);
+    border:1px solid var(--line); border-radius:14px; margin-bottom:10px; cursor:pointer;
+  }
+  .task-list-item:active{ border-color:var(--green); }
+  .task-list-item .badge{
+    width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center;
+    font-size:20px; flex-shrink:0;
+  }
+  .task-list-item .badge.purple{ background:var(--purple); }
+  .task-list-item .badge.orange{ background:var(--orange); }
+  .task-list-item .info{ flex:1; }
+  .task-list-item .info .name{ font-weight:600; font-size:15px; }
+  .task-list-item .info .earn{ color:var(--text-soft); font-size:12px; margin-top:2px; }
+  .task-list-item .chev{ color:var(--text-soft); font-size:18px; }
+
+  /* Alert feed */
   .alert{
     display:flex; gap:12px; align-items:flex-start; padding:14px; background:var(--panel);
     border:1px solid var(--line); border-left:3px solid var(--green); border-radius:12px; margin-bottom:10px;
@@ -90,7 +120,6 @@
   .alert .amt{ font-family:'IBM Plex Mono',monospace; color:var(--green); font-weight:500; font-size:14px; }
   .empty-note{ color:var(--text-soft); font-size:13px; padding:18px 0; text-align:center; }
 
-  /* Task cards */
   .task-card{
     background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
     padding:16px; margin-bottom:12px;
@@ -100,7 +129,6 @@
   .task-card .reward{ font-family:'IBM Plex Mono',monospace; color:var(--gold); font-size:13px; }
   .task-card .progress-track{ height:6px; }
 
-  /* Forms */
   .field{ margin-bottom:14px; }
   .field label{ display:block; font-size:12px; color:var(--text-soft); margin-bottom:6px; }
   .field input{
@@ -109,8 +137,8 @@
   }
   .field input:focus{ outline:none; border-color:var(--green); }
   .primary-btn{
-    width:100%; padding:16px; border:none; border-radius:12px; background:var(--gold);
-    color:#0B1210; font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:15px; cursor:pointer;
+    width:100%; padding:16px; border:none; border-radius:12px; background:var(--green);
+    color:#000; font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:15px; cursor:pointer;
   }
   .ghost-btn{
     width:100%; padding:14px; border:1px solid var(--line); border-radius:12px; background:transparent;
@@ -118,15 +146,14 @@
   }
   .note{ font-size:12px; color:var(--text-soft); line-height:1.5; margin-top:10px; }
 
-  /* Auth screen */
   .auth-wrap{ min-height:100vh; display:flex; flex-direction:column; justify-content:center; padding:24px; max-width:420px; margin:0 auto; }
-  .auth-wrap .display{ font-size:30px; font-weight:700; margin-bottom:4px; letter-spacing:-0.02em; }
+  .auth-wrap .logo{ margin-bottom:18px; }
+  .auth-wrap .display{ font-size:28px; font-weight:800; margin-bottom:4px; letter-spacing:-0.02em; }
   .auth-wrap .tag{ color:var(--text-soft); font-size:14px; margin-bottom:28px; }
   .toggle-row{ text-align:center; margin-top:14px; font-size:13px; color:var(--text-soft); }
   .toggle-row a{ color:var(--green); text-decoration:none; font-weight:600; }
   .error-msg{ background:rgba(232,103,75,0.12); border:1px solid rgba(232,103,75,0.3); color:var(--danger); font-size:13px; padding:10px 12px; border-radius:10px; margin-bottom:14px; display:none; }
 
-  /* Bottom nav */
   nav.tabs{
     position:fixed; bottom:0; left:0; right:0; background:var(--panel);
     border-top:1px solid var(--line); display:flex; padding:8px 6px calc(8px + env(safe-area-inset-bottom));
@@ -149,20 +176,19 @@
   .game-tile:active{ border-color:var(--green); }
   .game-tile img{ width:100%; aspect-ratio:4/3; object-fit:cover; display:block; }
   .game-tile .tile-name{ padding:10px 8px; }
-  .game-tile .emoji{ font-size:26px; display:block; margin-bottom:8px; }
 
   .game-frame-wrap{ position:relative; border-radius:var(--radius); overflow:hidden; border:1px solid var(--line); }
   .game-frame-wrap iframe{ width:100%; height:420px; border:none; display:block; }
   .clock-badge{
     position:absolute; top:10px; right:10px; z-index:5; pointer-events:none;
-    background:rgba(14,21,18,0.85); backdrop-filter:blur(4px); border:1px solid var(--line);
+    background:rgba(0,0,0,0.85); backdrop-filter:blur(4px); border:1px solid var(--line);
     border-radius:99px; padding:6px 12px; font-family:'IBM Plex Mono',monospace;
     font-size:12px; color:var(--green); display:flex; align-items:center; gap:6px;
     transition:background .3s, color .3s;
   }
-  .clock-badge.credited{ background:var(--green); color:#0B1210; }
+  .clock-badge.credited{ background:var(--green); color:#000; }
   .fullscreen-btn{
-    position:absolute; top:10px; left:10px; z-index:5; background:rgba(14,21,18,0.85);
+    position:absolute; top:10px; left:10px; z-index:5; background:rgba(0,0,0,0.85);
     border:1px solid var(--line); border-radius:10px; width:34px; height:34px; color:var(--text);
     font-size:15px; display:flex; align-items:center; justify-content:center; cursor:pointer;
   }
@@ -172,8 +198,11 @@
 
 <!-- AUTH SCREEN -->
 <div id="authScreen" class="auth-wrap">
-  <div class="display">WinBig</div>
-  <div class="tag">Watch ads, play games, get alerted every time you earn.</div>
+  <div class="logo">
+    <svg viewBox="0 0 40 40"><path d="M2 8 L11 32 L20 14 L29 32 L38 8 L31 8 L27 22 L20 6 L13 22 L9 8 Z" fill="#7ED321"/></svg>
+    <div class="wordmark">Win<span class="big">Big</span></div>
+  </div>
+  <div class="tag">Do simple tasks. Get paid big.</div>
   <div id="authError" class="error-msg"></div>
   <div class="field">
     <label>Phone number</label>
@@ -193,36 +222,46 @@
 <!-- APP SHELL -->
 <div id="appShell" style="display:none;">
   <header class="top">
-    <div class="brand"><div class="dot"></div><span>WinBig</span></div>
-    <div class="mono" id="pointsPill" style="font-size:12px; background:var(--gold-dim); color:var(--gold); padding:6px 10px; border-radius:99px;">0 pts</div>
+    <div class="logo">
+      <svg viewBox="0 0 40 40"><path d="M2 8 L11 32 L20 14 L29 32 L38 8 L31 8 L27 22 L20 6 L13 22 L9 8 Z" fill="#7ED321"/></svg>
+      <div class="wordmark">Win<span class="big">Big</span></div>
+    </div>
+    <div class="mono" id="pointsPill" style="font-size:12px; background:var(--green-dim); color:var(--green); padding:6px 10px; border-radius:99px;">0 pts</div>
   </header>
 
   <main>
-    <!-- HOME / EARN -->
-    <section class="screen active" id="screen-earn">
+    <!-- HOME (TASKS) -->
+    <section class="screen active" id="screen-home">
       <div class="balance-card">
-        <div class="label">Wallet balance</div>
+        <div class="label">Account Balance</div>
         <div class="amount">₦<span id="balanceAmount">0.00</span></div>
-        <div class="sub">
-          <div>Points: <b id="pointsAmount">0</b></div>
-          <div>Today: <b id="adsToday">0</b> ads</div>
-        </div>
+        <div class="sub"><div>Points: <b id="pointsAmount">0</b></div></div>
         <div class="progress-wrap">
           <div class="progress-track"><div class="progress-fill" id="withdrawProgress" style="width:0%"></div></div>
           <div class="progress-label"><span>Withdrawal progress</span><span id="withdrawProgressLabel">₦0 / ₦3,000</span></div>
         </div>
+        <button class="btn-green" id="homeWithdrawBtn">Withdraw</button>
       </div>
 
-      <button class="watch-btn" id="watchAdBtn">🎮 Play a Game & Earn</button>
-      <div class="cooldown-note" id="cooldownNote"></div>
+      <div class="section-title">Available Tasks</div>
+      <div class="task-list-item" id="taskItemSurvey">
+        <div class="badge purple">📝</div>
+        <div class="info"><div class="name">Complete Survey</div><div class="earn">Answer questions, get paid per survey</div></div>
+        <div class="chev">›</div>
+      </div>
+      <div class="task-list-item" id="taskItemGame">
+        <div class="badge orange">🎮</div>
+        <div class="info"><div class="name">Play a Game</div><div class="earn">Play as long as you want, credited every 5 min</div></div>
+        <div class="chev">›</div>
+      </div>
 
       <div class="section-title">Recent alerts</div>
       <div id="alertFeed"><div class="empty-note">Your credit alerts will show up here once you complete a task.</div></div>
     </section>
 
-    <!-- GAMES -->
-    <section class="screen" id="screen-tasks">
-      <h2 class="page-title">Play & Earn</h2>
+    <!-- GAMES (sub-screen) -->
+    <section class="screen" id="screen-games">
+      <header class="sub"><div class="back-btn" data-back="home">←</div><h2>Play a Game</h2></header>
       <p class="page-sub">Play as long as you want — you're credited every few minutes, automatically.</p>
       <div id="gameBannerSlot"></div>
       <div id="gamePicker" class="section-title" style="display:none;">Choose a game</div>
@@ -233,9 +272,16 @@
       <button class="ghost-btn" id="changeGameBtn" style="display:none;">← Choose a different game</button>
     </section>
 
-    <!-- DASHBOARD -->
-    <section class="screen" id="screen-dashboard">
-      <h2 class="page-title">Dashboard</h2>
+    <!-- SURVEYS (sub-screen) -->
+    <section class="screen" id="screen-surveys">
+      <header class="sub"><div class="back-btn" data-back="home">←</div><h2>Surveys</h2></header>
+      <p class="page-sub">Answer a few questions, get paid per survey.</p>
+      <div id="surveyWallSlot" style="min-height:400px;"><div class="empty-note">Loading surveys…</div></div>
+    </section>
+
+    <!-- REWARDS -->
+    <section class="screen" id="screen-rewards">
+      <h2 class="page-title">Rewards</h2>
       <p class="page-sub">Your full earning history.</p>
       <div class="balance-card">
         <div class="label">Total earned (all time)</div>
@@ -245,17 +291,13 @@
       <div id="historyFeed"><div class="empty-note">No history yet.</div></div>
     </section>
 
-    <!-- SURVEYS -->
-    <section class="screen" id="screen-surveys">
-      <h2 class="page-title">Surveys</h2>
-      <p class="page-sub">Answer a few questions, get paid per survey.</p>
-      <div id="surveyWallSlot" style="min-height:400px;"><div class="empty-note">Loading surveys…</div></div>
-    </section>
+    <!-- PROFILE -->
+    <section class="screen" id="screen-profile">
+      <h2 class="page-title">Profile</h2>
+      <p class="page-sub" id="profilePhone">—</p>
 
-    <!-- WITHDRAW -->
-    <section class="screen" id="screen-withdraw">
-      <h2 class="page-title">Withdraw</h2>
-      <p class="page-sub">Minimum withdrawal: ₦<span id="minWithdrawLabel">3,000</span></p>
+      <div class="section-title">Withdraw</div>
+      <p class="page-sub" style="margin-top:-10px;">Minimum withdrawal: ₦<span id="minWithdrawLabel">3,000</span></p>
       <div id="withdrawLocked" class="task-card">
         <div class="row"><span class="name">Keep earning</span><span class="reward" id="withdrawShortfall">—</span></div>
         <div class="progress-track"><div class="progress-fill" id="withdrawProgress2" style="width:0%"></div></div>
@@ -268,28 +310,25 @@
         <div class="note">Withdrawals are reviewed manually right now and paid within 24–48 hours while we finish automated payouts.</div>
       </form>
       <div id="withdrawStatus"></div>
+
+      <button class="ghost-btn" id="logoutBtn" style="margin-top:24px;">Log out</button>
     </section>
   </main>
 
   <nav class="tabs">
-    <button class="tab-btn active" data-screen="earn"><span class="ic">🏠</span>Earn</button>
-    <button class="tab-btn" data-screen="tasks"><span class="ic">🎮</span>Play</button>
-    <button class="tab-btn" data-screen="surveys"><span class="ic">📝</span>Surveys</button>
-    <button class="tab-btn" data-screen="dashboard"><span class="ic">📊</span>Dashboard</button>
-    <button class="tab-btn" data-screen="withdraw"><span class="ic">💸</span>Withdraw</button>
+    <button class="tab-btn active" data-screen="home"><span class="ic">✅</span>Tasks</button>
+    <button class="tab-btn" data-screen="rewards"><span class="ic">⭐</span>Rewards</button>
+    <button class="tab-btn" data-screen="profile"><span class="ic">👤</span>Profile</button>
   </nav>
 </div>
 
 <script>
-/* ============ CONFIG — fill in the placeholders below ============ */
 const SUPABASE_URL = "https://ysztokoesjurgkeiooui.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlzenRva29lc2p1cmdrZWlvb3VpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI1OTg3NjYsImV4cCI6MjA5ODE3NDc2Nn0.HnVH4XV09sZHdv9OQ4XCsVugzjhPC8XW22o4q0U5Xmc";
-/* Monetag Onclick (Popunder) tag lives in <head> — it fires on the next click anywhere on the page. */
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 let currentUser = null;
-let settings = { points_per_ad: 10, naira_per_point: 0.1, withdrawal_minimum_naira: 3000, ad_cooldown_seconds: 120 };
-let cooldownTimer = null;
+let settings = { points_per_ad: 10, naira_per_point: 0.1, withdrawal_minimum_naira: 3000, ad_cooldown_seconds: 300 };
 
 // ---------- AUTH ----------
 let authMode = "signup";
@@ -331,6 +370,11 @@ document.getElementById("authSubmit").onclick = async () => {
   initApp();
 };
 
+document.getElementById("logoutBtn").onclick = async () => {
+  await sb.auth.signOut();
+  location.reload();
+};
+
 // ---------- APP INIT ----------
 async function initApp(){
   const { data: { user } } = await sb.auth.getUser();
@@ -338,11 +382,24 @@ async function initApp(){
   currentUser = user;
   document.getElementById("authScreen").style.display = "none";
   document.getElementById("appShell").style.display = "block";
+  document.getElementById("profilePhone").textContent = user.email ? user.email.replace("@winbig.local","") : "";
 
   await loadSettings();
   await refreshProfile();
   await loadAlertFeed();
-  setupWatchButton();
+
+  document.getElementById("taskItemSurvey").onclick = () => goToScreen("surveys");
+  document.getElementById("taskItemGame").onclick = () => goToScreen("games");
+  document.getElementById("homeWithdrawBtn").onclick = () => goToScreen("profile");
+  document.querySelectorAll(".back-btn").forEach(b => b.onclick = () => goToScreen(b.dataset.back));
+}
+
+function goToScreen(name){
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  document.getElementById("screen-" + name).classList.add("active");
+  document.querySelectorAll(".tab-btn").forEach(b => b.classList.toggle("active", b.dataset.screen === name));
+  if(name === "games") initGamesTab();
+  if(name === "surveys") loadSurveyWall();
 }
 
 async function loadSettings(){
@@ -366,9 +423,6 @@ async function refreshProfile(){
   document.getElementById("pointsAmount").textContent = profile.points;
   document.getElementById("pointsPill").textContent = profile.points + " pts";
   document.getElementById("dashTotalEarned").textContent = Number(profile.naira_balance).toFixed(2);
-  const today = new Date().toISOString().slice(0,10);
-  const adsToday = profile.last_ad_date === today ? profile.ads_watched_today : 0;
-  document.getElementById("adsToday").textContent = adsToday;
 
   const min = settings.withdrawal_minimum_naira;
   const pct = Math.min(100, (Number(profile.naira_balance) / min) * 100);
@@ -411,14 +465,6 @@ async function loadAlertFeed(){
   });
 }
 
-// ---------- EARN BUTTON — routes to real earning mechanism (offer wall) ----------
-function setupWatchButton(){
-  const btn = document.getElementById("watchAdBtn");
-  btn.onclick = () => {
-    document.querySelector('.tab-btn[data-screen="tasks"]').click();
-  };
-}
-
 // ---------- WITHDRAW ----------
 document.getElementById("withdrawForm").addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -436,7 +482,7 @@ document.getElementById("withdrawForm").addEventListener("submit", async (e) => 
     : `<div class="note" style="color:var(--green)">Withdrawal requested — you'll be paid within 24–48 hours.</div>`;
 });
 
-/* ============ GAME CONFIG — add as many as you like ============ */
+/* ============ GAME CONFIG ============ */
 const GAMES = [
   { name: "DNA Evolution 3D", url: "https://html5.gamemonetize.co/coqggzygf7rfnv8725r0ckd6rc7xhcm3/", thumb: "https://img.gamemonetize.com/coqggzygf7rfnv8725r0ckd6rc7xhcm3/512x384.jpg" },
   { name: "Funny Prank Sounds", url: "https://html5.gamemonetize.co/nzjmfjme4x5y6vvd84fs3c5vlc0zwka5/", thumb: "https://img.gamemonetize.com/nzjmfjme4x5y6vvd84fs3c5vlc0zwka5/512x384.jpg" },
@@ -448,11 +494,10 @@ const GAMES = [
   { name: "Friday the 13th", url: "https://html5.gamemonetize.co/kkpefmyk6na21ifxvxkfigsa4km3z95k/", thumb: "https://img.gamemonetize.com/kkpefmyk6na21ifxvxkfigsa4km3z95k/512x384.jpg" },
   { name: "Ben 10 Alien Force", url: "https://html5.gamemonetize.co/k26c8skafieuipsstgd0yio5k46ejse3/", thumb: "https://img.gamemonetize.com/k26c8skafieuipsstgd0yio5k46ejse3/512x384.jpg" },
 ];
-const GAME_BANNER_TAG = ""; // paste Monetag's In-Page Push (or Vignette Banner) <script> tag here, as a string
-/* ================================================================= */
+const GAME_BANNER_TAG = "";
 
 let gamesTabInitialized = false;
-let activeSession = null; // { id, target_seconds, startedAt }
+let activeSession = null;
 let sessionTimer = null;
 let currentGame = null;
 
@@ -521,12 +566,8 @@ function selectGame(game){
   document.getElementById("changeGameBtn").style.display = "block";
 }
 
-// Starts the continuous earn loop: begins a session, counts down, credits on completion,
-// then immediately starts the next session automatically. No manual restart, no daily cap —
-// it just keeps going as long as the player keeps playing.
 async function startGameLoop(){
-  const btn = document.getElementById("startGameBtn");
-  btn.style.display = "none";
+  document.getElementById("startGameBtn").style.display = "none";
   document.getElementById("clockBadge").style.display = "flex";
   await beginSession();
 }
@@ -547,7 +588,7 @@ async function tickSession(){
   if(!activeSession) return;
   const badge = document.getElementById("clockBadgeText");
   const badgeEl = document.getElementById("clockBadge");
-  if(!badge) { clearInterval(sessionTimer); return; } // frame was closed
+  if(!badge) { clearInterval(sessionTimer); return; }
   const elapsed = (Date.now() - activeSession.startedAt) / 1000;
   const remaining = Math.max(0, Math.ceil(activeSession.target_seconds - elapsed));
   if(remaining > 0){
@@ -569,27 +610,12 @@ async function tickSession(){
     await loadAlertFeed();
     setTimeout(() => {
       badgeEl.classList.remove("credited");
-      beginSession(); // auto-loop: next cycle starts right away, no cap
+      beginSession();
     }, 1800);
   }
 }
 
-// ---------- NAV ----------
-document.querySelectorAll(".tab-btn").forEach(btn => {
-  btn.onclick = async () => {
-    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
-    document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
-    btn.classList.add("active");
-    document.getElementById("screen-" + btn.dataset.screen).classList.add("active");
-    if(btn.dataset.screen === "tasks"){
-      initGamesTab();
-    }
-    if(btn.dataset.screen === "surveys"){
-      loadSurveyWall();
-    }
-  };
-});
-
+// ---------- SURVEYS ----------
 let surveyWallLoaded = false;
 async function loadSurveyWall(){
   if(surveyWallLoaded) return;
@@ -612,6 +638,11 @@ async function loadSurveyWall(){
     surveyWallLoaded = false;
   }
 }
+
+// ---------- NAV ----------
+document.querySelectorAll("nav.tabs .tab-btn").forEach(btn => {
+  btn.onclick = () => goToScreen(btn.dataset.screen);
+});
 
 // ---------- BOOTSTRAP ----------
 (async () => {
