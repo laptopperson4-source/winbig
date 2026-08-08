@@ -245,14 +245,14 @@
 
       <div class="section-title">Available Tasks</div>
       <div class="task-list-item" id="taskItemSurvey">
-        <div class="badge purple">📝</div>
+        <div class="badge purple"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2h6a2 2 0 0 1 2 2v1h-10V4a2 2 0 0 1 2-2z"/><rect x="5" y="4" width="14" height="18" rx="2"/><path d="M9 12h6M9 16h4"/></svg></div>
         <div class="info"><div class="name">Complete Survey</div><div class="earn">Answer questions, get paid per survey</div></div>
-        <div class="chev">›</div>
+        <div class="chev"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></div>
       </div>
       <div class="task-list-item" id="taskItemGame">
-        <div class="badge orange">🎮</div>
+        <div class="badge orange"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="10" rx="5"/><path d="M7 12h.01M9 10v4M15 11h.01M17 13h.01"/></svg></div>
         <div class="info"><div class="name">Play a Game</div><div class="earn">Play as long as you want, credited every 5 min</div></div>
-        <div class="chev">›</div>
+        <div class="chev"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></div>
       </div>
 
       <div class="section-title">Recent alerts</div>
@@ -261,20 +261,20 @@
 
     <!-- GAMES (sub-screen) -->
     <section class="screen" id="screen-games">
-      <header class="sub"><div class="back-btn" data-back="home">←</div><h2>Play a Game</h2></header>
+      <header class="sub"><div class="back-btn" data-back="home"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></div><h2>Play a Game</h2></header>
       <p class="page-sub">Play as long as you want — you're credited every few minutes, automatically.</p>
       <div id="gameBannerSlot"></div>
       <div id="gamePicker" class="section-title" style="display:none;">Choose a game</div>
       <div id="gamePickerGrid"></div>
       <div id="gameFrameSlot" style="display:none;"></div>
       <div id="gameEmptyState" class="empty-note">No games added yet.</div>
-      <button class="watch-btn" id="startGameBtn" style="display:none; margin-top:14px;">▶ Start Playing</button>
-      <button class="ghost-btn" id="changeGameBtn" style="display:none;">← Choose a different game</button>
+      <button class="watch-btn" id="startGameBtn" style="display:none; margin-top:14px;"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" style="vertical-align:-3px; margin-right:4px;"><path d="M8 5v14l11-7z"/></svg>Start Playing</button>
+      <button class="ghost-btn" id="changeGameBtn" style="display:none;"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg> Choose a different game</button>
     </section>
 
     <!-- SURVEYS (sub-screen) -->
     <section class="screen" id="screen-surveys">
-      <header class="sub"><div class="back-btn" data-back="home">←</div><h2>Surveys</h2></header>
+      <header class="sub"><div class="back-btn" data-back="home"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></div><h2>Surveys</h2></header>
       <p class="page-sub">Answer a few questions, get paid per survey.</p>
       <div id="surveyWallSlot" style="min-height:400px;"><div class="empty-note">Loading surveys…</div></div>
     </section>
@@ -316,9 +316,9 @@
   </main>
 
   <nav class="tabs">
-    <button class="tab-btn active" data-screen="home"><span class="ic">✅</span>Tasks</button>
-    <button class="tab-btn" data-screen="rewards"><span class="ic">⭐</span>Rewards</button>
-    <button class="tab-btn" data-screen="profile"><span class="ic">👤</span>Profile</button>
+    <button class="tab-btn active" data-screen="home"><span class="ic"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M8 12l3 3 5-6"/></svg></span>Tasks</button>
+    <button class="tab-btn" data-screen="rewards"><span class="ic"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.9 6.3 6.9.9-5 4.8 1.3 6.9-6.1-3.4-6.1 3.4 1.3-6.9-5-4.8 6.9-.9z"/></svg></span>Rewards</button>
+    <button class="tab-btn" data-screen="profile"><span class="ic"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></span>Profile</button>
   </nav>
 </div>
 
@@ -453,7 +453,7 @@ async function loadAlertFeed(){
   data.forEach(row => {
     const time = new Date(row.created_at).toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"});
     const html = `<div class="alert">
-        <div class="icon">✅</div>
+        <div class="icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#7ED321" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
         <div class="body">
           <div class="title">WinBig Alert: Wallet credited</div>
           <div class="meta">${time} · +${row.points_awarded} pts</div>
@@ -536,7 +536,7 @@ function initGamesTab(){
     document.getElementById("gameFrameSlot").style.display = "none";
     document.getElementById("gameFrameSlot").innerHTML = "";
     document.getElementById("startGameBtn").style.display = "none";
-    document.getElementById("startGameBtn").textContent = "▶ Start Playing";
+    document.getElementById("startGameBtn").innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" style="vertical-align:-3px; margin-right:4px;"><path d="M8 5v14l11-7z"/></svg>Start Playing';
     document.getElementById("changeGameBtn").style.display = "none";
     picker.style.display = "block";
     grid.style.display = "grid";
@@ -553,8 +553,8 @@ function selectGame(game){
   frameSlot.style.display = "block";
   frameSlot.innerHTML = `
     <div class="game-frame-wrap" id="gameFrameWrap">
-      <button class="fullscreen-btn" id="fullscreenBtn" title="Fullscreen">⛶</button>
-      <div class="clock-badge" id="clockBadge" style="display:none;">🕒 <span id="clockBadgeText">5:00</span></div>
+      <button class="fullscreen-btn" id="fullscreenBtn" title="Fullscreen"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3"/></svg></button>
+      <div class="clock-badge" id="clockBadge" style="display:none;"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg> <span id="clockBadgeText">5:00</span></div>
       <iframe src="${game.url}" allow="autoplay; fullscreen"></iframe>
     </div>`;
   document.getElementById("fullscreenBtn").onclick = () => {
