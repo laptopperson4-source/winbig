@@ -122,6 +122,28 @@
   .task-list-item .info .earn{ color:var(--text-soft); font-size:12px; margin-top:2px; }
   .task-list-item .chev{ color:var(--icon-outline); font-size:18px; }
 
+  /* Custom survey cards */
+  .survey-card{
+    display:flex; align-items:center; gap:12px; padding:14px; background:var(--panel);
+    border:1px solid var(--line); border-radius:14px; margin-bottom:10px; cursor:pointer;
+  }
+  .survey-card:active{ border-color:var(--green); }
+  .survey-card .badge{
+    width:44px; height:44px; border-radius:12px; background:var(--purple);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0; color:#fff;
+  }
+  .survey-card .info{ flex:1; min-width:0; }
+  .survey-card .info .top-row{ display:flex; align-items:center; gap:8px; }
+  .survey-card .info .name{ font-weight:600; font-size:14px; }
+  .survey-card .top-tag{
+    font-size:10px; font-weight:700; text-transform:uppercase; color:#000;
+    background:var(--green); padding:2px 6px; border-radius:5px; letter-spacing:.03em;
+  }
+  .survey-card .meta{ display:flex; gap:10px; color:var(--text-soft); font-size:12px; margin-top:3px; }
+  .survey-card .meta .stars{ color:var(--gold); }
+  .survey-card .payout{ font-family:'IBM Plex Mono',monospace; color:var(--green); font-weight:600; font-size:14px; white-space:nowrap; }
+  .survey-refresh-note{ text-align:center; font-size:11px; color:var(--text-soft); margin:14px 0 4px; }
+
   /* Alert feed */
   .alert{
     display:flex; gap:12px; align-items:flex-start; padding:14px; background:var(--panel);
@@ -290,7 +312,8 @@
     <section class="screen" id="screen-surveys">
       <header class="sub"><div class="back-btn" data-back="home"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></div><h2>Surveys</h2></header>
       <p class="page-sub">Answer a few questions, get paid per survey.</p>
-      <div id="surveyWallSlot" style="min-height:400px;"><div class="empty-note">Loading surveys…</div></div>
+      <div id="surveyList"><div class="empty-note">Loading surveys…</div></div>
+      <div class="survey-refresh-note" id="surveyRefreshNote"></div>
     </section>
 
     <!-- REWARDS -->
@@ -630,25 +653,71 @@ async function tickSession(){
 
 // ---------- SURVEYS ----------
 let surveyWallLoaded = false;
+let surveyRefreshTimer = null;
+
+function surveyBadgeIcon(){
+  return '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2h6a2 2 0 0 1 2 2v1h-10V4a2 2 0 0 1 2-2z"/><rect x="5" y="4" width="14" height="18" rx="2"/><path d="M9 12h6M9 16h4"/></svg>';
+}
+function starIcon(){
+  return '<svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor" style="vertical-align:-1px;"><path d="M12 2l2.9 6.3 6.9.9-5 4.8 1.3 6.9-6.1-3.4-6.1 3.4 1.3-6.9-5-4.8 6.9-.9z"/></svg>';
+}
+function clockIconSmall(){
+  return '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>';
+}
+
 async function loadSurveyWall(){
   if(surveyWallLoaded) return;
   surveyWallLoaded = true;
-  const slot = document.getElementById("surveyWallSlot");
+  await fetchAndRenderSurveys();
+  surveyRefreshTimer = setInterval(fetchAndRenderSurveys, 120000); // CPX recommends refreshing every ~2 min
+}
+
+async function fetchAndRenderSurveys(){
+  const list = document.getElementById("surveyList");
+  const note = document.getElementById("surveyRefreshNote");
   try {
     const { data: { session } } = await sb.auth.getSession();
-    const resp = await fetch("https://ysztokoesjurgkeiooui.supabase.co/functions/v1/cpx-wall-url", {
+    const resp = await fetch("https://ysztokoesjurgkeiooui.supabase.co/functions/v1/cpx-surveys", {
       headers: { Authorization: "Bearer " + session.access_token }
     });
     if(!resp.ok){
-      slot.innerHTML = '<div class="empty-note">Couldn\'t load surveys right now — try again shortly.</div>';
-      surveyWallLoaded = false;
+      list.innerHTML = '<div class="empty-note">Couldn\'t load surveys right now — try again shortly.</div>';
       return;
     }
-    const { url } = await resp.json();
-    slot.innerHTML = `<iframe src="${url}" style="width:100%; height:calc(100vh - 260px); min-height:480px; border:none; border-radius:12px;"></iframe>`;
+    const data = await resp.json();
+    const surveys = Array.isArray(data) ? data : (data.surveys || []);
+    if(!surveys.length){
+      list.innerHTML = '<div class="empty-note">No surveys available right now — check back soon.</div>';
+      note.textContent = "";
+      return;
+    }
+    list.innerHTML = surveys.map(s => {
+      const payout = s.payout ?? s.payout_local ?? "0";
+      const loi = s.loi ?? s.length_of_interview ?? null;
+      const rating = s.statistics_rating_avg ?? s.score ?? null;
+      const isTop = s.top === "1" || s.top === 1 || s.top === true;
+      const link = s.href_new || s.href || s.link || s.url || "#";
+      return `<div class="survey-card" data-link="${link}">
+        <div class="badge">${surveyBadgeIcon()}</div>
+        <div class="info">
+          <div class="top-row">
+            <div class="name">Survey #${s.id ?? ""}</div>
+            ${isTop ? '<span class="top-tag">Top</span>' : ""}
+          </div>
+          <div class="meta">
+            ${loi ? `<span>${clockIconSmall()} ${loi} min</span>` : ""}
+            ${rating ? `<span class="stars">${starIcon()} ${Number(rating).toFixed(1)}</span>` : ""}
+          </div>
+        </div>
+        <div class="payout">${payout} pts</div>
+      </div>`;
+    }).join("");
+    list.querySelectorAll(".survey-card").forEach(card => {
+      card.onclick = () => window.open(card.dataset.link, "_blank");
+    });
+    note.textContent = "Refreshes automatically every couple of minutes";
   } catch (e) {
-    slot.innerHTML = '<div class="empty-note">Couldn\'t reach the survey service — check your connection and reopen this tab.</div>';
-    surveyWallLoaded = false;
+    list.innerHTML = '<div class="empty-note">Couldn\'t reach the survey service — check your connection and reopen this tab.</div>';
   }
 }
 
