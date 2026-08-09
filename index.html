@@ -33,7 +33,18 @@
     margin:0; background:var(--ink); color:var(--text);
     font-family:'Inter',sans-serif; -webkit-font-smoothing:antialiased;
     min-height:100vh; padding-bottom:84px;
+    position:relative;
   }
+  body::before{
+    content:""; position:fixed; top:0; left:0; height:100vh; width:45vw; max-width:340px;
+    background:linear-gradient(90deg, rgba(130,227,53,0.35) 0%, rgba(130,227,53,0.12) 45%, transparent 100%);
+    pointer-events:none; z-index:0; animation:edgeGlow 4s ease-in-out infinite;
+  }
+  @keyframes edgeGlow{
+    0%, 100% { opacity:0.55; }
+    50% { opacity:1; }
+  }
+  header.top, main, .auth-wrap, nav.tabs{ position:relative; z-index:1; }
   h1,h2,h3,.display{ font-family:'Space Grotesk',sans-serif; }
   .mono{ font-family:'IBM Plex Mono',monospace; }
 
