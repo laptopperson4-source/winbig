@@ -27,128 +27,110 @@
     --text-soft:#9CA3AF;
     --danger:#E8674B;
     --radius:16px;
+    --sidebar-w:250px;
   }
   *{box-sizing:border-box;}
   body{
     margin:0; background:var(--ink); color:var(--text);
     font-family:'Inter',sans-serif; -webkit-font-smoothing:antialiased;
-    min-height:100vh; padding-bottom:84px;
-    position:relative;
+    min-height:100vh; position:relative;
   }
   body::before{
     content:""; position:fixed; top:0; right:0; height:100vh; width:45vw; max-width:340px;
     background:linear-gradient(270deg, rgba(130,227,53,0.35) 0%, rgba(130,227,53,0.12) 45%, transparent 100%);
     pointer-events:none; z-index:0; animation:edgeGlow 4s ease-in-out infinite;
   }
-  @keyframes edgeGlow{
-    0%, 100% { opacity:0.55; }
-    50% { opacity:1; }
-  }
-  header.top, main, .auth-wrap, nav.tabs{ position:relative; z-index:1; }
+  @keyframes edgeGlow{ 0%,100%{opacity:0.55;} 50%{opacity:1;} }
   h1,h2,h3,.display{ font-family:'Space Grotesk',sans-serif; }
   .mono{ font-family:'IBM Plex Mono',monospace; }
 
-  /* Logo */
   .logo{ display:flex; align-items:center; gap:8px; }
-  .logo svg{ width:26px; height:26px; }
-  .logo .wordmark{ font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:20px; letter-spacing:-0.02em; }
-  .logo .wordmark .big{ color:var(--green); }
 
-  header.top{
-    padding:20px 18px 14px; display:flex; align-items:center; justify-content:space-between;
+  /* ===== App shell / layout ===== */
+  #appShell{ display:none; position:relative; z-index:1; }
+  .layout{ display:flex; min-height:100vh; max-width:1400px; margin:0 auto; }
+  .content-col{ flex:1; min-width:0; padding:0 16px 100px; }
+  main{ max-width:900px; margin:0 auto; }
+
+  /* Sidebar (desktop only) */
+  .sidebar{
+    display:none; width:var(--sidebar-w); flex-shrink:0; border-right:1px solid var(--line);
+    padding:22px 16px; flex-direction:column; gap:4px; position:sticky; top:0; height:100vh; overflow-y:auto;
   }
-  header.top .icon-btn{ background:var(--panel); border:1px solid var(--line); border-radius:10px; width:36px; height:36px; display:flex; align-items:center; justify-content:center; color:var(--text); font-size:16px; }
-  header.sub{ padding:18px 18px 4px; display:flex; align-items:center; gap:12px; }
-  header.sub .back-btn{ background:var(--panel); border:1px solid var(--line); border-radius:10px; width:36px; height:36px; display:flex; align-items:center; justify-content:center; color:var(--text); font-size:16px; cursor:pointer; }
-  header.sub h2{ margin:0; font-size:19px; }
+  .sidebar .logo{ padding:0 8px 22px; }
+  .sidebar .logo img{ height:30px; }
+  .side-link{
+    display:flex; align-items:center; gap:12px; padding:11px 12px; border-radius:10px;
+    color:var(--text-soft); font-size:14px; font-weight:500; cursor:pointer; border:1px solid transparent;
+  }
+  .side-link svg{ flex-shrink:0; }
+  .side-link:hover{ background:var(--panel); }
+  .side-link.active{ background:var(--green-dim); color:var(--green); border-color:rgba(130,227,53,0.3); }
+  .side-spacer{ flex:1; }
+  .side-card{
+    background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:14px; margin-top:8px; font-size:13px;
+  }
 
-  main{ padding:0 16px; max-width:520px; margin:0 auto; }
-  .screen{ display:none; }
-  .screen.active{ display:block; animation:fade .25s ease; }
-  @keyframes fade{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:none;} }
+  /* Topbar */
+  .topbar{ display:flex; align-items:center; justify-content:space-between; padding:20px 0 14px; gap:14px; }
+  .topbar .mobile-logo{ display:flex; }
+  .topbar .mobile-logo img{ height:34px; }
+  .topbar .greeting{ display:none; }
+  .topbar .greeting h2{ margin:0; font-size:19px; }
+  .topbar .greeting p{ margin:2px 0 0; color:var(--text-soft); font-size:13px; }
+  .topbar .search-wrap{ display:none; flex:1; max-width:420px; }
+  .topbar .search-wrap input{
+    width:100%; background:var(--panel); border:1px solid var(--line); border-radius:10px;
+    padding:10px 14px; color:var(--text); font-size:14px;
+  }
+  .topbar .right-cluster{ display:flex; align-items:center; gap:12px; }
+  .icon-btn{ background:var(--panel); border:1px solid var(--line); border-radius:10px; width:38px; height:38px; display:flex; align-items:center; justify-content:center; cursor:pointer; position:relative; }
+  .icon-btn .dot{ position:absolute; top:7px; right:7px; width:7px; height:7px; border-radius:50%; background:var(--green); }
+  .avatar{ width:38px; height:38px; border-radius:50%; background:var(--panel-2); border:2px solid var(--green); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; color:var(--green); }
 
-  /* Balance card */
-  .balance-card{
+  /* Earnings card */
+  .earnings-card{
     background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
-    padding:22px 20px; margin-bottom:20px; position:relative; overflow:hidden;
+    padding:22px 20px; margin-bottom:18px; position:relative; overflow:hidden;
   }
-  .balance-card::after{
-    content:""; position:absolute; top:-40%; right:-20%; width:180px; height:180px;
-    background:radial-gradient(circle, var(--green-dim), transparent 70%);
-  }
-  .balance-card .label{ color:var(--text-soft); font-size:13px; margin-bottom:6px; }
-  .balance-card .amount{ font-size:36px; font-weight:800; letter-spacing:-0.02em; font-family:'Space Grotesk',sans-serif; }
-  .balance-card .amount span{ font-size:20px; color:var(--text-soft); font-weight:500; }
-  .balance-card .sub{ display:flex; gap:16px; margin-top:10px; font-size:13px; color:var(--text-soft); }
-  .balance-card .sub b{ color:var(--gold); font-family:'IBM Plex Mono',monospace; }
+  .earnings-card .row-top{ display:flex; justify-content:space-between; align-items:flex-start; }
+  .earnings-card .label{ color:var(--text-soft); font-size:13px; display:flex; align-items:center; gap:6px; }
+  .earnings-card .pct-badge{ background:var(--green-dim); color:var(--green); font-size:12px; font-weight:600; padding:5px 10px; border-radius:99px; display:flex; align-items:center; gap:3px; }
+  .earnings-card .amount{ font-size:34px; font-weight:800; letter-spacing:-0.02em; font-family:'Space Grotesk',sans-serif; margin-top:6px; }
+  .earnings-card .delta{ display:flex; align-items:center; gap:8px; font-size:13px; color:var(--green); margin-top:4px; }
+  .earnings-card .delta .muted{ color:var(--text-soft); }
+  .earnings-card .sparkline{ margin-top:10px; }
+  .earnings-card hr{ border:none; border-top:1px solid var(--line); margin:16px 0; }
+  .earnings-card .bottom-row{ display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; }
+  .earnings-card .bottom-row .bal-label{ color:var(--text-soft); font-size:12px; }
+  .earnings-card .bottom-row .bal-amt{ font-size:20px; font-weight:700; }
+  .earnings-card .btns{ display:flex; gap:10px; }
+  .btn-outline{ background:var(--panel-2); border:1px solid var(--line); color:var(--text); padding:11px 16px; border-radius:10px; font-size:13px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:6px; }
+  .btn-green-sm{ background:linear-gradient(135deg, var(--green-btn-start), var(--green-btn-end)); color:#000; border:none; padding:11px 18px; border-radius:10px; font-size:13px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:6px; }
 
-  .progress-wrap{ margin-top:14px; }
-  .progress-track{ height:8px; border-radius:99px; background:rgba(255,255,255,0.08); overflow:hidden; }
-  .progress-fill{ height:100%; background:var(--green); border-radius:99px; transition:width .4s ease; }
-  .progress-label{ display:flex; justify-content:space-between; font-size:12px; color:var(--text-soft); margin-top:6px; }
+  .section-title{ font-size:13px; text-transform:uppercase; letter-spacing:.06em; color:var(--text-soft); margin:22px 0 10px; display:flex; justify-content:space-between; align-items:center; }
+  .section-title .view-all{ color:var(--green); text-transform:none; letter-spacing:0; font-size:13px; cursor:pointer; }
 
-  .btn-green{
-    width:100%; padding:16px; border:none; border-radius:12px;
-    background:linear-gradient(135deg, var(--green-btn-start), var(--green-btn-end)); color:#000; font-family:'Space Grotesk',sans-serif;
-    font-weight:700; font-size:15px; margin-top:16px; cursor:pointer;
-  }
-  .btn-green:disabled{ background:var(--panel-2); color:var(--text-soft); }
+  /* Quick actions */
+  .quick-actions{ display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; }
+  .qa-tile{ background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:16px 10px; text-align:center; cursor:pointer; }
+  .qa-tile:active{ border-color:var(--green); }
+  .qa-tile .qa-icon{ width:38px; height:38px; margin:0 auto 8px; border-radius:10px; background:var(--green-dim); display:flex; align-items:center; justify-content:center; color:var(--green); }
+  .qa-tile .qa-name{ font-size:12px; font-weight:600; }
 
-  .watch-btn{
-    width:100%; padding:18px; border:none; border-radius:var(--radius);
-    background:linear-gradient(135deg, var(--green-btn-start), var(--green-btn-end)); color:#000; font-family:'Space Grotesk',sans-serif;
-    font-weight:700; font-size:17px; margin:6px 0 18px; cursor:pointer;
-    display:flex; align-items:center; justify-content:center; gap:10px;
-  }
-  .watch-btn:disabled{ background:var(--panel-2); color:var(--text-soft); }
-  .cooldown-note{ text-align:center; font-size:12px; color:var(--text-soft); margin-top:-10px; margin-bottom:18px; }
+  /* Featured tasks */
+  .ftask{ display:flex; align-items:center; gap:12px; padding:14px; background:var(--panel); border:1px solid var(--line); border-radius:14px; margin-bottom:10px; cursor:pointer; }
+  .ftask:active{ border-color:var(--green); }
+  .ftask .badge{ width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0; color:#fff; }
+  .ftask .badge.purple{ background:var(--purple); } .ftask .badge.orange{ background:var(--orange); }
+  .ftask .info{ flex:1; min-width:0; }
+  .ftask .info .name{ font-weight:600; font-size:14px; }
+  .ftask .info .meta{ display:flex; gap:8px; margin-top:3px; color:var(--text-soft); font-size:12px; }
+  .ftask .tag{ background:var(--panel-2); border:1px solid var(--line); padding:1px 7px; border-radius:5px; font-size:11px; }
+  .ftask .chev{ color:var(--icon-outline); }
 
-  .section-title{ font-size:13px; text-transform:uppercase; letter-spacing:.06em; color:var(--text-soft); margin:22px 0 10px; }
-
-  /* Task list (matches mockup) */
-  .task-list-item{
-    display:flex; align-items:center; gap:12px; padding:14px; background:var(--panel);
-    border:1px solid var(--line); border-radius:14px; margin-bottom:10px; cursor:pointer;
-  }
-  .task-list-item:active{ border-color:var(--green); }
-  .task-list-item .badge{
-    width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center;
-    font-size:20px; flex-shrink:0;
-  }
-  .task-list-item .badge.purple{ background:var(--purple); }
-  .task-list-item .badge.orange{ background:var(--orange); }
-  .task-list-item .info{ flex:1; }
-  .task-list-item .info .name{ font-weight:600; font-size:15px; }
-  .task-list-item .info .earn{ color:var(--text-soft); font-size:12px; margin-top:2px; }
-  .task-list-item .chev{ color:var(--icon-outline); font-size:18px; }
-
-  /* Custom survey cards */
-  .survey-card{
-    display:flex; align-items:center; gap:12px; padding:14px; background:var(--panel);
-    border:1px solid var(--line); border-radius:14px; margin-bottom:10px; cursor:pointer;
-  }
-  .survey-card:active{ border-color:var(--green); }
-  .survey-card .badge{
-    width:44px; height:44px; border-radius:12px; background:var(--purple);
-    display:flex; align-items:center; justify-content:center; flex-shrink:0; color:#fff;
-  }
-  .survey-card .info{ flex:1; min-width:0; }
-  .survey-card .info .top-row{ display:flex; align-items:center; gap:8px; }
-  .survey-card .info .name{ font-weight:600; font-size:14px; }
-  .survey-card .top-tag{
-    font-size:10px; font-weight:700; text-transform:uppercase; color:#000;
-    background:var(--green); padding:2px 6px; border-radius:5px; letter-spacing:.03em;
-  }
-  .survey-card .meta{ display:flex; gap:10px; color:var(--text-soft); font-size:12px; margin-top:3px; }
-  .survey-card .meta .stars{ color:var(--gold); }
-  .survey-card .payout{ font-family:'IBM Plex Mono',monospace; color:var(--green); font-weight:600; font-size:14px; white-space:nowrap; }
-  .survey-refresh-note{ text-align:center; font-size:11px; color:var(--text-soft); margin:14px 0 4px; }
-
-  /* Alert feed */
-  .alert{
-    display:flex; gap:12px; align-items:flex-start; padding:14px; background:var(--panel);
-    border:1px solid var(--line); border-left:3px solid var(--green); border-radius:12px; margin-bottom:10px;
-  }
+  /* Recent activity */
+  .alert{ display:flex; gap:12px; align-items:flex-start; padding:14px; background:var(--panel); border:1px solid var(--line); border-left:3px solid var(--green); border-radius:12px; margin-bottom:10px; }
   .alert .icon{ font-size:18px; }
   .alert .body{ flex:1; }
   .alert .body .title{ font-size:14px; font-weight:600; }
@@ -156,77 +138,97 @@
   .alert .amt{ font-family:'IBM Plex Mono',monospace; color:var(--green); font-weight:500; font-size:14px; }
   .empty-note{ color:var(--text-soft); font-size:13px; padding:18px 0; text-align:center; }
 
-  .task-card{
-    background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
-    padding:16px; margin-bottom:12px;
-  }
+  /* Trust strip (desktop) */
+  .trust-strip{ display:none; grid-template-columns:repeat(4,1fr); gap:14px; margin-top:24px; }
+  .trust-item{ background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:16px; display:flex; gap:12px; align-items:flex-start; }
+  .trust-item .ti-icon{ width:38px; height:38px; border-radius:10px; background:var(--green-dim); color:var(--green); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .trust-item .ti-title{ font-size:13px; font-weight:700; }
+  .trust-item .ti-sub{ font-size:12px; color:var(--text-soft); margin-top:2px; }
+
+  /* Right wallet panel (desktop only) */
+  .right-panel{ display:none; width:300px; flex-shrink:0; padding:22px 0 22px 20px; }
+  .wallet-panel{ background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:20px; position:relative; overflow:hidden; }
+  .wallet-panel::after{ content:""; position:absolute; top:-30%; right:-20%; width:160px; height:160px; background:radial-gradient(circle, var(--green-dim), transparent 70%); }
+  .wallet-panel .label{ color:var(--text-soft); font-size:13px; }
+  .wallet-panel .amt{ font-size:26px; font-weight:800; margin:6px 0 16px; font-family:'Space Grotesk',sans-serif; }
+
+  .task-card{ background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:16px; margin-bottom:12px; }
   .task-card .row{ display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
   .task-card .name{ font-weight:600; font-size:15px; }
   .task-card .reward{ font-family:'IBM Plex Mono',monospace; color:var(--gold); font-size:13px; }
-  .task-card .progress-track{ height:6px; }
+  .progress-track{ height:8px; border-radius:99px; background:rgba(255,255,255,0.08); overflow:hidden; }
+  .progress-fill{ height:100%; background:var(--green); border-radius:99px; transition:width .4s ease; }
 
   .field{ margin-bottom:14px; }
   .field label{ display:block; font-size:12px; color:var(--text-soft); margin-bottom:6px; }
-  .field input{
-    width:100%; padding:13px 14px; border-radius:12px; border:1px solid var(--line);
-    background:var(--panel); color:var(--text); font-size:15px; font-family:'Inter',sans-serif;
-  }
+  .field input{ width:100%; padding:13px 14px; border-radius:12px; border:1px solid var(--line); background:var(--panel); color:var(--text); font-size:15px; font-family:'Inter',sans-serif; }
   .field input:focus{ outline:none; border-color:var(--green); }
-  .primary-btn{
-    width:100%; padding:16px; border:none; border-radius:12px; background:linear-gradient(135deg, var(--green-btn-start), var(--green-btn-end));
-    color:#000; font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:15px; cursor:pointer;
-  }
-  .ghost-btn{
-    width:100%; padding:14px; border:1px solid var(--line); border-radius:12px; background:transparent;
-    color:var(--text-soft); font-size:14px; margin-top:10px; cursor:pointer;
-  }
+  .primary-btn{ width:100%; padding:16px; border:none; border-radius:12px; background:linear-gradient(135deg, var(--green-btn-start), var(--green-btn-end)); color:#000; font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:15px; cursor:pointer; }
+  .ghost-btn{ width:100%; padding:14px; border:1px solid var(--line); border-radius:12px; background:transparent; color:var(--text-soft); font-size:14px; margin-top:10px; cursor:pointer; }
   .note{ font-size:12px; color:var(--text-soft); line-height:1.5; margin-top:10px; }
 
-  .auth-wrap{ min-height:100vh; display:flex; flex-direction:column; justify-content:center; padding:24px; max-width:420px; margin:0 auto; }
+  .auth-wrap{ min-height:100vh; display:flex; flex-direction:column; justify-content:center; padding:24px; max-width:420px; margin:0 auto; position:relative; z-index:1; }
   .auth-wrap .logo{ margin-bottom:18px; }
-  .auth-wrap .display{ font-size:28px; font-weight:800; margin-bottom:4px; letter-spacing:-0.02em; }
   .auth-wrap .tag{ color:var(--text-soft); font-size:14px; margin-bottom:28px; }
   .toggle-row{ text-align:center; margin-top:14px; font-size:13px; color:var(--text-soft); }
   .toggle-row a{ color:var(--green); text-decoration:none; font-weight:600; }
   .error-msg{ background:rgba(232,103,75,0.12); border:1px solid rgba(232,103,75,0.3); color:var(--danger); font-size:13px; padding:10px 12px; border-radius:10px; margin-bottom:14px; display:none; }
 
-  nav.tabs{
-    position:fixed; bottom:0; left:0; right:0; background:var(--panel);
-    border-top:1px solid var(--line); display:flex; padding:8px 6px calc(8px + env(safe-area-inset-bottom));
-    max-width:520px; margin:0 auto;
-  }
-  nav.tabs button{
-    flex:1; background:none; border:none; color:var(--icon-outline); font-family:'Inter',sans-serif;
-    font-size:11px; padding:8px 4px; display:flex; flex-direction:column; align-items:center; gap:4px; cursor:pointer;
-  }
-  nav.tabs button .ic{ font-size:19px; }
+  /* Bottom nav (mobile) */
+  nav.tabs{ position:fixed; bottom:0; left:0; right:0; background:var(--panel); border-top:1px solid var(--line); display:flex; align-items:center; padding:8px 6px calc(8px + env(safe-area-inset-bottom)); z-index:2; }
+  nav.tabs button{ flex:1; background:none; border:none; color:var(--icon-outline); font-size:11px; padding:8px 4px; display:flex; flex-direction:column; align-items:center; gap:4px; cursor:pointer; }
   nav.tabs button.active{ color:var(--green); }
+  nav.tabs .fab{ width:52px; height:52px; border-radius:50%; background:linear-gradient(135deg, var(--green-btn-start), var(--green-btn-end)); display:flex; align-items:center; justify-content:center; margin:-26px 8px 0; flex:0 0 auto; box-shadow:0 0 0 6px var(--panel); }
+
+  header.sub{ padding:18px 0 4px; display:flex; align-items:center; gap:12px; }
+  header.sub .back-btn{ background:var(--panel); border:1px solid var(--line); border-radius:10px; width:36px; height:36px; display:flex; align-items:center; justify-content:center; color:var(--text); font-size:16px; cursor:pointer; }
+  header.sub h2{ margin:0; font-size:19px; }
   h2.page-title{ font-size:20px; margin:18px 0 4px; }
   p.page-sub{ color:var(--text-soft); font-size:13px; margin:0 0 18px; }
+  .screen{ display:none; }
+  .screen.active{ display:block; animation:fade .25s ease; }
+  @keyframes fade{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:none;} }
 
-  .game-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px; }
-  .game-tile{
-    background:var(--panel); border:1px solid var(--line); border-radius:12px;
-    overflow:hidden; text-align:center; cursor:pointer; font-size:13px; font-weight:600;
-  }
+  .game-grid{ display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin-bottom:16px; }
+  .game-tile{ background:var(--panel); border:1px solid var(--line); border-radius:12px; overflow:hidden; text-align:center; cursor:pointer; font-size:11px; font-weight:600; }
   .game-tile:active{ border-color:var(--green); }
   .game-tile img{ width:100%; aspect-ratio:4/3; object-fit:cover; display:block; }
-  .game-tile .tile-name{ padding:10px 8px; }
-
+  .game-tile .tile-name{ padding:6px 4px; }
   .game-frame-wrap{ position:relative; border-radius:var(--radius); overflow:hidden; border:1px solid var(--line); }
   .game-frame-wrap iframe{ width:100%; height:420px; border:none; display:block; }
-  .clock-badge{
-    position:absolute; top:10px; right:10px; z-index:5; pointer-events:none;
-    background:rgba(0,0,0,0.85); backdrop-filter:blur(4px); border:1px solid var(--line);
-    border-radius:99px; padding:6px 12px; font-family:'IBM Plex Mono',monospace;
-    font-size:12px; color:var(--green); display:flex; align-items:center; gap:6px;
-    transition:background .3s, color .3s;
-  }
+  .clock-badge{ position:absolute; top:10px; right:10px; z-index:5; pointer-events:none; background:rgba(0,0,0,0.85); backdrop-filter:blur(4px); border:1px solid var(--line); border-radius:99px; padding:6px 12px; font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--green); display:flex; align-items:center; gap:6px; transition:background .3s, color .3s; }
   .clock-badge.credited{ background:var(--green); color:#000; }
-  .fullscreen-btn{
-    position:absolute; top:10px; left:10px; z-index:5; background:rgba(0,0,0,0.85);
-    border:1px solid var(--line); border-radius:10px; width:34px; height:34px; color:var(--text);
-    font-size:15px; display:flex; align-items:center; justify-content:center; cursor:pointer;
+  .fullscreen-btn{ position:absolute; top:10px; left:10px; z-index:5; background:rgba(0,0,0,0.85); border:1px solid var(--line); border-radius:10px; width:34px; height:34px; color:var(--text); font-size:15px; display:flex; align-items:center; justify-content:center; cursor:pointer; }
+
+  .survey-card{ display:flex; align-items:center; gap:12px; padding:14px; background:var(--panel); border:1px solid var(--line); border-radius:14px; margin-bottom:10px; cursor:pointer; }
+  .survey-card:active{ border-color:var(--green); }
+  .survey-card .badge{ width:44px; height:44px; border-radius:12px; background:var(--purple); display:flex; align-items:center; justify-content:center; flex-shrink:0; color:#fff; }
+  .survey-card .info{ flex:1; min-width:0; }
+  .survey-card .info .top-row{ display:flex; align-items:center; gap:8px; }
+  .survey-card .info .name{ font-weight:600; font-size:14px; }
+  .survey-card .top-tag{ font-size:10px; font-weight:700; text-transform:uppercase; color:#000; background:var(--green); padding:2px 6px; border-radius:5px; letter-spacing:.03em; }
+  .survey-card .meta{ display:flex; gap:10px; color:var(--text-soft); font-size:12px; margin-top:3px; }
+  .survey-card .meta .stars{ color:var(--gold); }
+  .survey-card .payout{ font-family:'IBM Plex Mono',monospace; color:var(--green); font-weight:600; font-size:14px; white-space:nowrap; }
+  .survey-refresh-note{ text-align:center; font-size:11px; color:var(--text-soft); margin:14px 0 4px; }
+
+  .soon-card{ background:var(--panel); border:1px dashed var(--line); border-radius:var(--radius); padding:32px 20px; text-align:center; color:var(--text-soft); }
+  .soon-card .big-icon{ color:var(--green); margin-bottom:10px; }
+
+  /* ===== Desktop breakpoint ===== */
+  @media (min-width:900px){
+    .sidebar{ display:flex; }
+    .right-panel{ display:block; }
+    .topbar .search-wrap{ display:flex; }
+    .topbar .greeting{ display:block; }
+    .topbar .mobile-logo{ display:none; }
+    nav.tabs{ display:none; }
+    .content-col{ padding:0 24px 40px; }
+    main{ max-width:none; }
+    .trust-strip{ display:grid; }
+    body{ padding-bottom:0; }
+    .quick-actions{ grid-template-columns:repeat(5,1fr); }
+    .game-grid{ grid-template-columns:repeat(5,1fr); }
   }
 </style>
 </head>
@@ -234,128 +236,216 @@
 
 <!-- AUTH SCREEN -->
 <div id="authScreen" class="auth-wrap">
-  <div class="logo">
-    <img src="assets/logo.png" alt="WinBig" style="height:120px; width:auto; max-width:80vw; object-fit:contain;">
-  </div>
+  <div class="logo"><img src="assets/logo.png" alt="WinBig" style="height:120px; width:auto; max-width:80vw; object-fit:contain;"></div>
   <div class="tag">Do simple tasks. Get paid big.</div>
   <div id="authError" class="error-msg"></div>
-  <div class="field">
-    <label>Phone number</label>
-    <input id="authPhone" type="tel" placeholder="080XXXXXXXX" />
-  </div>
-  <div class="field">
-    <label>Password</label>
-    <input id="authPassword" type="password" placeholder="••••••••" />
-  </div>
+  <div class="field"><label>Phone number</label><input id="authPhone" type="tel" placeholder="080XXXXXXXX" /></div>
+  <div class="field"><label>Password</label><input id="authPassword" type="password" placeholder="••••••••" /></div>
   <button class="primary-btn" id="authSubmit">Create account</button>
-  <div class="toggle-row">
-    <span id="authToggleText">Already have an account?</span>
-    <a href="#" id="authToggleLink">Log in</a>
-  </div>
+  <div class="toggle-row"><span id="authToggleText">Already have an account?</span> <a href="#" id="authToggleLink">Log in</a></div>
 </div>
 
 <!-- APP SHELL -->
-<div id="appShell" style="display:none;">
-  <header class="top">
-    <div class="logo">
-      <img src="assets/logo.png" alt="WinBig" style="height:104px; width:auto; object-fit:contain;">
-    </div>
-    <button class="icon-btn" id="bellBtn" aria-label="Notifications">
-      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="var(--icon-outline)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
-    </button>
-  </header>
+<div id="appShell">
+  <div class="layout">
+    <!-- SIDEBAR (desktop) -->
+    <aside class="sidebar">
+      <div class="logo"><img src="assets/logo.png" alt="WinBig"></div>
+      <div class="side-link active" data-nav="home" data-screen="home"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-7 9 7"/><path d="M5 10v9h14v-9"/></svg>Dashboard</div>
+      <div class="side-link" data-nav="tasks" data-screen="tasks-hub"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 13h8M8 18h5"/></svg>Browse Tasks</div>
+      <div class="side-link" data-nav="soon" data-title="Daily Bonus"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="8" width="18" height="13" rx="2"/><path d="M12 8v13M3 12h18M12 8c-1.5-4-6-4-6-1s3 1 6 1 6 2 6-1-4.5-3-6 1z"/></svg>Daily Bonus</div>
+      <div class="side-link" data-nav="soon" data-title="Refer & Earn"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3"/><path d="M2 20c0-3.5 3-5.5 7-5.5s7 2 7 5.5"/><circle cx="18" cy="8" r="2.5"/><path d="M22 20c0-2.5-1.7-4-4-4.6"/></svg>Refer & Earn</div>
+      <div class="side-link" data-nav="soon" data-title="Leaderboard"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 0 1-10 0V4z"/><path d="M7 6H4a3 3 0 0 0 3 5M17 6h3a3 3 0 0 1-3 5"/></svg>Leaderboard</div>
+      <div class="side-link" data-nav="soon" data-title="Achievements"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M9 13l-2 8 5-3 5 3-2-8"/></svg>Achievements</div>
+      <div class="side-link" data-nav="wallet" data-screen="wallet"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M16 14h2"/></svg>Wallet</div>
+      <div class="side-link" data-nav="rewards" data-screen="rewards"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 10l5 5 5-5M12 15V3"/><path d="M4 21h16"/></svg>Transactions</div>
+      <div class="side-link" data-nav="soon" data-title="Notifications"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>Notifications</div>
+      <div class="side-link" data-nav="profile" data-screen="profile"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>Settings</div>
+      <div class="side-spacer"></div>
+      <div class="side-card">
+        <div style="color:var(--text-soft);">Need help?</div>
+        <div style="color:var(--green); font-weight:600; margin-top:2px;">Visit our Help Center</div>
+      </div>
+    </aside>
 
-  <main>
-    <!-- HOME (TASKS) -->
-    <section class="screen active" id="screen-home">
-      <div class="balance-card">
-        <div class="label">Account Balance</div>
-        <div class="amount">₦<span id="balanceAmount">0.00</span></div>
-        <div class="sub"><div>Points: <b id="pointsAmount">0</b></div></div>
-        <div class="progress-wrap">
-          <div class="progress-track"><div class="progress-fill" id="withdrawProgress" style="width:0%"></div></div>
-          <div class="progress-label"><span>Withdrawal progress</span><span id="withdrawProgressLabel">₦0 / ₦3,000</span></div>
+    <div class="content-col">
+      <header class="topbar">
+        <div class="mobile-logo"><img src="assets/logo.png" alt="WinBig"></div>
+        <div class="greeting"><h2>Dashboard</h2><p>Welcome back — here's how you're doing.</p></div>
+        <div class="search-wrap"><input placeholder="Search tasks, offers & more..."></div>
+        <div class="right-cluster">
+          <button class="icon-btn" id="bellBtn" aria-label="Notifications">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="var(--icon-outline)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+            <span class="dot"></span>
+          </button>
+          <div class="avatar" id="avatarInitial">W</div>
         </div>
-        <button class="btn-green" id="homeWithdrawBtn">Withdraw</button>
+      </header>
+
+      <main>
+        <!-- HOME / DASHBOARD -->
+        <section class="screen active" id="screen-home">
+          <div class="earnings-card">
+            <div class="row-top">
+              <div class="label">Total Earnings</div>
+              <div class="pct-badge" id="pctBadge">—</div>
+            </div>
+            <div class="amount">₦<span id="totalEarnedAmount">0.00</span></div>
+            <div class="delta"><span id="deltaAmount">+₦0.00</span> <span class="muted">from yesterday</span></div>
+            <div class="sparkline"><svg id="sparklineSvg" viewBox="0 0 300 60" width="100%" height="60" preserveAspectRatio="none"></svg></div>
+            <hr>
+            <div class="bottom-row">
+              <div><div class="bal-label">Available Balance</div><div class="bal-amt">₦<span id="balanceAmount">0.00</span></div></div>
+              <div class="btns">
+                <button class="btn-outline" id="viewWalletBtn"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/></svg>View Wallet</button>
+                <button class="btn-green-sm" id="homeWithdrawBtn">Withdraw</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-title">Quick Actions<span class="view-all" data-goto="tasks-hub">View all</span></div>
+          <div class="quick-actions">
+            <div class="qa-tile" data-goto="tasks-hub"><div class="qa-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 13h8M8 18h5"/></svg></div><div class="qa-name">Browse Tasks</div></div>
+            <div class="qa-tile" data-soon="Daily Bonus"><div class="qa-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="8" width="18" height="13" rx="2"/><path d="M12 8v13M3 12h18"/></svg></div><div class="qa-name">Daily Bonus</div></div>
+            <div class="qa-tile" data-soon="Refer & Earn"><div class="qa-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3"/><path d="M2 20c0-3.5 3-5.5 7-5.5s7 2 7 5.5"/></svg></div><div class="qa-name">Refer & Earn</div></div>
+            <div class="qa-tile" data-soon="Leaderboard"><div class="qa-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 4h10v4a5 5 0 0 1-10 0V4z"/><path d="M8 21h8M12 17v4"/></svg></div><div class="qa-name">Leaderboard</div></div>
+            <div class="qa-tile" data-soon="Achievements"><div class="qa-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M9 13l-2 8 5-3 5 3-2-8"/></svg></div><div class="qa-name">Achievements</div></div>
+          </div>
+
+          <div class="section-title">Featured Tasks<span class="view-all" data-goto="tasks-hub">View all</span></div>
+          <div class="ftask" id="taskItemSurvey">
+            <div class="badge purple"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2h6a2 2 0 0 1 2 2v1h-10V4a2 2 0 0 1 2-2z"/><rect x="5" y="4" width="14" height="18" rx="2"/><path d="M9 12h6M9 16h4"/></svg></div>
+            <div class="info"><div class="name">Complete Survey</div><div class="meta"><span class="tag">Survey</span></div></div>
+            <div class="chev"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></div>
+          </div>
+          <div class="ftask" id="taskItemGame">
+            <div class="badge orange"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="10" rx="5"/><path d="M7 12h.01M9 10v4M15 11h.01M17 13h.01"/></svg></div>
+            <div class="info"><div class="name">Play a Game</div><div class="meta"><span class="tag">Game</span><span>~5 min cycles</span></div></div>
+            <div class="chev"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></div>
+          </div>
+          <p class="note">More task types (app installs, video-only tasks) are on the way.</p>
+
+          <div class="section-title">Recent Activity<span class="view-all" data-goto="rewards">View all</span></div>
+          <div id="alertFeed"><div class="empty-note">Your credit alerts will show up here once you complete a task.</div></div>
+
+          <div class="trust-strip">
+            <div class="trust-item"><div class="ti-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l7 4v5c0 5-3.5 7.5-7 9-3.5-1.5-7-4-7-9V7z"/><path d="M9 12l2 2 4-4"/></svg></div><div><div class="ti-title">Trusted & Secure</div><div class="ti-sub">Your data and earnings are protected.</div></div></div>
+            <div class="trust-item"><div class="ti-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L4 14h6l-1 8 9-12h-6z"/></svg></div><div><div class="ti-title">Fast Payouts</div><div class="ti-sub">Withdraw once you hit the minimum.</div></div></div>
+            <div class="trust-item"><div class="ti-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3"/><path d="M2 20c0-3.5 3-5.5 7-5.5s7 2 7 5.5"/><circle cx="18" cy="8" r="2.5"/><path d="M22 20c0-2.5-1.7-4-4-4.6"/></svg></div><div><div class="ti-title">Real People</div><div class="ti-sub">A growing community earning daily.</div></div></div>
+            <div class="trust-item"><div class="ti-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="8" width="18" height="13" rx="2"/><path d="M12 8v13M3 12h18"/></svg></div><div><div class="ti-title">Rewards & Bonuses</div><div class="ti-sub">More ways to earn, coming soon.</div></div></div>
+          </div>
+        </section>
+
+        <!-- TASKS HUB (mobile "Tasks" tab / desktop "Browse Tasks") -->
+        <section class="screen" id="screen-tasks-hub">
+          <h2 class="page-title">Browse Tasks</h2>
+          <p class="page-sub">Everything you can do to earn right now.</p>
+          <div class="ftask" id="taskItemSurvey2">
+            <div class="badge purple"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2h6a2 2 0 0 1 2 2v1h-10V4a2 2 0 0 1 2-2z"/><rect x="5" y="4" width="14" height="18" rx="2"/><path d="M9 12h6M9 16h4"/></svg></div>
+            <div class="info"><div class="name">Complete Survey</div><div class="meta"><span class="tag">Survey</span><span>Answer questions, get paid per survey</span></div></div>
+            <div class="chev"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></div>
+          </div>
+          <div class="ftask" id="taskItemGame2">
+            <div class="badge orange"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="10" rx="5"/><path d="M7 12h.01M9 10v4M15 11h.01M17 13h.01"/></svg></div>
+            <div class="info"><div class="name">Play a Game</div><div class="meta"><span class="tag">Game</span><span>Play as long as you want, credited every 5 min</span></div></div>
+            <div class="chev"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></div>
+          </div>
+        </section>
+
+        <!-- GAMES (sub-screen) -->
+        <section class="screen" id="screen-games">
+          <header class="sub"><div class="back-btn" data-back="tasks-hub"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></div><h2>Play a Game</h2></header>
+          <p class="page-sub">Play as long as you want — you're credited every few minutes, automatically.</p>
+          <div id="gameBannerSlot"></div>
+          <div id="gamePicker" class="section-title" style="display:none;">Choose a game</div>
+          <div id="gamePickerGrid"></div>
+          <div id="gameFrameSlot" style="display:none;"></div>
+          <div id="gameEmptyState" class="empty-note">No games added yet.</div>
+          <button class="btn-green-sm" id="startGameBtn" style="display:none; margin-top:14px; width:100%; justify-content:center; padding:16px;"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" style="margin-right:4px;"><path d="M8 5v14l11-7z"/></svg>Start Playing</button>
+          <button class="ghost-btn" id="changeGameBtn" style="display:none;">Choose a different game</button>
+        </section>
+
+        <!-- SURVEYS (sub-screen) -->
+        <section class="screen" id="screen-surveys">
+          <header class="sub"><div class="back-btn" data-back="tasks-hub"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></div><h2>Surveys</h2></header>
+          <p class="page-sub">Answer a few questions, get paid per survey.</p>
+          <div id="surveyList"><div class="empty-note">Loading surveys…</div></div>
+          <div class="survey-refresh-note" id="surveyRefreshNote"></div>
+        </section>
+
+        <!-- REWARDS / TRANSACTIONS -->
+        <section class="screen" id="screen-rewards">
+          <h2 class="page-title">Transactions</h2>
+          <p class="page-sub">Your full earning history.</p>
+          <div class="earnings-card"><div class="label">Total earned (all time)</div><div class="amount">₦<span id="dashTotalEarned">0.00</span></div></div>
+          <div class="section-title">History</div>
+          <div id="historyFeed"><div class="empty-note">No history yet.</div></div>
+        </section>
+
+        <!-- WALLET -->
+        <section class="screen" id="screen-wallet">
+          <h2 class="page-title">Wallet</h2>
+          <p class="page-sub">Minimum withdrawal: ₦<span id="minWithdrawLabel">3,000</span></p>
+          <div class="earnings-card">
+            <div class="label">Available Balance</div>
+            <div class="amount">₦<span id="walletBalanceAmount">0.00</span></div>
+            <div class="sparkline" style="margin-top:14px;">
+              <div class="progress-track"><div class="progress-fill" id="withdrawProgress" style="width:0%"></div></div>
+              <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--text-soft); margin-top:6px;"><span>Withdrawal progress</span><span id="withdrawProgressLabel">₦0 / ₦3,000</span></div>
+            </div>
+          </div>
+          <div id="withdrawLocked" class="task-card">
+            <div class="row"><span class="name">Keep earning</span><span class="reward" id="withdrawShortfall">—</span></div>
+            <div class="progress-track"><div class="progress-fill" id="withdrawProgress2" style="width:0%"></div></div>
+          </div>
+          <form id="withdrawForm" style="display:none;">
+            <div class="field"><label>Bank name</label><input id="wBank" required placeholder="e.g. GTBank"></div>
+            <div class="field"><label>Account number</label><input id="wAcct" required inputmode="numeric" placeholder="10-digit account number"></div>
+            <div class="field"><label>Account name</label><input id="wName" required placeholder="Must match your bank account"></div>
+            <button class="primary-btn" type="submit">Request withdrawal</button>
+            <div class="note">Withdrawals are reviewed manually right now and paid within 24–48 hours while we finish automated payouts.</div>
+          </form>
+          <div id="withdrawStatus"></div>
+        </section>
+
+        <!-- PROFILE -->
+        <section class="screen" id="screen-profile">
+          <h2 class="page-title">Profile</h2>
+          <p class="page-sub" id="profilePhone">—</p>
+          <button class="ghost-btn" id="logoutBtn" style="margin-top:12px;">Log out</button>
+        </section>
+
+        <!-- COMING SOON -->
+        <section class="screen" id="screen-soon">
+          <header class="sub"><div class="back-btn" data-back="home"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></div><h2 id="soonTitle">Coming Soon</h2></header>
+          <div class="soon-card">
+            <div class="big-icon"><svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div>
+            <div style="font-weight:600; color:var(--text); margin-bottom:4px;" id="soonBody">This feature is on the way.</div>
+            <div>We'll let you know the moment it's live.</div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <!-- RIGHT PANEL (desktop) -->
+    <aside class="right-panel">
+      <div class="wallet-panel">
+        <div class="label">Wallet Overview</div>
+        <div class="amt">₦<span id="rpBalance">0.00</span></div>
+        <button class="btn-green-sm" id="rpWithdrawBtn" style="width:100%; justify-content:center;">Withdraw Funds</button>
       </div>
+      <div class="section-title">Recent Activity</div>
+      <div id="rpActivity"><div class="empty-note">Nothing yet.</div></div>
+    </aside>
+  </div>
 
-      <div class="section-title">Available Tasks</div>
-      <div class="task-list-item" id="taskItemSurvey">
-        <div class="badge purple"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2h6a2 2 0 0 1 2 2v1h-10V4a2 2 0 0 1 2-2z"/><rect x="5" y="4" width="14" height="18" rx="2"/><path d="M9 12h6M9 16h4"/></svg></div>
-        <div class="info"><div class="name">Complete Survey</div><div class="earn">Answer questions, get paid per survey</div></div>
-        <div class="chev"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></div>
-      </div>
-      <div class="task-list-item" id="taskItemGame">
-        <div class="badge orange"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="10" rx="5"/><path d="M7 12h.01M9 10v4M15 11h.01M17 13h.01"/></svg></div>
-        <div class="info"><div class="name">Play a Game</div><div class="earn">Play as long as you want, credited every 5 min</div></div>
-        <div class="chev"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></div>
-      </div>
-
-      <div class="section-title">Recent alerts</div>
-      <div id="alertFeed"><div class="empty-note">Your credit alerts will show up here once you complete a task.</div></div>
-    </section>
-
-    <!-- GAMES (sub-screen) -->
-    <section class="screen" id="screen-games">
-      <header class="sub"><div class="back-btn" data-back="home"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></div><h2>Play a Game</h2></header>
-      <p class="page-sub">Play as long as you want — you're credited every few minutes, automatically.</p>
-      <div id="gameBannerSlot"></div>
-      <div id="gamePicker" class="section-title" style="display:none;">Choose a game</div>
-      <div id="gamePickerGrid"></div>
-      <div id="gameFrameSlot" style="display:none;"></div>
-      <div id="gameEmptyState" class="empty-note">No games added yet.</div>
-      <button class="watch-btn" id="startGameBtn" style="display:none; margin-top:14px;"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" style="vertical-align:-3px; margin-right:4px;"><path d="M8 5v14l11-7z"/></svg>Start Playing</button>
-      <button class="ghost-btn" id="changeGameBtn" style="display:none;"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg> Choose a different game</button>
-    </section>
-
-    <!-- SURVEYS (sub-screen) -->
-    <section class="screen" id="screen-surveys">
-      <header class="sub"><div class="back-btn" data-back="home"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></div><h2>Surveys</h2></header>
-      <p class="page-sub">Answer a few questions, get paid per survey.</p>
-      <div id="surveyList"><div class="empty-note">Loading surveys…</div></div>
-      <div class="survey-refresh-note" id="surveyRefreshNote"></div>
-    </section>
-
-    <!-- REWARDS -->
-    <section class="screen" id="screen-rewards">
-      <h2 class="page-title">Rewards</h2>
-      <p class="page-sub">Your full earning history.</p>
-      <div class="balance-card">
-        <div class="label">Total earned (all time)</div>
-        <div class="amount">₦<span id="dashTotalEarned">0.00</span></div>
-      </div>
-      <div class="section-title">History</div>
-      <div id="historyFeed"><div class="empty-note">No history yet.</div></div>
-    </section>
-
-    <!-- PROFILE -->
-    <section class="screen" id="screen-profile">
-      <h2 class="page-title">Profile</h2>
-      <p class="page-sub" id="profilePhone">—</p>
-
-      <div class="section-title">Withdraw</div>
-      <p class="page-sub" style="margin-top:-10px;">Minimum withdrawal: ₦<span id="minWithdrawLabel">3,000</span></p>
-      <div id="withdrawLocked" class="task-card">
-        <div class="row"><span class="name">Keep earning</span><span class="reward" id="withdrawShortfall">—</span></div>
-        <div class="progress-track"><div class="progress-fill" id="withdrawProgress2" style="width:0%"></div></div>
-      </div>
-      <form id="withdrawForm" style="display:none;">
-        <div class="field"><label>Bank name</label><input id="wBank" required placeholder="e.g. GTBank"></div>
-        <div class="field"><label>Account number</label><input id="wAcct" required inputmode="numeric" placeholder="10-digit account number"></div>
-        <div class="field"><label>Account name</label><input id="wName" required placeholder="Must match your bank account"></div>
-        <button class="primary-btn" type="submit">Request withdrawal</button>
-        <div class="note">Withdrawals are reviewed manually right now and paid within 24–48 hours while we finish automated payouts.</div>
-      </form>
-      <div id="withdrawStatus"></div>
-
-      <button class="ghost-btn" id="logoutBtn" style="margin-top:24px;">Log out</button>
-    </section>
-  </main>
-
+  <!-- BOTTOM NAV (mobile) -->
   <nav class="tabs">
-    <button class="tab-btn active" data-screen="home"><span class="ic"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M8 12l3 3 5-6"/></svg></span>Tasks</button>
-    <button class="tab-btn" data-screen="rewards"><span class="ic"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.9 6.3 6.9.9-5 4.8 1.3 6.9-6.1-3.4-6.1 3.4 1.3-6.9-5-4.8 6.9-.9z"/></svg></span>Rewards</button>
-    <button class="tab-btn" data-screen="profile"><span class="ic"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></span>Profile</button>
+    <button class="tab-btn active" data-screen="home"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-7 9 7"/><path d="M5 10v9h14v-9"/></svg>Home</button>
+    <button class="tab-btn" data-screen="tasks-hub"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 13h8M8 18h5"/></svg>Tasks</button>
+    <div class="fab" data-goto="tasks-hub"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></div>
+    <button class="tab-btn" data-screen="wallet"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/></svg>Wallet</button>
+    <button class="tab-btn" data-screen="profile"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>Profile</button>
   </nav>
 </div>
 
@@ -376,7 +466,6 @@ document.getElementById("authToggleLink").onclick = (e) => {
   document.getElementById("authToggleText").textContent = authMode === "signup" ? "Already have an account?" : "New to WinBig?";
   document.getElementById("authToggleLink").textContent = authMode === "signup" ? "Log in" : "Create account";
 };
-
 function phoneToEmail(phone){ return phone.replace(/\D/g,"") + "@winbig.local"; }
 
 document.getElementById("authSubmit").onclick = async () => {
@@ -406,11 +495,7 @@ document.getElementById("authSubmit").onclick = async () => {
   }
   initApp();
 };
-
-document.getElementById("logoutBtn").onclick = async () => {
-  await sb.auth.signOut();
-  location.reload();
-};
+document.getElementById("logoutBtn").onclick = async () => { await sb.auth.signOut(); location.reload(); };
 
 // ---------- APP INIT ----------
 async function initApp(){
@@ -419,7 +504,9 @@ async function initApp(){
   currentUser = user;
   document.getElementById("authScreen").style.display = "none";
   document.getElementById("appShell").style.display = "block";
-  document.getElementById("profilePhone").textContent = user.email ? user.email.replace("@winbig.local","") : "";
+  const phoneLabel = user.email ? user.email.replace("@winbig.local","") : "";
+  document.getElementById("profilePhone").textContent = phoneLabel;
+  document.getElementById("avatarInitial").textContent = phoneLabel ? phoneLabel.slice(-2) : "W";
 
   await loadSettings();
   await refreshProfile();
@@ -427,14 +514,28 @@ async function initApp(){
 
   document.getElementById("taskItemSurvey").onclick = () => goToScreen("surveys");
   document.getElementById("taskItemGame").onclick = () => goToScreen("games");
-  document.getElementById("homeWithdrawBtn").onclick = () => goToScreen("profile");
+  document.getElementById("taskItemSurvey2").onclick = () => goToScreen("surveys");
+  document.getElementById("taskItemGame2").onclick = () => goToScreen("games");
+  document.getElementById("homeWithdrawBtn").onclick = () => goToScreen("wallet");
+  document.getElementById("rpWithdrawBtn").onclick = () => goToScreen("wallet");
+  document.getElementById("viewWalletBtn").onclick = () => goToScreen("wallet");
   document.querySelectorAll(".back-btn").forEach(b => b.onclick = () => goToScreen(b.dataset.back));
+  document.querySelectorAll("[data-goto]").forEach(el => el.onclick = () => goToScreen(el.dataset.goto));
+  document.querySelectorAll("[data-soon]").forEach(el => el.onclick = () => showSoon(el.dataset.soon));
+  document.querySelectorAll(".side-link[data-nav='soon']").forEach(el => el.onclick = () => showSoon(el.dataset.title));
+}
+
+function showSoon(title){
+  document.getElementById("soonTitle").textContent = title;
+  document.getElementById("soonBody").textContent = title + " isn't live yet.";
+  goToScreen("soon");
 }
 
 function goToScreen(name){
   document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
-  document.getElementById("screen-" + name).classList.add("active");
-  document.querySelectorAll(".tab-btn").forEach(b => b.classList.toggle("active", b.dataset.screen === name));
+  const target = document.getElementById("screen-" + name);
+  if(target) target.classList.add("active");
+  document.querySelectorAll(".tab-btn, .side-link").forEach(b => b.classList.toggle("active", b.dataset.screen === name));
   if(name === "games") initGamesTab();
   if(name === "surveys") loadSurveyWall();
 }
@@ -453,29 +554,68 @@ async function loadSettings(){
   document.getElementById("minWithdrawLabel").textContent = Number(settings.withdrawal_minimum_naira).toLocaleString();
 }
 
+function renderSparkline(dailyTotals){
+  const svg = document.getElementById("sparklineSvg");
+  const vals = dailyTotals.length ? dailyTotals : [0,0,0,0,0,0,0];
+  const max = Math.max(...vals, 1);
+  const w = 300, h = 60, step = w / (vals.length - 1 || 1);
+  const points = vals.map((v,i) => `${(i*step).toFixed(1)},${(h - (v/max)*h*0.85 - 4).toFixed(1)}`).join(" ");
+  const dots = vals.map((v,i) => {
+    const x = (i*step).toFixed(1), y = (h - (v/max)*h*0.85 - 4).toFixed(1);
+    return i === vals.length-1 ? `<circle cx="${x}" cy="${y}" r="3" fill="var(--green)"/>` : "";
+  }).join("");
+  svg.innerHTML = `<polyline points="${points}" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>${dots}`;
+}
+
 async function refreshProfile(){
   const { data: profile } = await sb.from("profiles").select("*").eq("id", currentUser.id).single();
   if(!profile) return;
-  document.getElementById("balanceAmount").textContent = Number(profile.naira_balance).toFixed(2);
-  document.getElementById("pointsAmount").textContent = profile.points;
-  document.getElementById("dashTotalEarned").textContent = Number(profile.naira_balance).toFixed(2);
+  const bal = Number(profile.naira_balance);
+  document.getElementById("balanceAmount").textContent = bal.toFixed(2);
+  document.getElementById("totalEarnedAmount").textContent = bal.toFixed(2);
+  document.getElementById("dashTotalEarned").textContent = bal.toFixed(2);
+  document.getElementById("walletBalanceAmount").textContent = bal.toFixed(2);
+  document.getElementById("rpBalance").textContent = bal.toFixed(2);
 
   const min = settings.withdrawal_minimum_naira;
-  const pct = Math.min(100, (Number(profile.naira_balance) / min) * 100);
+  const pct = Math.min(100, (bal / min) * 100);
   document.getElementById("withdrawProgress").style.width = pct + "%";
   document.getElementById("withdrawProgress2").style.width = pct + "%";
-  document.getElementById("withdrawProgressLabel").textContent =
-    `₦${Number(profile.naira_balance).toFixed(0)} / ₦${min.toLocaleString()}`;
+  document.getElementById("withdrawProgressLabel").textContent = `₦${bal.toFixed(0)} / ₦${min.toLocaleString()}`;
 
-  if(Number(profile.naira_balance) >= min){
+  if(bal >= min){
     document.getElementById("withdrawLocked").style.display = "none";
     document.getElementById("withdrawForm").style.display = "block";
   } else {
     document.getElementById("withdrawLocked").style.display = "block";
     document.getElementById("withdrawForm").style.display = "none";
-    document.getElementById("withdrawShortfall").textContent =
-      `₦${(min - Number(profile.naira_balance)).toFixed(0)} to go`;
+    document.getElementById("withdrawShortfall").textContent = `₦${(min - bal).toFixed(0)} to go`;
   }
+
+  // Real 7-day trend + today's delta from ad_views history
+  const sevenDaysAgo = new Date(Date.now() - 6*86400000).toISOString();
+  const { data: views } = await sb.from("ad_views").select("naira_awarded, created_at")
+    .eq("user_id", currentUser.id).gte("created_at", sevenDaysAgo);
+  const byDay = {};
+  const todayStr = new Date().toISOString().slice(0,10);
+  const yesterdayStr = new Date(Date.now() - 86400000).toISOString().slice(0,10);
+  for(let i=6;i>=0;i--){
+    const d = new Date(Date.now() - i*86400000).toISOString().slice(0,10);
+    byDay[d] = 0;
+  }
+  (views||[]).forEach(v => {
+    const d = v.created_at.slice(0,10);
+    if(byDay[d] !== undefined) byDay[d] += Number(v.naira_awarded);
+  });
+  const dailyVals = Object.values(byDay);
+  renderSparkline(dailyVals);
+  const todayTotal = byDay[todayStr] || 0;
+  const yestTotal = byDay[yesterdayStr] || 0;
+  document.getElementById("deltaAmount").textContent = `+₦${todayTotal.toFixed(2)}`;
+  const pctChange = yestTotal > 0 ? ((todayTotal - yestTotal) / yestTotal * 100) : (todayTotal > 0 ? 100 : 0);
+  const pctBadge = document.getElementById("pctBadge");
+  pctBadge.textContent = `${pctChange >= 0 ? "+" : ""}${pctChange.toFixed(1)}%`;
+
   return profile;
 }
 
@@ -483,21 +623,19 @@ async function loadAlertFeed(){
   const { data } = await sb.from("ad_views").select("*").eq("user_id", currentUser.id).order("created_at", { ascending:false }).limit(15);
   const feed = document.getElementById("alertFeed");
   const history = document.getElementById("historyFeed");
+  const rp = document.getElementById("rpActivity");
   if(!data || data.length === 0) return;
-  feed.innerHTML = "";
-  history.innerHTML = "";
+  feed.innerHTML = ""; history.innerHTML = ""; rp.innerHTML = "";
   data.forEach(row => {
     const time = new Date(row.created_at).toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"});
     const html = `<div class="alert">
-        <div class="icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#7ED321" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
-        <div class="body">
-          <div class="title">WinBig Alert: Wallet credited</div>
-          <div class="meta">${time} · +${row.points_awarded} pts</div>
-        </div>
+        <div class="icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+        <div class="body"><div class="title">WinBig Alert: Wallet credited</div><div class="meta">${time} · +${row.points_awarded} pts</div></div>
         <div class="amt">+₦${Number(row.naira_awarded).toFixed(2)}</div>
       </div>`;
     feed.innerHTML += html;
     history.innerHTML += html;
+    if(rp.children.length < 5) rp.innerHTML += html;
   });
 }
 
@@ -506,8 +644,7 @@ document.getElementById("withdrawForm").addEventListener("submit", async (e) => 
   e.preventDefault();
   const profile = await refreshProfile();
   const { error } = await sb.from("withdrawals").insert({
-    user_id: currentUser.id,
-    amount_naira: profile.naira_balance,
+    user_id: currentUser.id, amount_naira: profile.naira_balance,
     bank_name: document.getElementById("wBank").value,
     account_number: document.getElementById("wAcct").value,
     account_name: document.getElementById("wName").value,
@@ -540,19 +677,11 @@ let currentGame = null;
 function initGamesTab(){
   if(gamesTabInitialized) return;
   gamesTabInitialized = true;
-
-  if(GAME_BANNER_TAG){
-    document.getElementById("gameBannerSlot").innerHTML = GAME_BANNER_TAG;
-  }
-
+  if(GAME_BANNER_TAG){ document.getElementById("gameBannerSlot").innerHTML = GAME_BANNER_TAG; }
   const emptyState = document.getElementById("gameEmptyState");
   const picker = document.getElementById("gamePicker");
   const grid = document.getElementById("gamePickerGrid");
-
-  if(GAMES.length === 0){
-    emptyState.style.display = "block";
-    return;
-  }
+  if(GAMES.length === 0){ emptyState.style.display = "block"; return; }
   emptyState.style.display = "none";
   picker.style.display = "block";
   grid.className = "game-grid";
@@ -564,20 +693,16 @@ function initGamesTab(){
   grid.querySelectorAll(".game-tile").forEach(tile => {
     tile.onclick = () => selectGame(GAMES[parseInt(tile.dataset.index)]);
   });
-
   document.getElementById("changeGameBtn").onclick = () => {
-    currentGame = null;
-    activeSession = null;
-    clearInterval(sessionTimer);
+    currentGame = null; activeSession = null; clearInterval(sessionTimer);
     document.getElementById("gameFrameSlot").style.display = "none";
     document.getElementById("gameFrameSlot").innerHTML = "";
     document.getElementById("startGameBtn").style.display = "none";
-    document.getElementById("startGameBtn").innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" style="vertical-align:-3px; margin-right:4px;"><path d="M8 5v14l11-7z"/></svg>Start Playing';
+    document.getElementById("startGameBtn").innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" style="margin-right:4px;"><path d="M8 5v14l11-7z"/></svg>Start Playing';
     document.getElementById("changeGameBtn").style.display = "none";
     picker.style.display = "block";
     grid.style.display = "grid";
   };
-
   document.getElementById("startGameBtn").onclick = startGameLoop;
 }
 
@@ -589,8 +714,8 @@ function selectGame(game){
   frameSlot.style.display = "block";
   frameSlot.innerHTML = `
     <div class="game-frame-wrap" id="gameFrameWrap">
-      <button class="fullscreen-btn" id="fullscreenBtn" title="Fullscreen"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3"/></svg></button>
-      <div class="clock-badge" id="clockBadge" style="display:none;"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg> <span id="clockBadgeText">5:00</span></div>
+      <button class="fullscreen-btn" id="fullscreenBtn" title="Fullscreen"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3"/></svg></button>
+      <div class="clock-badge" id="clockBadge" style="display:none;"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg> <span id="clockBadgeText">5:00</span></div>
       <iframe src="${game.url}" allow="autoplay; fullscreen"></iframe>
     </div>`;
   document.getElementById("fullscreenBtn").onclick = () => {
@@ -607,19 +732,14 @@ async function startGameLoop(){
   document.getElementById("clockBadge").style.display = "flex";
   await beginSession();
 }
-
 async function beginSession(){
   const { data, error } = await sb.rpc("start_game_session");
-  if(error || data.error){
-    document.getElementById("clockBadgeText").textContent = "error";
-    return;
-  }
+  if(error || data.error){ document.getElementById("clockBadgeText").textContent = "error"; return; }
   activeSession = { id: data.session_id, target_seconds: data.target_seconds, startedAt: Date.now() };
   clearInterval(sessionTimer);
   sessionTimer = setInterval(tickSession, 1000);
   tickSession();
 }
-
 async function tickSession(){
   if(!activeSession) return;
   const badge = document.getElementById("clockBadgeText");
@@ -635,43 +755,27 @@ async function tickSession(){
     const sessionId = activeSession.id;
     activeSession = null;
     const { data, error } = await sb.rpc("complete_game_session", { p_session_id: sessionId });
-    if(error || data.error){
-      badge.textContent = "retry…";
-      await beginSession();
-      return;
-    }
+    if(error || data.error){ badge.textContent = "retry…"; await beginSession(); return; }
     badgeEl.classList.add("credited");
     badge.textContent = `+₦${Number(data.naira).toFixed(0)}!`;
     await refreshProfile();
     await loadAlertFeed();
-    setTimeout(() => {
-      badgeEl.classList.remove("credited");
-      beginSession();
-    }, 1800);
+    setTimeout(() => { badgeEl.classList.remove("credited"); beginSession(); }, 1800);
   }
 }
 
 // ---------- SURVEYS ----------
 let surveyWallLoaded = false;
-let surveyRefreshTimer = null;
-
-function surveyBadgeIcon(){
-  return '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2h6a2 2 0 0 1 2 2v1h-10V4a2 2 0 0 1 2-2z"/><rect x="5" y="4" width="14" height="18" rx="2"/><path d="M9 12h6M9 16h4"/></svg>';
-}
-function starIcon(){
-  return '<svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor" style="vertical-align:-1px;"><path d="M12 2l2.9 6.3 6.9.9-5 4.8 1.3 6.9-6.1-3.4-6.1 3.4 1.3-6.9-5-4.8 6.9-.9z"/></svg>';
-}
-function clockIconSmall(){
-  return '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>';
-}
+function surveyBadgeIcon(){ return '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2h6a2 2 0 0 1 2 2v1h-10V4a2 2 0 0 1 2-2z"/><rect x="5" y="4" width="14" height="18" rx="2"/><path d="M9 12h6M9 16h4"/></svg>'; }
+function starIcon(){ return '<svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor" style="vertical-align:-1px;"><path d="M12 2l2.9 6.3 6.9.9-5 4.8 1.3 6.9-6.1-3.4-6.1 3.4 1.3-6.9-5-4.8 6.9-.9z"/></svg>'; }
+function clockIconSmall(){ return '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>'; }
 
 async function loadSurveyWall(){
   if(surveyWallLoaded) return;
   surveyWallLoaded = true;
   await fetchAndRenderSurveys();
-  surveyRefreshTimer = setInterval(fetchAndRenderSurveys, 120000); // CPX recommends refreshing every ~2 min
+  setInterval(fetchAndRenderSurveys, 120000);
 }
-
 async function fetchAndRenderSurveys(){
   const list = document.getElementById("surveyList");
   const note = document.getElementById("surveyRefreshNote");
@@ -680,17 +784,10 @@ async function fetchAndRenderSurveys(){
     const resp = await fetch("https://ysztokoesjurgkeiooui.supabase.co/functions/v1/cpx-surveys", {
       headers: { Authorization: "Bearer " + session.access_token }
     });
-    if(!resp.ok){
-      list.innerHTML = '<div class="empty-note">Couldn\'t load surveys right now — try again shortly.</div>';
-      return;
-    }
+    if(!resp.ok){ list.innerHTML = '<div class="empty-note">Couldn\'t load surveys right now — try again shortly.</div>'; return; }
     const data = await resp.json();
     const surveys = Array.isArray(data) ? data : (data.surveys || []);
-    if(!surveys.length){
-      list.innerHTML = '<div class="empty-note">No surveys available right now — check back soon.</div>';
-      note.textContent = "";
-      return;
-    }
+    if(!surveys.length){ list.innerHTML = '<div class="empty-note">No surveys available right now — check back soon.</div>'; note.textContent = ""; return; }
     list.innerHTML = surveys.map(s => {
       const payout = s.payout ?? s.payout_local ?? "0";
       const loi = s.loi ?? s.length_of_interview ?? null;
@@ -700,31 +797,18 @@ async function fetchAndRenderSurveys(){
       return `<div class="survey-card" data-link="${link}">
         <div class="badge">${surveyBadgeIcon()}</div>
         <div class="info">
-          <div class="top-row">
-            <div class="name">Survey #${s.id ?? ""}</div>
-            ${isTop ? '<span class="top-tag">Top</span>' : ""}
-          </div>
-          <div class="meta">
-            ${loi ? `<span>${clockIconSmall()} ${loi} min</span>` : ""}
-            ${rating ? `<span class="stars">${starIcon()} ${Number(rating).toFixed(1)}</span>` : ""}
-          </div>
+          <div class="top-row"><div class="name">Survey #${s.id ?? ""}</div>${isTop ? '<span class="top-tag">Top</span>' : ""}</div>
+          <div class="meta">${loi ? `<span>${clockIconSmall()} ${loi} min</span>` : ""}${rating ? `<span class="stars">${starIcon()} ${Number(rating).toFixed(1)}</span>` : ""}</div>
         </div>
         <div class="payout">${payout} pts</div>
       </div>`;
     }).join("");
-    list.querySelectorAll(".survey-card").forEach(card => {
-      card.onclick = () => window.open(card.dataset.link, "_blank");
-    });
+    list.querySelectorAll(".survey-card").forEach(card => { card.onclick = () => window.open(card.dataset.link, "_blank"); });
     note.textContent = "Refreshes automatically every couple of minutes";
   } catch (e) {
     list.innerHTML = '<div class="empty-note">Couldn\'t reach the survey service — check your connection and reopen this tab.</div>';
   }
 }
-
-// ---------- NAV ----------
-document.querySelectorAll("nav.tabs .tab-btn").forEach(btn => {
-  btn.onclick = () => goToScreen(btn.dataset.screen);
-});
 
 // ---------- BOOTSTRAP ----------
 (async () => {
