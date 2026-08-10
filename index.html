@@ -523,6 +523,9 @@ async function initApp(){
   document.querySelectorAll("[data-goto]").forEach(el => el.onclick = () => goToScreen(el.dataset.goto));
   document.querySelectorAll("[data-soon]").forEach(el => el.onclick = () => showSoon(el.dataset.soon));
   document.querySelectorAll(".side-link[data-nav='soon']").forEach(el => el.onclick = () => showSoon(el.dataset.title));
+  // Main nav: bottom tab bar (mobile) + sidebar links (desktop) — excluding the "soon" stubs bound above
+  document.querySelectorAll("nav.tabs .tab-btn[data-screen]").forEach(b => b.onclick = () => goToScreen(b.dataset.screen));
+  document.querySelectorAll(".sidebar .side-link[data-screen]").forEach(b => b.onclick = () => goToScreen(b.dataset.screen));
 }
 
 function showSoon(title){
