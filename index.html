@@ -784,28 +784,53 @@ async function fetchAndRenderSurveys(){
   const note = document.getElementById("surveyRefreshNote");
   try {
     const { data: { session } } = await sb.auth.getSession();
-    const resp = await fetch("https://ysztokoesjurgkeiooui.supabase.co/functions/v1/cpx-surveys", {
-      headers: { Authorization: "Bearer " + session.access_token }
-    });
-    if(!resp.ok){ list.innerHTML = '<div class="empty-note">Couldn\'t load surveys right now — try again shortly.</div>'; return; }
-    const data = await resp.json();
-    const surveys = Array.isArray(data) ? data : (data.surveys || []);
-    if(!surveys.length){ list.innerHTML = '<div class="empty-note">No surveys available right now — check back soon.</div>'; note.textContent = ""; return; }
-    list.innerHTML = surveys.map(s => {
-      const payout = s.payout ?? s.payout_local ?? "0";
-      const loi = s.loi ?? s.length_of_interview ?? null;
-      const rating = s.statistics_rating_avg ?? s.score ?? null;
-      const isTop = s.top === "1" || s.top === 1 || s.top === true;
-      const link = s.href_new || s.href || s.link || s.url || "#";
-      return `<div class="survey-card" data-link="${link}">
+    const authHeader = { Authorization: "Bearer " + session.access_token };
+
+    const [cpxResp, bitlabsResp] = await Promise.allSettled([
+      fetch("https://ysztokoesjurgkeiooui.supabase.co/functions/v1/cpx-surveys", { headers: authHeader }),
+      fetch("https://ysztokoesjurgkeiooui.supabase.co/functions/v1/bitlabs-surveys", { headers: authHeader }),
+    ]);
+
+    let combined = [];
+
+    if(cpxResp.status === "fulfilled" && cpxResp.value.ok){
+      const data = await cpxResp.value.json();
+      const surveys = Array.isArray(data) ? data : (data.surveys || []);
+      combined = combined.concat(surveys.map(s => ({
+        provider: "cpx",
+        id: s.id ?? "",
+        payoutLabel: `${s.payout ?? s.payout_local ?? "0"} pts`,
+        loi: s.loi ?? s.length_of_interview ?? null,
+        rating: s.statistics_rating_avg ?? s.score ?? null,
+        isTop: s.top === "1" || s.top === 1 || s.top === true,
+        link: s.href_new || s.href || s.link || s.url || "#",
+      })));
+    }
+
+    if(bitlabsResp.status === "fulfilled" && bitlabsResp.value.ok){
+      const data = await bitlabsResp.value.json();
+      const surveys = Array.isArray(data) ? data : (data.data || data.surveys || []);
+      combined = combined.concat(surveys.map(s => ({
+        provider: "bitlabs",
+        id: s.id ?? "",
+        payoutLabel: (s.value ?? s.user_value ?? s.payout) != null ? `$${s.value ?? s.user_value ?? s.payout}` : "—",
+        loi: s.loi ?? s.length_of_interview ?? null,
+        rating: s.rating ?? null,
+        isTop: false,
+        link: s.click_url || s.link || s.url || "#",
+      })));
+    }
+
+    if(!combined.length){ list.innerHTML = '<div class="empty-note">No surveys available right now — check back soon.</div>'; note.textContent = ""; return; }
+
+    list.innerHTML = combined.map(s => `<div class="survey-card" data-link="${s.link}">
         <div class="badge">${surveyBadgeIcon()}</div>
         <div class="info">
-          <div class="top-row"><div class="name">Survey #${s.id ?? ""}</div>${isTop ? '<span class="top-tag">Top</span>' : ""}</div>
-          <div class="meta">${loi ? `<span>${clockIconSmall()} ${loi} min</span>` : ""}${rating ? `<span class="stars">${starIcon()} ${Number(rating).toFixed(1)}</span>` : ""}</div>
+          <div class="top-row"><div class="name">Survey #${s.id}</div>${s.isTop ? '<span class="top-tag">Top</span>' : ""}</div>
+          <div class="meta">${s.loi ? `<span>${clockIconSmall()} ${s.loi} min</span>` : ""}${s.rating ? `<span class="stars">${starIcon()} ${Number(s.rating).toFixed(1)}</span>` : ""}</div>
         </div>
-        <div class="payout">${payout} pts</div>
-      </div>`;
-    }).join("");
+        <div class="payout">${s.payoutLabel}</div>
+      </div>`).join("");
     list.querySelectorAll(".survey-card").forEach(card => { card.onclick = () => window.open(card.dataset.link, "_blank"); });
     note.textContent = "Refreshes automatically every couple of minutes";
   } catch (e) {
