@@ -219,16 +219,22 @@
 
   .soon-card{ background:var(--panel); border:1px dashed var(--line); border-radius:var(--radius); padding:32px 20px; text-align:center; color:var(--text-soft); }
 
-  .ctask-card{ background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:16px; margin-bottom:10px; }
-  .ctask-card .row{ display:flex; justify-content:space-between; align-items:flex-start; gap:10px; margin-bottom:6px; }
-  .ctask-card .name{ font-weight:600; font-size:14px; }
-  .ctask-card .desc{ color:var(--text-soft); font-size:12px; margin-top:2px; line-height:1.4; }
-  .ctask-card .reward{ font-family:'IBM Plex Mono',monospace; color:var(--green); font-weight:600; font-size:14px; white-space:nowrap; }
-  .ctask-card .btn-row{ display:flex; gap:8px; margin-top:12px; }
-  .ctask-card .btn-row button{ flex:1; padding:10px; border-radius:9px; font-size:12px; font-weight:600; cursor:pointer; border:1px solid var(--line); background:var(--panel-2); color:var(--text); }
+  .ctask-card{ background:var(--panel); border:1px solid var(--line); border-radius:16px; overflow:hidden; margin-bottom:16px; }
+  .ctask-card .cover{ width:100%; aspect-ratio:16/10; object-fit:cover; display:block; background:linear-gradient(135deg, var(--panel-2), var(--ink)); }
+  .ctask-card .body{ padding:16px; }
+  .ctask-card .top-row{ display:flex; justify-content:space-between; align-items:flex-start; gap:14px; }
+  .ctask-card .name{ font-weight:700; font-size:15px; }
+  .ctask-card .desc{ color:var(--text-soft); font-size:12px; margin-top:4px; line-height:1.5; max-width:60%; }
+  .ctask-card .earn-block{ text-align:right; flex-shrink:0; }
+  .ctask-card .earn-label{ font-size:11px; color:var(--green); text-transform:uppercase; letter-spacing:.05em; font-weight:700; }
+  .ctask-card .earn-num{ font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:26px; line-height:1.1; }
+  .ctask-card .earn-unit{ font-size:11px; color:var(--green); font-weight:700; }
+  .ctask-card .days-pill{ display:inline-flex; align-items:center; gap:6px; background:var(--panel-2); border:1px solid var(--line); border-radius:99px; padding:5px 12px; font-size:11px; color:var(--text-soft); margin-top:12px; }
+  .ctask-card .btn-row{ display:flex; gap:8px; margin-top:14px; }
+  .ctask-card .btn-row button{ flex:1; padding:11px; border-radius:9px; font-size:12px; font-weight:600; cursor:pointer; border:1px solid var(--line); background:var(--panel-2); color:var(--text); }
   .ctask-card .btn-row button.claim{ background:linear-gradient(135deg, var(--green-btn-start), var(--green-btn-end)); color:#000; border:none; }
   .ctask-card .btn-row button:disabled{ opacity:0.5; cursor:not-allowed; }
-  .ctask-card .done-tag{ font-size:11px; color:var(--green); font-weight:600; }
+  .ctask-card .done-tag{ font-size:11px; color:var(--green); font-weight:600; margin-top:12px; }
   .soon-card .big-icon{ color:var(--green); margin-bottom:10px; }
 
   /* ===== Desktop breakpoint ===== */
@@ -924,18 +930,28 @@ async function loadCustomTasks(){
 
   list.innerHTML = tasks.map(t => {
     const isDone = claimedIds.has(t.id);
+    const points = t.base_points;
+    const daysLeft = t.expires_at ? Math.max(0, Math.ceil((new Date(t.expires_at) - Date.now()) / 86400000)) : null;
     return `<div class="ctask-card" data-task-id="${t.id}" data-url="${t.target_url || ''}">
-      <div class="row">
-        <div><div class="name">${t.title}</div><div class="desc">${t.description}</div></div>
-        <div class="reward">₦${Number(t.base_naira).toFixed(2)}</div>
+      ${t.cover_image_url ? `<img class="cover" src="${t.cover_image_url}" alt="${t.title}" loading="lazy">` : `<div class="cover"></div>`}
+      <div class="body">
+        <div class="top-row">
+          <div><div class="name">${t.title}</div><div class="desc">${t.description}</div></div>
+          <div class="earn-block">
+            <div class="earn-label">Earn</div>
+            <div class="earn-num">${points.toLocaleString()}</div>
+            <div class="earn-unit">POINTS</div>
+          </div>
+        </div>
+        ${daysLeft !== null ? `<div class="days-pill"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>${daysLeft} day${daysLeft === 1 ? "" : "s"} left</div>` : ""}
+        ${isDone
+          ? '<div class="done-tag">✓ Completed</div>'
+          : `<div class="btn-row">
+               <button class="open-btn">Open</button>
+               <button class="claim claim-btn" disabled>Claim Reward</button>
+             </div>`
+        }
       </div>
-      ${isDone
-        ? '<div class="done-tag">✓ Completed</div>'
-        : `<div class="btn-row">
-             <button class="open-btn">Open</button>
-             <button class="claim claim-btn" disabled>Claim Reward</button>
-           </div>`
-      }
     </div>`;
   }).join("");
 
