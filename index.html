@@ -167,7 +167,12 @@
   .ghost-btn{ width:100%; padding:14px; border:1px solid var(--line); border-radius:12px; background:transparent; color:var(--text-soft); font-size:14px; margin-top:10px; cursor:pointer; }
   .note{ font-size:12px; color:var(--text-soft); line-height:1.5; margin-top:10px; }
 
-  .auth-wrap{ min-height:100vh; display:flex; flex-direction:column; justify-content:center; padding:24px; max-width:420px; margin:0 auto; position:relative; z-index:1; }
+  .auth-wrap{ min-height:100vh; position:relative; z-index:1; overflow:hidden; }
+  .auth-scene{ position:absolute; top:0; right:0; width:min(90vw, 480px); height:min(60vh, 480px); pointer-events:none; z-index:0; opacity:0.9; }
+  .auth-form{
+    position:relative; z-index:1; min-height:100vh; display:flex; flex-direction:column;
+    justify-content:center; padding:24px; max-width:420px; margin:0 auto; background:transparent;
+  }
   .auth-wrap .logo{ margin-bottom:18px; }
   .auth-wrap .tag{ color:var(--text-soft); font-size:14px; margin-bottom:28px; }
   .toggle-row{ text-align:center; margin-top:14px; font-size:13px; color:var(--text-soft); }
@@ -236,13 +241,50 @@
 
 <!-- AUTH SCREEN -->
 <div id="authScreen" class="auth-wrap">
-  <div class="logo"><img src="assets/logo.png" alt="WinBig" style="height:120px; width:auto; max-width:80vw; object-fit:contain;"></div>
-  <div class="tag">Do simple tasks. Get paid big.</div>
-  <div id="authError" class="error-msg"></div>
-  <div class="field"><label>Phone number</label><input id="authPhone" type="tel" placeholder="080XXXXXXXX" /></div>
-  <div class="field"><label>Password</label><input id="authPassword" type="password" placeholder="••••••••" /></div>
-  <button class="primary-btn" id="authSubmit">Create account</button>
-  <div class="toggle-row"><span id="authToggleText">Already have an account?</span> <a href="#" id="authToggleLink">Log in</a></div>
+  <div class="auth-scene" aria-hidden="true">
+    <svg viewBox="0 0 400 400" width="100%" height="100%">
+      <defs>
+        <radialGradient id="fadeMask" cx="100%" cy="0%" r="100%">
+          <stop offset="0%" stop-color="white" stop-opacity="1"/>
+          <stop offset="55%" stop-color="white" stop-opacity="0.5"/>
+          <stop offset="100%" stop-color="white" stop-opacity="0"/>
+        </radialGradient>
+        <mask id="cornerFade"><rect width="400" height="400" fill="url(#fadeMask)"/></mask>
+        <linearGradient id="gGreen" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#9AE744"/><stop offset="100%" stop-color="#4C9A1E"/></linearGradient>
+        <linearGradient id="gGold" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#FFD873"/><stop offset="100%" stop-color="#C98A12"/></linearGradient>
+        <linearGradient id="gPurple" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#B79CFF"/><stop offset="100%" stop-color="#5C33C4"/></linearGradient>
+        <linearGradient id="gTeal" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#6FE3F0"/><stop offset="100%" stop-color="#158C9C"/></linearGradient>
+      </defs>
+      <g mask="url(#cornerFade)">
+        <!-- floating app-icon tiles -->
+        <rect x="255" y="215" width="60" height="60" rx="14" fill="url(#gPurple)" transform="rotate(-8 285 245)"/>
+        <path d="M275 245h20M285 235v20" stroke="white" stroke-width="4" stroke-linecap="round" transform="rotate(-8 285 245)"/>
+        <rect x="305" y="130" width="52" height="52" rx="13" fill="url(#gTeal)" transform="rotate(10 331 156)"/>
+        <circle cx="331" cy="156" r="10" fill="white" opacity="0.9" transform="rotate(10 331 156)"/>
+        <!-- dollar coin -->
+        <circle cx="330" cy="255" r="46" fill="url(#gGold)"/>
+        <circle cx="330" cy="255" r="46" fill="none" stroke="#FFF3D0" stroke-width="2" opacity="0.6"/>
+        <text x="330" y="270" font-family="Space Grotesk, sans-serif" font-size="44" font-weight="800" fill="#7A4E00" text-anchor="middle">$</text>
+        <!-- game controller -->
+        <g transform="translate(200,60) rotate(-14)">
+          <rect x="0" y="20" width="150" height="70" rx="35" fill="url(#gGreen)"/>
+          <circle cx="35" cy="55" r="14" fill="#0A0B0D" opacity="0.85"/>
+          <rect x="29" y="49" width="12" height="12" fill="#9AE744"/>
+          <circle cx="112" cy="45" r="9" fill="#0A0B0D" opacity="0.85"/>
+          <circle cx="130" cy="60" r="9" fill="#0A0B0D" opacity="0.85"/>
+        </g>
+      </g>
+    </svg>
+  </div>
+  <div class="auth-form">
+    <div class="logo"><img src="assets/logo.png" alt="WinBig" style="height:120px; width:auto; max-width:80vw; object-fit:contain;"></div>
+    <div class="tag">Do simple tasks. Get paid big.</div>
+    <div id="authError" class="error-msg"></div>
+    <div class="field"><label>Email</label><input id="authEmail" type="email" placeholder="you@example.com" autocomplete="email" /></div>
+    <div class="field"><label>Password</label><input id="authPassword" type="password" placeholder="••••••••" autocomplete="current-password" /></div>
+    <button class="primary-btn" id="authSubmit">Create account</button>
+    <div class="toggle-row"><span id="authToggleText">Already have an account?</span> <a href="#" id="authToggleLink">Log in</a></div>
+  </div>
 </div>
 
 <!-- APP SHELL -->
@@ -466,24 +508,21 @@ document.getElementById("authToggleLink").onclick = (e) => {
   document.getElementById("authToggleText").textContent = authMode === "signup" ? "Already have an account?" : "New to WinBig?";
   document.getElementById("authToggleLink").textContent = authMode === "signup" ? "Log in" : "Create account";
 };
-function phoneToEmail(phone){ return phone.replace(/\D/g,"") + "@winbig.local"; }
-
 document.getElementById("authSubmit").onclick = async () => {
-  const phone = document.getElementById("authPhone").value.trim();
+  const email = document.getElementById("authEmail").value.trim();
   const password = document.getElementById("authPassword").value;
   const errBox = document.getElementById("authError");
   errBox.style.display = "none";
-  if(!phone || password.length < 6){
-    errBox.textContent = "Enter a valid phone number and a password of at least 6 characters.";
+  if(!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || password.length < 6){
+    errBox.textContent = "Enter a valid email and a password of at least 6 characters.";
     errBox.style.display = "block";
     return;
   }
-  const email = phoneToEmail(phone);
   let result;
   if(authMode === "signup"){
     result = await sb.auth.signUp({ email, password });
     if(!result.error && result.data.user){
-      await sb.from("profiles").insert({ id: result.data.user.id, phone });
+      await sb.from("profiles").insert({ id: result.data.user.id });
     }
   } else {
     result = await sb.auth.signInWithPassword({ email, password });
@@ -504,9 +543,9 @@ async function initApp(){
   currentUser = user;
   document.getElementById("authScreen").style.display = "none";
   document.getElementById("appShell").style.display = "block";
-  const phoneLabel = user.email ? user.email.replace("@winbig.local","") : "";
-  document.getElementById("profilePhone").textContent = phoneLabel;
-  document.getElementById("avatarInitial").textContent = phoneLabel ? phoneLabel.slice(-2) : "W";
+  const emailLabel = user.email || "";
+  document.getElementById("profilePhone").textContent = emailLabel;
+  document.getElementById("avatarInitial").textContent = emailLabel ? emailLabel[0].toUpperCase() : "W";
 
   await loadSettings();
   await refreshProfile();
