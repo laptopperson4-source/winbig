@@ -167,17 +167,48 @@
   .ghost-btn{ width:100%; padding:14px; border:1px solid var(--line); border-radius:12px; background:transparent; color:var(--text-soft); font-size:14px; margin-top:10px; cursor:pointer; }
   .note{ font-size:12px; color:var(--text-soft); line-height:1.5; margin-top:10px; }
 
-  .auth-wrap{ min-height:100vh; position:relative; z-index:1; overflow:hidden; }
-  .auth-scene{ position:absolute; top:0; right:0; width:min(90vw, 480px); height:min(60vh, 480px); pointer-events:none; z-index:0; opacity:0.9; }
-  .auth-form{
-    position:relative; z-index:1; min-height:100vh; display:flex; flex-direction:column;
-    justify-content:center; padding:24px; max-width:420px; margin:0 auto; background:transparent;
+  .auth-page{ position:relative; z-index:1; min-height:100vh; padding:20px 24px 40px; }
+  .auth-topbanner{
+    display:inline-flex; align-items:center; gap:8px; background:var(--panel); border:1px solid var(--line);
+    border-radius:99px; padding:8px 16px; font-size:12px; color:var(--text-soft); margin-bottom:24px;
   }
-  .auth-wrap .logo{ margin-bottom:18px; }
-  .auth-wrap .tag{ color:var(--text-soft); font-size:14px; margin-bottom:28px; }
+  .auth-grid{ display:grid; grid-template-columns:1fr; gap:36px; align-items:center; max-width:1200px; margin:0 auto; }
+  .auth-left .logo{ margin-bottom:22px; }
+  .auth-headline{ font-size:36px; line-height:1.08; font-weight:800; letter-spacing:-0.02em; margin:0 0 14px; }
+  .auth-headline .hl-green{ color:var(--green); }
+  .auth-sub{ color:var(--text-soft); font-size:14px; margin:0 0 26px; max-width:380px; }
+  .trust-list{ display:flex; flex-direction:column; gap:16px; }
+  .trust-row{ display:flex; align-items:flex-start; gap:12px; }
+  .trust-icon{ width:36px; height:36px; border-radius:9px; background:var(--green-dim); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .trust-title{ font-weight:600; font-size:14px; }
+  .trust-sub{ color:var(--text-soft); font-size:12px; margin-top:1px; }
+
+  .auth-center{ display:flex; justify-content:center; }
+  .auth-card{
+    background:var(--panel); border:1px solid var(--line); border-radius:20px; padding:28px 26px;
+    width:100%; max-width:400px; box-shadow:0 0 40px rgba(130,227,53,0.08);
+  }
+  .auth-card h2{ margin:0 0 4px; font-size:22px; }
+  .auth-card .card-sub{ color:var(--text-soft); font-size:13px; margin:0 0 22px; }
+  .auth-card .bonus-note{ text-align:center; margin-top:16px; font-size:12px; color:var(--gold); }
+
+  .auth-right{ display:none; }
+  .auth-stats{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:14px; max-width:1200px; margin:36px auto 0;
+  }
+  .stat-item{ background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:14px; display:flex; align-items:center; gap:10px; }
+  .stat-num{ font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:17px; }
+  .stat-label{ color:var(--text-soft); font-size:11px; }
+
   .toggle-row{ text-align:center; margin-top:14px; font-size:13px; color:var(--text-soft); }
   .toggle-row a{ color:var(--green); text-decoration:none; font-weight:600; }
   .error-msg{ background:rgba(232,103,75,0.12); border:1px solid rgba(232,103,75,0.3); color:var(--danger); font-size:13px; padding:10px 12px; border-radius:10px; margin-bottom:14px; display:none; }
+
+  @media (min-width:1000px){
+    .auth-grid{ grid-template-columns:1fr 400px 1fr; gap:24px; }
+    .auth-right{ display:block; }
+    .auth-headline{ font-size:44px; }
+  }
 
   /* Bottom nav (mobile) */
   nav.tabs{ position:fixed; bottom:0; left:0; right:0; background:var(--panel); border-top:1px solid var(--line); display:flex; align-items:center; padding:8px 6px calc(8px + env(safe-area-inset-bottom)); z-index:2; }
@@ -257,50 +288,79 @@
 <body>
 
 <!-- AUTH SCREEN -->
-<div id="authScreen" class="auth-wrap">
-  <div class="auth-scene" aria-hidden="true">
-    <svg viewBox="0 0 400 400" width="100%" height="100%">
-      <defs>
-        <radialGradient id="fadeMask" cx="100%" cy="0%" r="100%">
-          <stop offset="0%" stop-color="white" stop-opacity="1"/>
-          <stop offset="55%" stop-color="white" stop-opacity="0.5"/>
-          <stop offset="100%" stop-color="white" stop-opacity="0"/>
-        </radialGradient>
-        <mask id="cornerFade"><rect width="400" height="400" fill="url(#fadeMask)"/></mask>
-        <linearGradient id="gGreen" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#9AE744"/><stop offset="100%" stop-color="#4C9A1E"/></linearGradient>
-        <linearGradient id="gGold" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#FFD873"/><stop offset="100%" stop-color="#C98A12"/></linearGradient>
-        <linearGradient id="gPurple" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#B79CFF"/><stop offset="100%" stop-color="#5C33C4"/></linearGradient>
-        <linearGradient id="gTeal" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#6FE3F0"/><stop offset="100%" stop-color="#158C9C"/></linearGradient>
-      </defs>
-      <g mask="url(#cornerFade)">
-        <!-- floating app-icon tiles -->
-        <rect x="255" y="215" width="60" height="60" rx="14" fill="url(#gPurple)" transform="rotate(-8 285 245)"/>
-        <path d="M275 245h20M285 235v20" stroke="white" stroke-width="4" stroke-linecap="round" transform="rotate(-8 285 245)"/>
-        <rect x="305" y="130" width="52" height="52" rx="13" fill="url(#gTeal)" transform="rotate(10 331 156)"/>
-        <circle cx="331" cy="156" r="10" fill="white" opacity="0.9" transform="rotate(10 331 156)"/>
-        <!-- dollar coin -->
-        <circle cx="330" cy="255" r="46" fill="url(#gGold)"/>
-        <circle cx="330" cy="255" r="46" fill="none" stroke="#FFF3D0" stroke-width="2" opacity="0.6"/>
-        <text x="330" y="270" font-family="Space Grotesk, sans-serif" font-size="44" font-weight="800" fill="#7A4E00" text-anchor="middle">$</text>
-        <!-- game controller -->
-        <g transform="translate(200,60) rotate(-14)">
-          <rect x="0" y="20" width="150" height="70" rx="35" fill="url(#gGreen)"/>
-          <circle cx="35" cy="55" r="14" fill="#0A0B0D" opacity="0.85"/>
-          <rect x="29" y="49" width="12" height="12" fill="#9AE744"/>
-          <circle cx="112" cy="45" r="9" fill="#0A0B0D" opacity="0.85"/>
-          <circle cx="130" cy="60" r="9" fill="#0A0B0D" opacity="0.85"/>
-        </g>
-      </g>
-    </svg>
+<div id="authScreen" class="auth-page">
+  <div class="auth-topbanner">
+    <svg viewBox="0 0 24 24" width="14" height="14" fill="var(--green)"><path d="M13 2L4 14h6l-1 8 9-12h-6z"/></svg>
+    <span id="authBannerText">Join our growing community</span>
   </div>
-  <div class="auth-form">
-    <div class="logo"><img src="assets/logo.png" alt="WinBig" style="height:120px; width:auto; max-width:80vw; object-fit:contain;"></div>
-    <div class="tag">Do simple tasks. Get paid big. <span style="color:var(--gold); font-weight:600;">Get $5 free just for signing up.</span></div>
-    <div id="authError" class="error-msg"></div>
-    <div class="field"><label>Email</label><input id="authEmail" type="email" placeholder="you@example.com" autocomplete="email" /></div>
-    <div class="field"><label>Password</label><input id="authPassword" type="password" placeholder="••••••••" autocomplete="current-password" /></div>
-    <button class="primary-btn" id="authSubmit">Create account</button>
-    <div class="toggle-row"><span id="authToggleText">Already have an account?</span> <a href="#" id="authToggleLink">Log in</a></div>
+
+  <div class="auth-grid">
+    <div class="auth-left">
+      <div class="logo"><img src="assets/logo.png" alt="WinBig" style="height:46px; width:auto; object-fit:contain;"></div>
+      <h1 class="auth-headline">Do simple<br>tasks.<br><span class="hl-green">Get paid big.</span></h1>
+      <p class="auth-sub">Complete easy tasks, earn real rewards, and grow with WinBig.</p>
+      <div class="trust-list">
+        <div class="trust-row"><div class="trust-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="var(--green)" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg></div><div><div class="trust-title">Simple Tasks</div><div class="trust-sub">Quick & easy tasks anyone can do.</div></div></div>
+        <div class="trust-row"><div class="trust-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="var(--green)" stroke-width="2"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/></svg></div><div><div class="trust-title">Real Rewards</div><div class="trust-sub">Get paid to your preferred wallet.</div></div></div>
+        <div class="trust-row"><div class="trust-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="var(--green)" stroke-width="2"><path d="M12 3l7 4v5c0 5-3.5 7.5-7 9-3.5-1.5-7-4-7-9V7z"/></svg></div><div><div class="trust-title">Safe & Trusted</div><div class="trust-sub">Secure platform. Real people. Real pay.</div></div></div>
+      </div>
+    </div>
+
+    <div class="auth-center">
+      <div class="auth-card">
+        <h2 id="authCardTitle">Welcome back</h2>
+        <p class="card-sub" id="authCardSub">Log in to continue earning</p>
+        <div id="authError" class="error-msg"></div>
+        <div class="field"><label>Email</label><input id="authEmail" type="email" placeholder="you@example.com" autocomplete="email" /></div>
+        <div class="field">
+          <label>Password</label>
+          <input id="authPassword" type="password" placeholder="••••••••" autocomplete="current-password" />
+        </div>
+        <div id="forgotRow" style="text-align:right; margin:-8px 0 16px;"><a href="#" id="forgotLink" style="color:var(--green); font-size:12px; text-decoration:none;">Forgot password?</a></div>
+        <button class="primary-btn" id="authSubmit" style="display:flex; align-items:center; justify-content:center; gap:8px;">Log in <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+        <div class="toggle-row"><span id="authToggleText">Don't have an account?</span> <a href="#" id="authToggleLink">Create account</a></div>
+        <div class="bonus-note">Get $5 free just for signing up</div>
+      </div>
+    </div>
+
+    <div class="auth-right">
+      <svg viewBox="0 0 500 560" width="100%" height="100%">
+        <defs>
+          <linearGradient id="gGreen" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#9AE744"/><stop offset="100%" stop-color="#4C9A1E"/></linearGradient>
+          <linearGradient id="gGold" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#FFD873"/><stop offset="100%" stop-color="#C98A12"/></linearGradient>
+          <linearGradient id="gPurple" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#B79CFF"/><stop offset="100%" stop-color="#5C33C4"/></linearGradient>
+          <linearGradient id="gTeal" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#6FE3F0"/><stop offset="100%" stop-color="#158C9C"/></linearGradient>
+          <radialGradient id="floorGlow" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#82E335" stop-opacity="0.45"/><stop offset="100%" stop-color="#82E335" stop-opacity="0"/></radialGradient>
+        </defs>
+        <ellipse cx="230" cy="480" rx="150" ry="30" fill="url(#floorGlow)"/>
+        <g transform="translate(120,120) rotate(-6)">
+          <rect x="0" y="0" width="190" height="340" rx="26" fill="#0F1512" stroke="#82E335" stroke-width="2" opacity="0.9"/>
+          <path d="M35 150 L60 190 L85 145 L110 190 L135 145" fill="none" stroke="#82E335" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+          <text x="95" y="235" font-family="Space Grotesk, sans-serif" font-size="20" font-weight="700" fill="#fff" text-anchor="middle">Let's win</text>
+          <text x="95" y="258" font-family="Space Grotesk, sans-serif" font-size="20" font-weight="700" fill="#82E335" text-anchor="middle" font-style="italic">together</text>
+        </g>
+        <g transform="translate(260,60) rotate(18)">
+          <rect x="0" y="20" width="170" height="80" rx="40" fill="url(#gGreen)"/>
+          <circle cx="40" cy="60" r="16" fill="#0A0B0D" opacity="0.85"/>
+          <rect x="33" y="53" width="14" height="14" fill="#DFFDBF"/>
+          <circle cx="128" cy="50" r="10" fill="#0A0B0D" opacity="0.85"/>
+          <circle cx="148" cy="68" r="10" fill="#0A0B0D" opacity="0.85"/>
+        </g>
+        <rect x="360" y="210" width="70" height="70" rx="16" fill="url(#gTeal)" transform="rotate(-10 395 245)"/>
+        <circle cx="395" cy="245" r="14" fill="white" opacity="0.9" transform="rotate(-10 395 245)"/>
+        <rect x="330" y="330" width="66" height="66" rx="16" fill="url(#gPurple)" transform="rotate(8 363 363)"/>
+        <path d="M363 345l5 11 12 1-9 8 3 12-11-6-11 6 3-12-9-8 12-1z" fill="white" transform="rotate(8 363 363)"/>
+        <circle cx="270" cy="400" r="52" fill="url(#gGold)"/>
+        <circle cx="270" cy="400" r="52" fill="none" stroke="#FFF3D0" stroke-width="2" opacity="0.6"/>
+        <text x="270" y="418" font-family="Space Grotesk, sans-serif" font-size="50" font-weight="800" fill="#7A4E00" text-anchor="middle">$</text>
+      </svg>
+    </div>
+  </div>
+
+  <div class="auth-stats" id="authStats">
+    <div class="stat-item"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--green)" stroke-width="2"><circle cx="9" cy="8" r="3"/><path d="M2 20c0-3.5 3-5.5 7-5.5s7 2 7 5.5"/></svg><div><div class="stat-num" id="statUsers">—</div><div class="stat-label">Active users</div></div></div>
+    <div class="stat-item"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--green)" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg><div><div class="stat-num" id="statTasks">—</div><div class="stat-label">Tasks completed</div></div></div>
+    <div class="stat-item"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--green)" stroke-width="2"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/></svg><div><div class="stat-num" id="statPaid">₦0</div><div class="stat-label">Paid to users</div></div></div>
   </div>
 </div>
 
@@ -529,14 +589,53 @@ let currentUser = null;
 let settings = { points_per_ad: 10, naira_per_point: 0.1, withdrawal_minimum_naira: 3000, ad_cooldown_seconds: 300 };
 
 // ---------- AUTH ----------
-let authMode = "signup";
+const arrowIcon = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+let authMode = "login";
+function applyAuthMode(){
+  const isLogin = authMode === "login";
+  document.getElementById("authCardTitle").textContent = isLogin ? "Welcome back" : "Create your account";
+  document.getElementById("authCardSub").textContent = isLogin ? "Log in to continue earning" : "Sign up and start earning in minutes";
+  document.getElementById("authSubmit").innerHTML = (isLogin ? "Log in " : "Create account ") + arrowIcon;
+  document.getElementById("authToggleText").textContent = isLogin ? "Don't have an account?" : "Already have an account?";
+  document.getElementById("authToggleLink").textContent = isLogin ? "Create account" : "Log in";
+  document.getElementById("forgotRow").style.display = isLogin ? "block" : "none";
+}
 document.getElementById("authToggleLink").onclick = (e) => {
   e.preventDefault();
-  authMode = authMode === "signup" ? "login" : "signup";
-  document.getElementById("authSubmit").textContent = authMode === "signup" ? "Create account" : "Log in";
-  document.getElementById("authToggleText").textContent = authMode === "signup" ? "Already have an account?" : "New to WinBig?";
-  document.getElementById("authToggleLink").textContent = authMode === "signup" ? "Log in" : "Create account";
+  authMode = authMode === "login" ? "signup" : "login";
+  applyAuthMode();
 };
+document.getElementById("forgotLink").onclick = async (e) => {
+  e.preventDefault();
+  const email = document.getElementById("authEmail").value.trim();
+  const errBox = document.getElementById("authError");
+  errBox.style.display = "none";
+  if(!email){
+    errBox.textContent = "Enter your email above first, then tap 'Forgot password?'";
+    errBox.style.display = "block";
+    return;
+  }
+  const { error } = await sb.auth.resetPasswordForEmail(email);
+  errBox.style.color = error ? "var(--danger)" : "var(--green)";
+  errBox.textContent = error ? error.message : "Password reset email sent — check your inbox.";
+  errBox.style.display = "block";
+};
+applyAuthMode();
+
+async function loadPublicStats(){
+  try {
+    const { data, error } = await sb.rpc("get_public_stats");
+    if(error || !data) return;
+    document.getElementById("statUsers").textContent = data.users.toLocaleString();
+    document.getElementById("statTasks").textContent = data.tasks.toLocaleString();
+    document.getElementById("statPaid").textContent = "₦" + Number(data.paid_naira).toLocaleString();
+    document.getElementById("authBannerText").textContent = data.users > 0
+      ? `Join ${data.users.toLocaleString()}+ users earning every day`
+      : "Be one of our first users — start earning today";
+  } catch(e){}
+}
+loadPublicStats();
+
 document.getElementById("authSubmit").onclick = async () => {
   const email = document.getElementById("authEmail").value.trim();
   const password = document.getElementById("authPassword").value;
