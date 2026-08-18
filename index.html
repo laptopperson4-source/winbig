@@ -278,7 +278,7 @@
   </div>
   <div class="auth-form">
     <div class="logo"><img src="assets/logo.png" alt="WinBig" style="height:120px; width:auto; max-width:80vw; object-fit:contain;"></div>
-    <div class="tag">Do simple tasks. Get paid big.</div>
+    <div class="tag">Do simple tasks. Get paid big. <span style="color:var(--gold); font-weight:600;">Get ₦500 free just for signing up.</span></div>
     <div id="authError" class="error-msg"></div>
     <div class="field"><label>Email</label><input id="authEmail" type="email" placeholder="you@example.com" autocomplete="email" /></div>
     <div class="field"><label>Password</label><input id="authPassword" type="password" placeholder="••••••••" autocomplete="current-password" /></div>
@@ -435,6 +435,16 @@
               <div class="progress-track"><div class="progress-fill" id="withdrawProgress" style="width:0%"></div></div>
               <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--text-soft); margin-top:6px;"><span>Withdrawal progress</span><span id="withdrawProgressLabel">₦0 / ₦3,000</span></div>
             </div>
+          </div>
+          <div id="bonusCard" class="task-card" style="display:none; border-color:var(--gold);">
+            <div class="row">
+              <span class="name" style="display:flex; align-items:center; gap:8px;">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--gold)" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M12 21V7"/><path d="M12 7c-2-4-8-3-8 0s6 4 8 0zM12 7c2-4 8-3 8 0s-6 4-8 0z"/></svg>
+                Signup Bonus (locked)
+              </span>
+              <span class="reward" style="color:var(--gold);">₦<span id="bonusAmount">0.00</span></span>
+            </div>
+            <div class="note" style="margin-top:0;">Unlocks automatically after your first successful withdrawal.</div>
           </div>
           <div id="withdrawLocked" class="task-card">
             <div class="row"><span class="name">Keep earning</span><span class="reward" id="withdrawShortfall">—</span></div>
@@ -618,6 +628,15 @@ async function refreshProfile(){
   document.getElementById("dashTotalEarned").textContent = bal.toFixed(2);
   document.getElementById("walletBalanceAmount").textContent = bal.toFixed(2);
   document.getElementById("rpBalance").textContent = bal.toFixed(2);
+
+  const bonusCard = document.getElementById("bonusCard");
+  const bonus = Number(profile.bonus_balance || 0);
+  if(bonus > 0 && !profile.bonus_unlocked){
+    bonusCard.style.display = "block";
+    document.getElementById("bonusAmount").textContent = bonus.toFixed(2);
+  } else {
+    bonusCard.style.display = "none";
+  }
 
   const min = settings.withdrawal_minimum_naira;
   const pct = Math.min(100, (bal / min) * 100);
