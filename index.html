@@ -218,6 +218,17 @@
   .survey-refresh-note{ text-align:center; font-size:11px; color:var(--text-soft); margin:14px 0 4px; }
 
   .soon-card{ background:var(--panel); border:1px dashed var(--line); border-radius:var(--radius); padding:32px 20px; text-align:center; color:var(--text-soft); }
+
+  .ctask-card{ background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:16px; margin-bottom:10px; }
+  .ctask-card .row{ display:flex; justify-content:space-between; align-items:flex-start; gap:10px; margin-bottom:6px; }
+  .ctask-card .name{ font-weight:600; font-size:14px; }
+  .ctask-card .desc{ color:var(--text-soft); font-size:12px; margin-top:2px; line-height:1.4; }
+  .ctask-card .reward{ font-family:'IBM Plex Mono',monospace; color:var(--green); font-weight:600; font-size:14px; white-space:nowrap; }
+  .ctask-card .btn-row{ display:flex; gap:8px; margin-top:12px; }
+  .ctask-card .btn-row button{ flex:1; padding:10px; border-radius:9px; font-size:12px; font-weight:600; cursor:pointer; border:1px solid var(--line); background:var(--panel-2); color:var(--text); }
+  .ctask-card .btn-row button.claim{ background:linear-gradient(135deg, var(--green-btn-start), var(--green-btn-end)); color:#000; border:none; }
+  .ctask-card .btn-row button:disabled{ opacity:0.5; cursor:not-allowed; }
+  .ctask-card .done-tag{ font-size:11px; color:var(--green); font-weight:600; }
   .soon-card .big-icon{ color:var(--green); margin-bottom:10px; }
 
   /* ===== Desktop breakpoint ===== */
@@ -278,7 +289,7 @@
   </div>
   <div class="auth-form">
     <div class="logo"><img src="assets/logo.png" alt="WinBig" style="height:120px; width:auto; max-width:80vw; object-fit:contain;"></div>
-    <div class="tag">Do simple tasks. Get paid big. <span style="color:var(--gold); font-weight:600;">Get ₦500 free just for signing up.</span></div>
+    <div class="tag">Do simple tasks. Get paid big. <span style="color:var(--gold); font-weight:600;">Get $5 free just for signing up.</span></div>
     <div id="authError" class="error-msg"></div>
     <div class="field"><label>Email</label><input id="authEmail" type="email" placeholder="you@example.com" autocomplete="email" /></div>
     <div class="field"><label>Password</label><input id="authPassword" type="password" placeholder="••••••••" autocomplete="current-password" /></div>
@@ -392,6 +403,8 @@
             <div class="info"><div class="name">Play a Game</div><div class="meta"><span class="tag">Game</span><span>Play as long as you want, credited every 5 min</span></div></div>
             <div class="chev"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></div>
           </div>
+          <div class="section-title">More Tasks</div>
+          <div id="customTasksList"><div class="empty-note">Loading tasks…</div></div>
         </section>
 
         <!-- GAMES (sub-screen) -->
@@ -590,6 +603,7 @@ function goToScreen(name){
   document.querySelectorAll(".tab-btn, .side-link").forEach(b => b.classList.toggle("active", b.dataset.screen === name));
   if(name === "games") initGamesTab();
   if(name === "surveys") loadSurveyWall();
+  if(name === "tasks-hub") loadCustomTasks();
 }
 
 async function loadSettings(){
@@ -894,6 +908,72 @@ async function fetchAndRenderSurveys(){
   } catch (e) {
     list.innerHTML = '<div class="empty-note">Couldn\'t reach the survey service — check your connection and reopen this tab.</div>';
   }
+}
+
+// ---------- CUSTOM TASKS (our own offerwall replacement) ----------
+async function loadCustomTasks(){
+  const list = document.getElementById("customTasksList");
+  const { data: tasks, error } = await sb.from("custom_tasks").select("*").eq("active", true).order("id");
+  if(error || !tasks || !tasks.length){
+    list.innerHTML = '<div class="empty-note">No extra tasks right now — check back soon.</div>';
+    return;
+  }
+  const { data: claimed } = await sb.from("ad_views").select("custom_task_id")
+    .eq("user_id", currentUser.id).eq("source", "custom_task");
+  const claimedIds = new Set((claimed || []).map(c => c.custom_task_id));
+
+  list.innerHTML = tasks.map(t => {
+    const isDone = claimedIds.has(t.id);
+    return `<div class="ctask-card" data-task-id="${t.id}" data-url="${t.target_url || ''}">
+      <div class="row">
+        <div><div class="name">${t.title}</div><div class="desc">${t.description}</div></div>
+        <div class="reward">₦${Number(t.base_naira).toFixed(2)}</div>
+      </div>
+      ${isDone
+        ? '<div class="done-tag">✓ Completed</div>'
+        : `<div class="btn-row">
+             <button class="open-btn">Open</button>
+             <button class="claim claim-btn" disabled>Claim Reward</button>
+           </div>`
+      }
+    </div>`;
+  }).join("");
+
+  list.querySelectorAll(".ctask-card").forEach(card => {
+    const openBtn = card.querySelector(".open-btn");
+    const claimBtn = card.querySelector(".claim-btn");
+    if(!openBtn) return;
+    openBtn.onclick = () => {
+      if(card.dataset.url) window.open(card.dataset.url, "_blank");
+      openBtn.disabled = true;
+      openBtn.textContent = "Opened";
+      let secs = 15;
+      claimBtn.textContent = `Wait ${secs}s`;
+      const t = setInterval(() => {
+        secs--;
+        if(secs <= 0){
+          clearInterval(t);
+          claimBtn.disabled = false;
+          claimBtn.textContent = "Claim Reward";
+        } else {
+          claimBtn.textContent = `Wait ${secs}s`;
+        }
+      }, 1000);
+    };
+    claimBtn.onclick = async () => {
+      claimBtn.disabled = true;
+      claimBtn.textContent = "Claiming…";
+      const taskId = parseInt(card.dataset.taskId);
+      const { data, error } = await sb.rpc("claim_custom_task", { p_task_id: taskId });
+      if(error || data.error){
+        claimBtn.textContent = data?.error === "already_claimed" ? "Already claimed" : "Try again";
+        return;
+      }
+      card.querySelector(".btn-row").outerHTML = '<div class="done-tag">✓ Completed</div>';
+      await refreshProfile();
+      await loadAlertFeed();
+    };
+  });
 }
 
 // ---------- BOOTSTRAP ----------
