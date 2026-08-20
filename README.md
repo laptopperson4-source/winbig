@@ -1,27 +1,81 @@
-# WinBig
+# WinBig - Earn Rewards by Completing Simple Tasks
 
-Watch-ads-earn-naira site. Single-file front end (`index.html`), Supabase backend.
+A modern, responsive web app where users complete simple tasks to earn real rewards.
 
-## What's already wired up
-- **Supabase project**: `ysztokoesjurgkeiooui` (URL + anon key already in `index.html`)
-- **Tables**: `profiles`, `ad_views`, `withdrawals`, `app_settings`, `game_sessions` (RLS enabled)
-- **Earn mechanic: Play a game for N minutes.** No ad network verifies this for a plain website, so it's enforced with our own server-side timing: `start_game_session()` records when a session begins, `complete_game_session()` (both Postgres functions, callable via `sb.rpc`) only pays out once real wall-clock time ≥ the target has passed. This is a heuristic, not proof of engagement — someone determined could still get around it — but it can't be beaten by simply calling the "claim" function instantly.
-- Two earlier approaches were tried and abandoned for this site (Monetag popunder — kept hijacking every click; CPAGrip offer wall — worked, but you wanted custom play-based tasks instead of a preset offer catalog). Both the `monetag-postback` and `cpagrip-postback` Edge Functions are still deployed but unused — safe to delete later.
-- **Front end**: auth (phone + password), Earn tab, Play tab (game + session timer), Dashboard, Withdraw request form.
+## Features
 
-## What you still need to do manually
+✨ **Modern Design**
+- Glassmorphic cards with soft rounded edges
+- Drifting dollar sign animations on login/signup
+- Poster-style task cards with cover images
+- Responsive layout (mobile-first)
+- Lime green & dark purple color scheme
 
-### 1. Add a real game
-Sign up as a publisher at **gamedistribution.com**, grab an embed link for a game from their catalog (legally licensed for third-party embedding — do NOT hotlink games from itch.io or CrazyGames directly, most don't allow that), and paste the URL into `GAME_EMBED_URL` in `index.html`.
+💰 **Earn Rewards**
+- Complete surveys, play games, follow social media
+- Real-time point tracking
+- Flexible task types (custom tasks, surveys, games, social)
+- Glassmorphic glassmorphic UI
 
-### 2. Add the banner ad
-In Monetag, create an **In-Page Push (Banner)** or **Vignette Banner** tag (ambient, no click required — unlike the popunder we removed). Paste the script tag into `GAME_BANNER_TAG` in `index.html`.
+🔐 **Secure Authentication**
+- Email + password auth via Supabase
+- Session management
+- Protected dashboard
 
-### 3. Paystack (withdrawals)
-Not wired yet — withdrawal requests currently just land in the `withdrawals` table as `pending` for manual payout.
+## Setup
 
-### 4. Tune the payout rate
-`app_settings` controls the economics: `game_session_target_seconds` (how long they must play), `game_session_points` (reward per session), `game_session_daily_cap` (sessions/day per user), `naira_per_point`.
+1. Clone the repository
+```bash
+git clone https://github.com/laptopperson4-source/winbig.git
+cd winbig
+```
 
-## Deploying
-Drag `index.html` into Cloudflare Pages, or connect this repo for auto-deploy on push.
+2. Install dependencies
+```bash
+npm install
+```
+
+3. Create `.env.local` with your Supabase credentials
+```
+VITE_SUPABASE_URL=your_supabase_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+
+4. Run dev server
+```bash
+npm run dev
+```
+
+5. Build for production
+```bash
+npm run build
+```
+
+## Deployment
+
+Deploy to Cloudflare Pages:
+1. Push to GitHub
+2. Connect repo to Cloudflare Pages
+3. Set build command: `npm run build`
+4. Set output directory: `dist`
+
+## Project Structure
+
+```
+src/
+  ├── App.jsx         - Main app component
+  ├── main.jsx        - Entry point
+  ├── index.css       - Tailwind styles
+  └── vite.config.js  - Vite configuration
+```
+
+## Colors
+
+- **Background**: #0A0B0D (Dark black)
+- **Accent**: #82E23E (Lime green)
+- **Hover**: #9AE744 (Light lime)
+- **Drifting $**: #20B2AA (Cyan)
+
+## License
+
+MIT
