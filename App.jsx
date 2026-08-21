@@ -6,11 +6,11 @@ const supabase = createClient(
   import.meta.env.VITE_SUPABASE_ANON_KEY
 );
 
-// SVG Icons
+// ============ SVG ICONS ============
 const DashboardIcon = () => <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>;
 const TasksIcon = () => <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>;
 const BonusIcon = () => <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>;
-const StreaksIcon = () => <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>;
+const StreaksIcon = () => <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>;
 const RewardsIcon = () => <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>;
 const ReferralsIcon = () => <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.89 1.97 1.74 1.97 2.95V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>;
 const LeaderboardIcon = () => <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>;
@@ -19,12 +19,8 @@ const HistoryIcon = () => <svg className="w-5 h-5" fill="currentColor" viewBox="
 const ProfileIcon = () => <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>;
 const SettingsIcon = () => <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.64l-1.92-3.32c-.12-.23-.37-.29-.59-.17l-2.39 1.83c-.52-.4-1.08-.73-1.69-.98l-.38-3.05c-.04-.24-.24-.42-.49-.42h-3.84c-.25 0-.45.18-.49.42l-.38 3.05c-.61.25-1.17.59-1.69.98l-2.39-1.83c-.23-.13-.47-.06-.59.17L2.74 8.87c-.12.23-.07.5.12.64l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.64l1.92 3.32c.12.23.37.29.59.17l2.39-1.83c.52.4 1.08.73 1.69.98l.38 3.05c.05.24.24.42.49.42h3.84c.25 0 .45-.18.49-.42l.38-3.05c.61-.25 1.17-.59 1.69-.98l2.39 1.83c.23.13.47.06.59-.17l1.92-3.32c.12-.23.07-.5-.12-.64l-2.03-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>;
 const HelpIcon = () => <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>;
-const StarIcon = () => <svg className="w-6 h-6" fill="#82E23E" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>;
-const FireIcon = () => <svg className="w-6 h-6" fill="#F59E0B" viewBox="0 0 24 24"><path d="M11.76 6.84l1.24-2.75c.02-.05.04-.1.04-.15 0-.18-.15-.33-.33-.33-.18 0-.33.15-.33.33 0 .05.02.1.04.15l1.24 2.75c.36-.89.65-1.75.92-2.67.02-.08.04-.16.04-.24 0-.18-.15-.33-.33-.33-.18 0-.33.15-.33.33 0 .08.02.16.04.24-.27.92-.56 1.78-.92 2.67zm10.58-5.64c-.16-.1-.36-.06-.47.1l-1.08 1.77c-.2.32-.16.73.09 1.01.26.29.66.35 1 .15.34-.2.53-.6.47-1v-.02l-.01-.01zm-20 0c.1-.16.06-.36-.1-.47-.16-.1-.36-.06-.47.1L.13 2.24c-.2.32-.16.73.09 1.01.26.29.66.35 1 .15.34-.2.53-.6.47-1l-.01-.02zm9.21 4.2c-.92 0-1.67.75-1.67 1.67S9.63 9.34 10.55 9.34s1.67-.75 1.67-1.67-.75-1.67-1.67-1.67zm0 2.67c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z"/></svg>;
-const TrophyIcon = () => <svg className="w-6 h-6" fill="#FCD34D" viewBox="0 0 24 24"><path d="M12 3C7.59 3 4 6.59 4 11c0 2.64 1.35 4.97 3.36 6.39C7.16 19.29 8.08 20.73 8.08 20.73h7.84s.92-1.44 1.72-3.34C18.65 15.97 20 13.64 20 11c0-4.41-3.59-8-8-8zm0 14c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6z"/></svg>;
-const GiftIcon = () => <svg className="w-6 h-6" fill="#A78BFA" viewBox="0 0 24 24"><path d="M12 2c-1.1 0-2 .9-2 2h-1V2h-2v2H6c-1.1 0-2 .9-2 2v2c0 1.1.9 2 2 2h1v10c0 1.1.9 2 2 2h6c1.1 0 2-.9 2-2V10h1c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2h-1V2h-2v2h-1c0-1.1-.9-2-2-2zm0 2h4v2h-4V4zm0 4h4v8h-4V8z"/></svg>;
-const PlayIcon = () => <svg className="w-6 h-6" fill="#9333EA" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>;
 
+// ============ LOGIN PAGE ============
 const LoginPage = ({ onLogin }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -52,7 +48,7 @@ const LoginPage = ({ onLogin }) => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0A0B0D] text-white overflow-hidden relative flex flex-col items-center justify-center px-4">
+    <div className="min-h-screen bg-[#0A0B0D] text-white overflow-hidden flex flex-col items-center justify-center px-4">
       <div className="mb-12 text-center">
         <div className="flex items-center justify-center gap-2 mb-8">
           <div className="w-10 h-10 bg-[#82E23E] rounded-lg flex items-center justify-center">
@@ -108,38 +104,555 @@ const LoginPage = ({ onLogin }) => {
   );
 };
 
-// TaskCard Component
-const TaskCard = ({ task }) => {
-  return (
-    <div className="bg-[#0A0B0D] bg-opacity-40 backdrop-blur-md border border-[#82E23E] border-opacity-20 rounded-2xl overflow-hidden hover:border-opacity-40 transition-all">
-      {task.cover_image_url && (
-        <div className="w-full h-40 overflow-hidden bg-gradient-to-b from-[#82E23E] to-[#0A0B0D]">
-          <img 
-            src={task.cover_image_url} 
-            alt={task.title}
-            className="w-full h-full object-cover hover:scale-105 transition-transform"
-          />
+// ============ TAB CONTENT RENDERERS ============
+const TasksTab = () => (
+  <div className="space-y-6">
+    <div className="grid grid-cols-4 gap-4">
+      <div className="bg-[#0A0B0D] bg-opacity-40 backdrop-blur-md border border-[#82E23E] border-opacity-20 rounded-2xl p-4">
+        <p className="text-gray-400 text-sm mb-2">Tasks Completed</p>
+        <p className="text-3xl font-bold text-white">18</p>
+        <p className="text-xs text-[#82E23E] mt-1">↑ 3 from yesterday</p>
+      </div>
+      <div className="bg-[#0A0B0D] bg-opacity-40 backdrop-blur-md border border-[#82E23E] border-opacity-20 rounded-2xl p-4">
+        <p className="text-gray-400 text-sm mb-2">Available Points</p>
+        <p className="text-3xl font-bold text-white">250</p>
+        <p className="text-xs text-gray-400 mt-1">Earn by completing tasks</p>
+      </div>
+      <div className="bg-[#0A0B0D] bg-opacity-40 backdrop-blur-md border border-[#82E23E] border-opacity-20 rounded-2xl p-4">
+        <p className="text-gray-400 text-sm mb-2">In Progress</p>
+        <p className="text-3xl font-bold text-white">2</p>
+        <p className="text-xs text-gray-400 mt-1">Keep it up!</p>
+      </div>
+      <div className="bg-[#0A0B0D] bg-opacity-40 backdrop-blur-md border border-[#82E23E] border-opacity-20 rounded-2xl p-4">
+        <p className="text-gray-400 text-sm mb-2">Bonus Tasks</p>
+        <p className="text-3xl font-bold text-white">12</p>
+        <p className="text-xs text-gray-400 mt-1">Complete for extra</p>
+      </div>
+    </div>
+
+    <div className="bg-[#0A0B0D] bg-opacity-40 backdrop-blur-md border border-[#82E23E] border-opacity-20 rounded-2xl p-6">
+      <div className="flex gap-2 mb-6 overflow-x-auto">
+        {['All Tasks', 'Featured', 'Apps', 'Surveys', 'Videos', 'Offers', 'Games'].map(tab => (
+          <button key={tab} className="px-4 py-2 bg-[#82E23E] bg-opacity-20 text-[#82E23E] rounded-lg text-sm font-semibold hover:bg-opacity-30 whitespace-nowrap">
+            {tab}
+          </button>
+        ))}
+      </div>
+
+      <div className="space-y-3">
+        {[
+          { icon: '📱', title: 'Download the App', points: '+30', difficulty: 'Easy', time: '1 min' },
+          { icon: '🎮', title: 'Reach Level 5', points: '+60', difficulty: 'Medium', time: '10-15 min' },
+          { icon: '🎥', title: 'Watch a Video', points: '+15', difficulty: 'Easy', time: '1-2 min' },
+          { icon: '📋', title: 'Complete a Survey', points: '+25', difficulty: 'Medium', time: '5-10 min' },
+        ].map((task, i) => (
+          <div key={i} className="flex items-center justify-between p-4 bg-[#0A0B0D] bg-opacity-40 border border-[#82E23E] border-opacity-20 rounded-lg hover:border-opacity-40 transition-all">
+            <div className="flex items-center gap-4">
+              <div className="text-3xl">{task.icon}</div>
+              <div>
+                <p className="font-bold text-white">{task.title}</p>
+                <p className="text-xs text-gray-400">{task.difficulty} • {task.time}</p>
+              </div>
+            </div>
+            <div className="text-right">
+              <p className="text-2xl font-bold text-[#82E23E]">{task.points}</p>
+              <button className="text-[#82E23E] hover:text-[#9AE744] text-sm font-semibold mt-1">Start Task</button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+);
+
+const WalletTab = () => (
+  <div className="space-y-6">
+    <div className="bg-[#0A0B0D] bg-opacity-40 backdrop-blur-md border border-[#82E23E] border-opacity-20 rounded-2xl p-6">
+      <div className="flex justify-between items-start mb-6">
+        <div>
+          <p className="text-gray-400 text-sm mb-2">Total Balance</p>
+          <p className="text-4xl font-bold text-white">$12.50</p>
+          <p className="text-[#82E23E] text-sm mt-2">= 1,250 Points</p>
         </div>
-      )}
+        <div className="text-right">
+          <button className="bg-[#82E23E] text-[#0A0B0D] font-bold px-4 py-2 rounded-lg hover:bg-[#9AE744] transition-colors mb-2">
+            Withdraw
+          </button>
+          <button className="bg-[#82E23E] bg-opacity-20 text-[#82E23E] font-bold px-4 py-2 rounded-lg hover:bg-opacity-30 transition-colors block w-full">
+            Convert Points
+          </button>
+        </div>
+      </div>
 
-      <div className="p-4">
-        <p className="text-gray-400 text-xs mb-1 uppercase">EARN</p>
-        <p className="text-2xl font-bold text-[#82E23E] mb-3">{task.base_points || 0} POINTS</p>
+      <div className="grid grid-cols-4 gap-4 mt-6 pt-6 border-t border-[#82E23E] border-opacity-10">
+        <div>
+          <p className="text-gray-400 text-xs mb-1">Points Balance</p>
+          <p className="text-2xl font-bold text-white">1,250</p>
+        </div>
+        <div>
+          <p className="text-gray-400 text-xs mb-1">Total Earned</p>
+          <p className="text-2xl font-bold text-white">$28.70</p>
+        </div>
+        <div>
+          <p className="text-gray-400 text-xs mb-1">Total Withdraw</p>
+          <p className="text-2xl font-bold text-white">$16.20</p>
+        </div>
+        <div>
+          <p className="text-gray-400 text-xs mb-1">Pending</p>
+          <p className="text-2xl font-bold text-white">$2.30</p>
+        </div>
+      </div>
+    </div>
 
-        <h3 className="text-sm font-bold text-white mb-1">{task.title}</h3>
-        <p className="text-gray-400 text-xs mb-4 line-clamp-2">{task.description}</p>
+    <div className="bg-[#0A0B0D] bg-opacity-40 backdrop-blur-md border border-[#82E23E] border-opacity-20 rounded-2xl p-6">
+      <h3 className="text-lg font-bold mb-4">Recent Transactions</h3>
+      <div className="space-y-3">
+        {[
+          { type: 'Task', desc: 'Task Completed', amount: '+150 Pts', status: 'Completed', date: 'May 18, 10:30 AM' },
+          { type: 'Bonus', desc: 'Daily Bonus', amount: '+50 Pts', status: 'Completed', date: 'May 18, 08:00 AM' },
+          { type: 'Convert', desc: 'Points Converted', amount: '-500 Pts / +$5', status: 'Completed', date: 'May 17, 06:45 PM' },
+        ].map((tx, i) => (
+          <div key={i} className="flex justify-between items-center p-3 bg-[#0A0B0D] bg-opacity-40 border border-[#82E23E] border-opacity-20 rounded-lg">
+            <div>
+              <p className="font-bold text-white text-sm">{tx.desc}</p>
+              <p className="text-gray-400 text-xs">{tx.date}</p>
+            </div>
+            <p className="text-[#82E23E] font-bold">{tx.amount}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+);
 
-        <button className="w-full bg-[#82E23E] bg-opacity-20 border border-[#82E23E] text-[#82E23E] font-semibold py-2 rounded-lg hover:bg-opacity-30 transition-colors text-sm">
-          Start Task
+const LeaderboardTab = () => (
+  <div className="space-y-6">
+    <div className="bg-[#0A0B0D] bg-opacity-40 backdrop-blur-md border border-[#82E23E] border-opacity-20 rounded-2xl p-6">
+      <h3 className="text-lg font-bold mb-4">Top 10</h3>
+      <div className="space-y-2">
+        {[
+          { rank: 1, name: 'TopWinner', points: '12,450', badge: '🏆' },
+          { rank: 2, name: 'TaskMaster', points: '8,230', badge: '🥈' },
+          { rank: 3, name: 'EarnQueen', points: '6,780', badge: '🥉' },
+          { rank: 4, name: 'GrindPro', points: '5,610', badge: '' },
+          { rank: 5, name: 'WinKing', points: '4,900', badge: '' },
+        ].map(user => (
+          <div key={user.rank} className="flex items-center justify-between p-3 bg-[#0A0B0D] bg-opacity-40 border border-[#82E23E] border-opacity-20 rounded-lg hover:border-opacity-40 transition-all">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-[#82E23E] bg-opacity-20 rounded-full flex items-center justify-center text-[#82E23E] font-bold">
+                {user.rank}
+              </div>
+              <p className="font-bold text-white">{user.name}</p>
+            </div>
+            <p className="text-[#82E23E] font-bold">{user.points}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <div className="bg-[#0A0B0D] bg-opacity-40 backdrop-blur-md border border-[#82E23E] border-opacity-20 rounded-2xl p-6">
+      <h3 className="text-lg font-bold mb-4">Your Rank</h3>
+      <div className="text-center">
+        <p className="text-5xl font-bold text-[#82E23E] mb-2">14 / 2,345</p>
+        <p className="text-gray-400">Keep going! You're in the top 1%</p>
+      </div>
+    </div>
+  </div>
+);
+
+const RewardsTab = () => (
+  <div className="space-y-6">
+    <div className="grid grid-cols-4 gap-4">
+      <div className="bg-[#0A0B0D] bg-opacity-40 backdrop-blur-md border border-[#82E23E] border-opacity-20 rounded-2xl p-4">
+        <p className="text-gray-400 text-xs mb-2">Total Points</p>
+        <p className="text-2xl font-bold text-white">1,250</p>
+      </div>
+      <div className="bg-[#0A0B0D] bg-opacity-40 backdrop-blur-md border border-[#82E23E] border-opacity-20 rounded-2xl p-4">
+        <p className="text-gray-400 text-xs mb-2">Rewards Claimed</p>
+        <p className="text-2xl font-bold text-white">18</p>
+      </div>
+      <div className="bg-[#0A0B0D] bg-opacity-40 backdrop-blur-md border border-[#82E23E] border-opacity-20 rounded-2xl p-4">
+        <p className="text-gray-400 text-xs mb-2">Available Rewards</p>
+        <p className="text-2xl font-bold text-white">12</p>
+      </div>
+      <div className="bg-[#0A0B0D] bg-opacity-40 backdrop-blur-md border border-[#82E23E] border-opacity-20 rounded-2xl p-4">
+        <p className="text-gray-400 text-xs mb-2">Total Redeemed</p>
+        <p className="text-2xl font-bold text-white">$12.50</p>
+      </div>
+    </div>
+
+    <div className="bg-[#0A0B0D] bg-opacity-40 backdrop-blur-md border border-[#82E23E] border-opacity-20 rounded-2xl p-6">
+      <h3 className="text-lg font-bold mb-4">Available Rewards</h3>
+      <div className="grid grid-cols-2 gap-4">
+        {[
+          { name: 'Google Play $5', points: '500 Points' },
+          { name: 'PayPal Cash $5', points: '500 Points' },
+          { name: 'Netflix 1 Month', points: '750 Points' },
+          { name: 'Amazon Gift Card $10', points: '1,000 Points' },
+        ].map((reward, i) => (
+          <div key={i} className="bg-[#0A0B0D] bg-opacity-40 border border-[#82E23E] border-opacity-20 rounded-lg p-4 text-center hover:border-opacity-40 transition-all cursor-pointer">
+            <p className="font-bold text-white mb-2">{reward.name}</p>
+            <p className="text-[#82E23E] text-sm mb-3">{reward.points}</p>
+            <button className="w-full bg-[#82E23E] bg-opacity-20 text-[#82E23E] font-bold py-2 rounded-lg hover:bg-opacity-30">
+              Redeem Now
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+);
+
+const StreaksTab = () => (
+  <div className="space-y-6">
+    <div className="bg-[#0A0B0D] bg-opacity-40 backdrop-blur-md border border-[#82E23E] border-opacity-20 rounded-2xl p-6">
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h3 className="text-2xl font-bold text-white mb-2">Your Current Streak</h3>
+          <p className="text-gray-400">Keep it up!</p>
+        </div>
+        <div className="text-right">
+          <p className="text-6xl font-bold text-[#82E23E]">7</p>
+          <p className="text-gray-400 text-sm">Days</p>
+        </div>
+      </div>
+
+      <div className="flex gap-2 justify-center">
+        {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day, i) => (
+          <div key={day} className="text-center">
+            <div className={`w-10 h-10 rounded-lg flex items-center justify-center text-sm font-bold mb-1 ${
+              i < 7 ? 'bg-[#82E23E] bg-opacity-20 border border-[#82E23E] text-[#82E23E]' : 'bg-gray-700 text-gray-400'
+            }`}>
+              {i < 7 ? '✓' : '○'}
+            </div>
+            <p className="text-xs text-gray-400">{day}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <div className="bg-[#0A0B0D] bg-opacity-40 backdrop-blur-md border border-[#82E23E] border-opacity-20 rounded-2xl p-6">
+      <h3 className="text-lg font-bold mb-4">Streak Rewards</h3>
+      <div className="flex gap-2 overflow-x-auto">
+        {[
+          { day: 'Day 1', points: '+10' },
+          { day: 'Day 2', points: '+20' },
+          { day: 'Day 3', points: '+30' },
+          { day: 'Day 4', points: '+50' },
+          { day: 'Day 5', points: '+75' },
+          { day: 'Day 6', points: '+100' },
+          { day: 'Day 7', points: '+150', active: true },
+          { day: 'Day 10', points: '+500', locked: true },
+        ].map((reward, i) => (
+          <div key={i} className={`px-4 py-2 rounded-lg text-xs font-bold whitespace-nowrap ${
+            reward.locked ? 'bg-gray-700 text-gray-400' : reward.active ? 'bg-[#82E23E] bg-opacity-30 border border-[#82E23E] text-[#82E23E]' : 'bg-[#0A0B0D] bg-opacity-40 border border-[#82E23E] border-opacity-20 text-white'
+          }`}>
+            {reward.day}<br/>{reward.points}
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+);
+
+const DailyBonusTab = () => (
+  <div className="space-y-6">
+    <div className="bg-[#0A0B0D] bg-opacity-40 backdrop-blur-md border border-[#82E23E] border-opacity-20 rounded-2xl p-6">
+      <h3 className="text-lg font-bold mb-4">Your 7-Day Streak</h3>
+      <p className="text-gray-400 mb-6">Claim your bonus today and come back tomorrow for an even bigger reward!</p>
+      
+      <div className="flex gap-2 mb-6 justify-center">
+        {['+10', '+20', '+30', '+50', '+75', '+100', '+150'].map((bonus, i) => (
+          <div key={i} className={`px-3 py-2 rounded-lg text-xs font-bold text-center ${
+            i === 6 ? 'bg-[#82E23E] bg-opacity-30 border border-[#82E23E] text-[#82E23E]' : 'bg-[#0A0B0D] bg-opacity-40 border border-[#82E23E] border-opacity-20 text-white'
+          }`}>
+            Day {i+1}<br/>{bonus}
+          </div>
+        ))}
+      </div>
+
+      <button className="w-full bg-[#82E23E] text-[#0A0B0D] font-bold py-3 rounded-lg hover:bg-[#9AE744] transition-colors">
+        Claim Bonus
+      </button>
+    </div>
+
+    <div className="bg-[#0A0B0D] bg-opacity-40 backdrop-blur-md border border-[#82E23E] border-opacity-20 rounded-2xl p-6">
+      <h3 className="text-lg font-bold mb-4">Bonus History</h3>
+      <div className="space-y-2">
+        {[
+          { day: 'Day 7', date: 'May 16, 2024', bonus: '+150 Points' },
+          { day: 'Day 6', date: 'May 15, 2024', bonus: '+100 Points' },
+          { day: 'Day 5', date: 'May 14, 2024', bonus: '+75 Points' },
+        ].map((history, i) => (
+          <div key={i} className="flex justify-between items-center p-3 bg-[#0A0B0D] bg-opacity-40 border border-[#82E23E] border-opacity-20 rounded-lg">
+            <div>
+              <p className="font-bold text-white text-sm">{history.day}</p>
+              <p className="text-gray-400 text-xs">{history.date}</p>
+            </div>
+            <p className="text-[#82E23E] font-bold">{history.bonus}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+);
+
+const ReferralsTab = () => (
+  <div className="space-y-6">
+    <div className="grid grid-cols-4 gap-4">
+      <div className="bg-[#0A0B0D] bg-opacity-40 backdrop-blur-md border border-[#82E23E] border-opacity-20 rounded-2xl p-4">
+        <p className="text-gray-400 text-sm mb-2">Total Referrals</p>
+        <p className="text-3xl font-bold text-[#82E23E]">12</p>
+      </div>
+      <div className="bg-[#0A0B0D] bg-opacity-40 backdrop-blur-md border border-[#82E23E] border-opacity-20 rounded-2xl p-4">
+        <p className="text-gray-400 text-sm mb-2">Verified</p>
+        <p className="text-3xl font-bold text-[#82E23E]">8</p>
+      </div>
+      <div className="bg-[#0A0B0D] bg-opacity-40 backdrop-blur-md border border-[#82E23E] border-opacity-20 rounded-2xl p-4">
+        <p className="text-gray-400 text-sm mb-2">Points Earned</p>
+        <p className="text-3xl font-bold text-[#82E23E]">1,250</p>
+      </div>
+      <div className="bg-[#0A0B0D] bg-opacity-40 backdrop-blur-md border border-[#82E23E] border-opacity-20 rounded-2xl p-4">
+        <p className="text-gray-400 text-sm mb-2">Total Earned</p>
+        <p className="text-3xl font-bold text-[#82E23E]">$12.50</p>
+      </div>
+    </div>
+
+    <div className="bg-[#0A0B0D] bg-opacity-40 backdrop-blur-md border border-[#82E23E] border-opacity-20 rounded-2xl p-6">
+      <h3 className="text-lg font-bold mb-4">Your Referral Link</h3>
+      <div className="flex gap-2">
+        <input type="text" value="https://winbig.pages.dev/join?ref=blapityblabloop" readOnly className="flex-1 bg-[#1a1a1d] border border-[#82E23E] border-opacity-20 rounded-lg px-4 py-3 text-white text-sm" />
+        <button className="bg-[#82E23E] text-[#0A0B0D] font-bold px-4 py-3 rounded-lg hover:bg-[#9AE744]">
+          Copy
+        </button>
+      </div>
+      <p className="text-gray-400 text-xs mt-3 text-center">You earn 10% of all points your friends earn. There's no limit!</p>
+    </div>
+
+    <div className="bg-[#0A0B0D] bg-opacity-40 backdrop-blur-md border border-[#82E23E] border-opacity-20 rounded-2xl p-6">
+      <h3 className="text-lg font-bold mb-4">Your Referrals</h3>
+      <div className="space-y-2">
+        {[
+          { email: 'alice@example.com', date: 'May 18, 2024', status: 'Verified', points: '+52' },
+          { email: 'john@example.com', date: 'May 16, 2024', status: 'Verified', points: '+32' },
+          { email: 'mike@example.com', date: 'May 14, 2024', status: 'Verified', points: '+28' },
+        ].map((ref, i) => (
+          <div key={i} className="flex justify-between items-center p-3 bg-[#0A0B0D] bg-opacity-40 border border-[#82E23E] border-opacity-20 rounded-lg">
+            <div>
+              <p className="font-bold text-white text-sm">{ref.email}</p>
+              <p className="text-gray-400 text-xs">{ref.date}</p>
+            </div>
+            <div className="text-right">
+              <p className="text-[#82E23E] font-bold text-sm">{ref.status}</p>
+              <p className="text-[#82E23E] font-bold">{ref.points}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+);
+
+const ProfileTab = ({ user }) => (
+  <div className="space-y-6">
+    <div className="bg-[#0A0B0D] bg-opacity-40 backdrop-blur-md border border-[#82E23E] border-opacity-20 rounded-2xl p-6">
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-4">
+          <div className="w-16 h-16 bg-[#82E23E] rounded-full flex items-center justify-center text-[#0A0B0D] font-bold text-2xl">
+            {user?.email.charAt(0).toUpperCase()}
+          </div>
+          <div>
+            <p className="text-2xl font-bold text-white">{user?.email.split('@')[0]}</p>
+            <p className="text-gray-400">{user?.email}</p>
+            <p className="text-[#82E23E] text-sm mt-1">Active</p>
+          </div>
+        </div>
+        <button className="bg-[#82E23E] bg-opacity-20 text-[#82E23E] font-bold px-4 py-2 rounded-lg hover:bg-opacity-30">
+          Edit Profile
+        </button>
+      </div>
+
+      <div className="grid grid-cols-4 gap-4">
+        <div className="text-center">
+          <p className="text-3xl font-bold text-[#82E23E]">1,250</p>
+          <p className="text-gray-400 text-xs mt-1">Total Points</p>
+        </div>
+        <div className="text-center">
+          <p className="text-3xl font-bold text-[#82E23E]">18</p>
+          <p className="text-gray-400 text-xs mt-1">Tasks Completed</p>
+        </div>
+        <div className="text-center">
+          <p className="text-3xl font-bold text-[#82E23E]">7</p>
+          <p className="text-gray-400 text-xs mt-1">Current Streak</p>
+        </div>
+        <div className="text-center">
+          <p className="text-3xl font-bold text-[#82E23E]">$12.50</p>
+          <p className="text-gray-400 text-xs mt-1">Total Earned</p>
+        </div>
+      </div>
+    </div>
+
+    <div className="bg-[#0A0B0D] bg-opacity-40 backdrop-blur-md border border-[#82E23E] border-opacity-20 rounded-2xl p-6">
+      <h3 className="text-lg font-bold mb-4">Achievements</h3>
+      <div className="flex gap-4 flex-wrap">
+        {[
+          { icon: '✓', label: 'First Steps' },
+          { icon: '7', label: 'Week Warrior' },
+          { icon: '🔥', label: 'Streak Master' },
+          { icon: '🏆', label: 'Task Master' },
+        ].map((achievement, i) => (
+          <div key={i} className="text-center">
+            <div className="w-12 h-12 mx-auto bg-[#82E23E] bg-opacity-20 border border-[#82E23E] rounded-full flex items-center justify-center text-lg mb-2">
+              {achievement.icon}
+            </div>
+            <p className="text-xs text-gray-400">{achievement.label}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <div className="bg-[#0A0B0D] bg-opacity-40 backdrop-blur-md border border-[#82E23E] border-opacity-20 rounded-2xl p-6">
+      <h3 className="text-lg font-bold mb-4">Account Settings</h3>
+      <div className="space-y-3">
+        <button className="w-full flex justify-between items-center p-3 bg-[#0A0B0D] bg-opacity-40 border border-[#82E23E] border-opacity-20 rounded-lg hover:border-opacity-40">
+          <span className="text-white font-semibold">Notification Settings</span>
+          <span className="text-gray-400">→</span>
+        </button>
+        <button className="w-full flex justify-between items-center p-3 bg-[#0A0B0D] bg-opacity-40 border border-[#82E23E] border-opacity-20 rounded-lg hover:border-opacity-40">
+          <span className="text-white font-semibold">Privacy Settings</span>
+          <span className="text-gray-400">→</span>
         </button>
       </div>
     </div>
-  );
-};
+  </div>
+);
 
-// Main Dashboard
-const Dashboard = ({ user, onLogout, tasks, profile }) => {
+const HistoryTab = () => (
+  <div className="space-y-6">
+    <div className="bg-[#0A0B0D] bg-opacity-40 backdrop-blur-md border border-[#82E23E] border-opacity-20 rounded-2xl p-6">
+      <h3 className="text-lg font-bold mb-4">Recent Activity</h3>
+      <div className="space-y-2">
+        {[
+          { activity: 'Task Completed', date: 'May 18, 2024', amount: '+150 Points', status: 'Completed' },
+          { activity: 'Daily Bonus', date: 'May 18, 2024', amount: '+50 Points', status: 'Completed' },
+          { activity: 'Points Converted', date: 'May 17, 2024', amount: '-500 Points', status: 'Completed' },
+          { activity: 'Withdrawal', date: 'May 16, 2024', amount: '-$10.00', status: 'Completed' },
+        ].map((item, i) => (
+          <div key={i} className="flex justify-between items-center p-3 bg-[#0A0B0D] bg-opacity-40 border border-[#82E23E] border-opacity-20 rounded-lg hover:border-opacity-40">
+            <div>
+              <p className="font-bold text-white text-sm">{item.activity}</p>
+              <p className="text-gray-400 text-xs">{item.date}</p>
+            </div>
+            <div className="text-right">
+              <p className="text-[#82E23E] font-bold text-sm">{item.amount}</p>
+              <p className="text-[#82E23E] text-xs">{item.status}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+);
+
+const SettingsTab = () => (
+  <div className="space-y-6">
+    <div className="bg-[#0A0B0D] bg-opacity-40 backdrop-blur-md border border-[#82E23E] border-opacity-20 rounded-2xl p-6">
+      <h3 className="text-lg font-bold mb-4">Account Information</h3>
+      <div className="space-y-3">
+        <div>
+          <p className="text-gray-400 text-sm mb-1">Email</p>
+          <p className="text-white font-semibold">blapityblabloop@gmail.com</p>
+        </div>
+        <div>
+          <p className="text-gray-400 text-sm mb-1">Member Since</p>
+          <p className="text-white font-semibold">May 10, 2024</p>
+        </div>
+      </div>
+    </div>
+
+    <div className="bg-[#0A0B0D] bg-opacity-40 backdrop-blur-md border border-[#82E23E] border-opacity-20 rounded-2xl p-6">
+      <h3 className="text-lg font-bold mb-4">Preferences</h3>
+      <div className="space-y-3">
+        <div className="flex justify-between items-center">
+          <p className="text-white">Language</p>
+          <p className="text-[#82E23E]">English →</p>
+        </div>
+        <div className="flex justify-between items-center">
+          <p className="text-white">Timezone</p>
+          <p className="text-[#82E23E]">West Africa Time →</p>
+        </div>
+      </div>
+    </div>
+
+    <div className="bg-[#0A0B0D] bg-opacity-40 backdrop-blur-md border border-[#82E23E] border-opacity-20 rounded-2xl p-6">
+      <h3 className="text-lg font-bold mb-4 text-red-400">Account Actions</h3>
+      <div className="space-y-2">
+        <button className="w-full p-3 bg-red-500 bg-opacity-20 border border-red-500 border-opacity-50 text-red-400 font-bold rounded-lg hover:bg-opacity-30">
+          Change Password
+        </button>
+        <button className="w-full p-3 bg-red-500 bg-opacity-20 border border-red-500 border-opacity-50 text-red-400 font-bold rounded-lg hover:bg-opacity-30">
+          Delete Account
+        </button>
+      </div>
+    </div>
+  </div>
+);
+
+const HelpTab = () => (
+  <div className="space-y-6">
+    <div className="bg-[#0A0B0D] bg-opacity-40 backdrop-blur-md border border-[#82E23E] border-opacity-20 rounded-2xl p-6">
+      <h3 className="text-lg font-bold mb-4">Frequently Asked Questions</h3>
+      <div className="space-y-2">
+        {[
+          'How do I earn points on WinBig?',
+          'When will I receive my withdrawal?',
+          'What payment methods do you support?',
+          'Is there a minimum amount to withdraw?',
+        ].map((faq, i) => (
+          <button key={i} className="w-full text-left p-3 bg-[#0A0B0D] bg-opacity-40 border border-[#82E23E] border-opacity-20 rounded-lg hover:border-opacity-40">
+            <p className="text-white font-semibold text-sm">{faq}</p>
+          </button>
+        ))}
+      </div>
+    </div>
+
+    <div className="bg-[#0A0B0D] bg-opacity-40 backdrop-blur-md border border-[#82E23E] border-opacity-20 rounded-2xl p-6">
+      <h3 className="text-lg font-bold mb-4">Contact Support</h3>
+      <div className="space-y-3">
+        <button className="w-full p-3 bg-[#82E23E] bg-opacity-20 text-[#82E23E] font-bold rounded-lg hover:bg-opacity-30">
+          Email Support
+        </button>
+        <button className="w-full p-3 bg-[#82E23E] bg-opacity-20 text-[#82E23E] font-bold rounded-lg hover:bg-opacity-30">
+          Live Chat
+        </button>
+      </div>
+    </div>
+
+    <div className="bg-[#0A0B0D] bg-opacity-40 backdrop-blur-md border border-[#82E23E] border-opacity-20 rounded-2xl p-6">
+      <h3 className="text-lg font-bold mb-2">Support Status</h3>
+      <p className="text-[#82E23E] font-bold mb-3">All Systems Operational</p>
+      <div className="space-y-1 text-sm">
+        <div className="flex justify-between">
+          <span className="text-gray-400">Website</span>
+          <span className="text-[#82E23E]">Operational</span>
+        </div>
+        <div className="flex justify-between">
+          <span className="text-gray-400">API</span>
+          <span className="text-[#82E23E]">Operational</span>
+        </div>
+        <div className="flex justify-between">
+          <span className="text-gray-400">Payments</span>
+          <span className="text-[#82E23E]">Operational</span>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+// ============ MAIN DASHBOARD ============
+const Dashboard = ({ user, onLogout, tasks }) => {
   const [activeNav, setActiveNav] = useState('dashboard');
+  const [showStats, setShowStats] = useState(true);
 
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: DashboardIcon },
@@ -156,11 +669,55 @@ const Dashboard = ({ user, onLogout, tasks, profile }) => {
     { id: 'help', label: 'Help & Support', icon: HelpIcon },
   ];
 
+  const renderTab = () => {
+    switch(activeNav) {
+      case 'dashboard':
+        return (
+          <div className="space-y-6">
+            <h1 className="text-3xl font-bold">Dashboard</h1>
+            <div className="grid grid-cols-4 gap-4">
+              <div className="bg-[#0A0B0D] bg-opacity-40 backdrop-blur-md border border-[#82E23E] border-opacity-20 rounded-2xl p-6">
+                <p className="text-gray-400 text-sm mb-2">Total Points</p>
+                <p className="text-3xl font-bold text-white">1,250</p>
+                <p className="text-[#82E23E] text-xs mt-2">+150 from yesterday</p>
+              </div>
+              <div className="bg-[#0A0B0D] bg-opacity-40 backdrop-blur-md border border-[#82E23E] border-opacity-20 rounded-2xl p-6">
+                <p className="text-gray-400 text-sm mb-2">Tasks Completed</p>
+                <p className="text-3xl font-bold text-white">18</p>
+                <p className="text-[#82E23E] text-xs mt-2">+3 from yesterday</p>
+              </div>
+              <div className="bg-[#0A0B0D] bg-opacity-40 backdrop-blur-md border border-[#82E23E] border-opacity-20 rounded-2xl p-6">
+                <p className="text-gray-400 text-sm mb-2">Current Streak</p>
+                <p className="text-3xl font-bold text-white">7 Days</p>
+                <p className="text-[#82E23E] text-xs mt-2">Keep it up!</p>
+              </div>
+              <div className="bg-[#0A0B0D] bg-opacity-40 backdrop-blur-md border border-[#82E23E] border-opacity-20 rounded-2xl p-6">
+                <p className="text-gray-400 text-sm mb-2">Total Earned</p>
+                <p className="text-3xl font-bold text-white">$12.50</p>
+                <p className="text-[#82E23E] text-xs mt-2">Redeemable balance</p>
+              </div>
+            </div>
+          </div>
+        );
+      case 'tasks': return <TasksTab />;
+      case 'wallet': return <WalletTab />;
+      case 'leaderboard': return <LeaderboardTab />;
+      case 'rewards': return <RewardsTab />;
+      case 'streaks': return <StreaksTab />;
+      case 'bonus': return <DailyBonusTab />;
+      case 'referrals': return <ReferralsTab />;
+      case 'profile': return <ProfileTab user={user} />;
+      case 'history': return <HistoryTab />;
+      case 'settings': return <SettingsTab />;
+      case 'help': return <HelpTab />;
+      default: return <TasksTab />;
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#0A0B0D] text-white flex">
       {/* LEFT SIDEBAR */}
       <div className="w-64 bg-[#0A0B0D] bg-opacity-80 backdrop-blur-sm border-r border-[#82E23E] border-opacity-10 p-6 overflow-y-auto">
-        {/* Logo */}
         <div className="flex items-center gap-2 mb-8">
           <div className="w-8 h-8 bg-[#82E23E] rounded-lg flex items-center justify-center">
             <span className="text-[#0A0B0D] font-bold text-sm">W</span>
@@ -168,7 +725,6 @@ const Dashboard = ({ user, onLogout, tasks, profile }) => {
           <span className="font-bold text-lg">WinBig</span>
         </div>
 
-        {/* Navigation */}
         <nav className="space-y-2 mb-8">
           {navItems.map(item => (
             <button
@@ -186,8 +742,7 @@ const Dashboard = ({ user, onLogout, tasks, profile }) => {
           ))}
         </nav>
 
-        {/* Invite Card */}
-        <div className="bg-[#82E23E] bg-opacity-10 border border-[#82E23E] border-opacity-30 rounded-2xl p-4">
+        <div className="bg-[#82E23E] bg-opacity-10 border border-[#82E23E] border-opacity-30 rounded-2xl p-4 mb-6">
           <p className="text-xs font-bold text-[#82E23E] mb-2">Invite & Earn</p>
           <p className="text-xs text-gray-400 mb-4">Get 10% of your friends' earnings.</p>
           <button className="w-full bg-[#82E23E] text-[#0A0B0D] font-bold py-2 rounded-lg text-xs hover:bg-[#9AE744] transition-colors">
@@ -195,7 +750,6 @@ const Dashboard = ({ user, onLogout, tasks, profile }) => {
           </button>
         </div>
 
-        {/* Profile Section */}
         <div className="mt-6 pt-6 border-t border-[#82E23E] border-opacity-10">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-[#82E23E] rounded-full flex items-center justify-center text-[#0A0B0D] font-bold">
@@ -203,218 +757,42 @@ const Dashboard = ({ user, onLogout, tasks, profile }) => {
             </div>
             <div className="text-xs">
               <p className="font-bold truncate">{user.email.split('@')[0]}</p>
-              <button className="text-[#82E23E] hover:underline">View Profile</button>
+              <button onClick={onLogout} className="text-[#82E23E] hover:underline">Logout</button>
             </div>
           </div>
         </div>
       </div>
 
       {/* MAIN CONTENT */}
-      <div className="flex-1 flex">
-        <div className="flex-1 overflow-y-auto p-8">
-          {/* Header */}
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <h1 className="text-4xl font-bold mb-2">Welcome back, <span className="text-[#82E23E]">{user.email.split('@')[0]}</span>! 👋</h1>
-              <p className="text-gray-400">Complete tasks and earn rewards</p>
-            </div>
-            <button
-              onClick={onLogout}
-              className="text-[#82E23E] hover:text-[#9AE744] font-semibold text-sm"
-            >
-              Logout
-            </button>
-          </div>
+      <div className="flex-1 overflow-y-auto p-8">
+        {renderTab()}
+      </div>
 
-          {/* Stats Cards */}
-          <div className="grid grid-cols-4 gap-4 mb-8">
-            <div className="bg-[#0A0B0D] bg-opacity-40 backdrop-blur-md border border-[#82E23E] border-opacity-20 rounded-2xl p-6">
-              <div className="flex items-center justify-between mb-2">
-                <p className="text-gray-400 text-sm">Total Points</p>
-                <StarIcon />
-              </div>
-              <p className="text-3xl font-bold text-white">1,250</p>
-              <p className="text-xs text-[#82E23E] mt-2">+150 from yesterday</p>
-            </div>
-
-            <div className="bg-[#0A0B0D] bg-opacity-40 backdrop-blur-md border border-[#82E23E] border-opacity-20 rounded-2xl p-6">
-              <div className="flex items-center justify-between mb-2">
-                <p className="text-gray-400 text-sm">Tasks Completed</p>
-                <GiftIcon />
-              </div>
-              <p className="text-3xl font-bold text-white">18</p>
-              <p className="text-xs text-[#82E23E] mt-2">+3 from yesterday</p>
-            </div>
-
-            <div className="bg-[#0A0B0D] bg-opacity-40 backdrop-blur-md border border-[#82E23E] border-opacity-20 rounded-2xl p-6">
-              <div className="flex items-center justify-between mb-2">
-                <p className="text-gray-400 text-sm">Current Streak</p>
-                <FireIcon />
-              </div>
-              <p className="text-3xl font-bold text-white">7 Days</p>
-              <p className="text-xs text-[#82E23E] mt-2">Keep it up!</p>
-            </div>
-
-            <div className="bg-[#0A0B0D] bg-opacity-40 backdrop-blur-md border border-[#82E23E] border-opacity-20 rounded-2xl p-6">
-              <div className="flex items-center justify-between mb-2">
-                <p className="text-gray-400 text-sm">Total Earned</p>
-                <TrophyIcon />
-              </div>
-              <p className="text-3xl font-bold text-white">$12.50</p>
-              <p className="text-xs text-[#82E23E] mt-2">Redeemable balance</p>
-            </div>
-          </div>
-
-          {/* Featured Tasks */}
-          <div className="mb-8">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold">Featured Tasks</h2>
-              <a href="#" className="text-[#82E23E] hover:text-[#9AE744] text-sm font-semibold">View All Tasks →</a>
-            </div>
-
-            <div className="grid grid-cols-4 gap-6">
-              {tasks.slice(0, 4).map(task => (
-                <TaskCard key={task.id} task={task} />
-              ))}
-              {tasks.length === 0 && (
-                <div className="col-span-4 text-center py-12 text-gray-400">
-                  No tasks available yet
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Daily Streak & Bonus */}
-          <div className="grid grid-cols-2 gap-6">
-            {/* Daily Streak */}
-            <div className="bg-[#0A0B0D] bg-opacity-40 backdrop-blur-md border border-[#82E23E] border-opacity-20 rounded-2xl p-6">
-              <h3 className="text-lg font-bold mb-4">Daily Streak</h3>
-              <p className="text-gray-400 text-sm mb-4">Complete tasks every day to build your streak and earn bigger bonuses!</p>
-              
-              <div className="flex gap-2 justify-center">
-                {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day, i) => (
-                  <div key={day} className="text-center">
-                    <div className={`w-10 h-10 rounded-lg flex items-center justify-center text-xs font-bold mb-1 ${
-                      i < 7 ? 'bg-[#82E23E] bg-opacity-20 border border-[#82E23E] text-[#82E23E]' : 'bg-gray-700 text-gray-400'
-                    }`}>
-                      {i < 7 ? '✓' : '○'}
-                    </div>
-                    <p className="text-xs text-gray-400">{day}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Daily Bonus */}
-            <div className="bg-[#0A0B0D] bg-opacity-40 backdrop-blur-md border border-[#82E23E] border-opacity-20 rounded-2xl p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-bold">Daily Bonus</h3>
-                <p className="text-xs text-gray-400">How it works?</p>
-              </div>
-              <p className="text-gray-400 text-sm mb-4">You're on a 7-day streak! Claim your bonus.</p>
-              
-              <div className="flex gap-2 mb-4 overflow-x-auto">
-                {[
-                  { days: '3 Days', points: '+25' },
-                  { days: '5 Days', points: '+50' },
-                  { days: '7 Days', points: '+100', active: true },
-                  { days: '14 Days', points: '+250' },
-                  { days: '30 Days', points: '+500' },
-                ].map((bonus, i) => (
-                  <div key={i} className={`px-3 py-2 rounded-lg text-xs font-bold whitespace-nowrap ${
-                    bonus.active 
-                      ? 'bg-[#82E23E] bg-opacity-30 border border-[#82E23E] text-[#82E23E]'
-                      : 'bg-gray-700 text-gray-400'
-                  }`}>
-                    {bonus.days} <br/> {bonus.points}
-                  </div>
-                ))}
-              </div>
-
-              <button className="w-full bg-[#82E23E] text-[#0A0B0D] font-bold py-2 rounded-lg hover:bg-[#9AE744] transition-colors text-sm">
-                Claim Bonus
-              </button>
-            </div>
-          </div>
+      {/* RIGHT SIDEBAR */}
+      <div className="w-80 bg-[#0A0B0D] bg-opacity-80 backdrop-blur-sm border-l border-[#82E23E] border-opacity-10 p-6 overflow-y-auto">
+        <div className="bg-[#0A0B0D] bg-opacity-40 backdrop-blur-md border border-[#82E23E] border-opacity-20 rounded-2xl p-6 mb-6">
+          <h3 className="text-gray-400 text-sm mb-4">Wallet Balance</h3>
+          <p className="text-3xl font-bold text-white mb-1">1,250</p>
+          <p className="text-gray-400 text-xs mb-4">≈ $12.50 USD</p>
+          <button className="w-full bg-[#82E23E] text-[#0A0B0D] font-bold py-2 rounded-lg hover:bg-[#9AE744] text-sm">
+            Redeem Rewards
+          </button>
         </div>
 
-        {/* RIGHT SIDEBAR */}
-        <div className="w-80 bg-[#0A0B0D] bg-opacity-80 backdrop-blur-sm border-l border-[#82E23E] border-opacity-10 p-6 overflow-y-auto">
-          {/* Wallet Balance */}
-          <div className="bg-[#0A0B0D] bg-opacity-40 backdrop-blur-md border border-[#82E23E] border-opacity-20 rounded-2xl p-6 mb-6">
-            <h3 className="text-gray-400 text-sm mb-4">Wallet Balance</h3>
-            <div className="flex items-end gap-2 mb-2">
-              <svg className="w-6 h-6 text-[#82E23E]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-              <p className="text-3xl font-bold text-white">1,250</p>
-              <p className="text-sm text-gray-400">POINTS</p>
+        <div className="bg-[#0A0B0D] bg-opacity-40 backdrop-blur-md border border-[#82E23E] border-opacity-20 rounded-2xl p-6">
+          <h3 className="text-lg font-bold mb-4">Quick Stats</h3>
+          <div className="space-y-3 text-sm">
+            <div className="flex justify-between">
+              <span className="text-gray-400">Tasks Today</span>
+              <span className="text-[#82E23E] font-bold">3 / 5</span>
             </div>
-            <p className="text-xs text-gray-400 mb-6">≈ $12.50 USD</p>
-            
-            <button className="w-full bg-[#82E23E] text-[#0A0B0D] font-bold py-3 rounded-lg hover:bg-[#9AE744] transition-colors text-sm mb-2">
-              Redeem Rewards
-            </button>
-            <a href="#" className="text-center block text-[#82E23E] hover:underline text-xs">View Rewards →</a>
-          </div>
-
-          {/* Recent Activity */}
-          <div className="mb-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold">Recent Activity</h3>
-              <a href="#" className="text-[#82E23E] text-xs hover:underline">View All →</a>
+            <div className="flex justify-between">
+              <span className="text-gray-400">Daily Bonus</span>
+              <span className="text-[#82E23E] font-bold">+150 Pts</span>
             </div>
-
-            <div className="space-y-3">
-              {[
-                { activity: 'Download the App', date: 'May 16, 2024 - 10:30 AM', points: '+30', icon: PlayIcon },
-                { activity: 'Reach Level 5', date: 'May 16, 2024 - 09:45 AM', points: '+60', icon: TrophyIcon },
-                { activity: 'Daily Bonus Claimed', date: 'May 15, 2024 - 08:15 PM', points: '+50', icon: GiftIcon },
-                { activity: 'Watch Video', date: 'May 15, 2024 - 06:30 PM', points: '+15', icon: PlayIcon },
-                { activity: 'Survey Completed', date: 'May 15, 2024 - 05:20 PM', points: '+25', icon: TasksIcon },
-              ].map((item, i) => (
-                <div key={i} className="flex items-start gap-3 pb-3 border-b border-[#82E23E] border-opacity-10">
-                  <div className="w-10 h-10 rounded-lg bg-[#82E23E] bg-opacity-10 flex items-center justify-center flex-shrink-0">
-                    <item.icon />
-                  </div>
-                  <div className="flex-1 text-xs">
-                    <p className="text-white font-semibold">{item.activity}</p>
-                    <p className="text-gray-400">{item.date}</p>
-                  </div>
-                  <p className="text-[#82E23E] font-bold text-sm">{item.points}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Leaderboard */}
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold">Leaderboard</h3>
-              <a href="#" className="text-[#82E23E] text-xs hover:underline">View All →</a>
-            </div>
-
-            <div className="space-y-2">
-              {[
-                { rank: '1', name: 'krypto_ninja', points: '2,450' },
-                { rank: '2', name: 'satoshi_wins', points: '1,980' },
-                { rank: '3', name: 'queen_winner', points: '1,760' },
-                { rank: '4', name: 'blapityblabloop', points: '1,250', highlight: true },
-                { rank: '5', name: 'earn_master', points: '980' },
-              ].map((user, i) => (
-                <div key={i} className={`flex items-center gap-3 p-3 rounded-lg ${
-                  user.highlight ? 'bg-[#82E23E] bg-opacity-20 border border-[#82E23E]' : 'bg-[#0A0B0D] bg-opacity-40 border border-[#82E23E] border-opacity-20'
-                }`}>
-                  <p className={`font-bold w-6 text-center ${user.highlight ? 'text-[#82E23E]' : 'text-gray-400'}`}>
-                    {user.rank}
-                  </p>
-                  <div className="w-8 h-8 bg-[#82E23E] rounded-full flex items-center justify-center text-[#0A0B0D] font-bold text-xs flex-shrink-0">
-                    {user.name.charAt(0).toUpperCase()}
-                  </div>
-                  <div className="flex-1 text-xs">
-                    <p className={user.highlight ? 'text-white font-semibold' : 'text-gray-400'}>{user.name}</p>
-                  </div>
-                  <p className={`font-bold ${user.highlight ? 'text-[#82E23E]' : 'text-white'}`}>{user.points}</p>
-                </div>
-              ))}
+            <div className="flex justify-between">
+              <span className="text-gray-400">Streak Days</span>
+              <span className="text-[#82E23E] font-bold">7 Days</span>
             </div>
           </div>
         </div>
@@ -423,12 +801,11 @@ const Dashboard = ({ user, onLogout, tasks, profile }) => {
   );
 };
 
-// Main App
+// ============ MAIN APP ============
 export default function App() {
   const [screen, setScreen] = useState('login');
   const [user, setUser] = useState(null);
   const [tasks, setTasks] = useState([]);
-  const [profile, setProfile] = useState(null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -436,7 +813,6 @@ export default function App() {
         setUser(session.user);
         setScreen('dashboard');
         loadTasks();
-        loadProfile(session.user.id);
       }
     });
 
@@ -445,7 +821,6 @@ export default function App() {
         setUser(session.user);
         setScreen('dashboard');
         loadTasks();
-        loadProfile(session.user.id);
       }
     });
 
@@ -467,21 +842,6 @@ export default function App() {
     }
   };
 
-  const loadProfile = async (userId) => {
-    try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .single();
-      
-      if (error && error.code !== 'PGRST116') throw error;
-      setProfile(data);
-    } catch (err) {
-      console.error('Failed to load profile:', err);
-    }
-  };
-
   if (screen === 'login') {
     return (
       <LoginPage 
@@ -489,7 +849,6 @@ export default function App() {
           setUser(data.user);
           setScreen('dashboard');
           loadTasks();
-          loadProfile(data.user.id);
         }}
       />
     );
@@ -500,7 +859,6 @@ export default function App() {
       <Dashboard 
         user={user}
         tasks={tasks}
-        profile={profile}
         onLogout={() => {
           supabase.auth.signOut();
           setUser(null);
