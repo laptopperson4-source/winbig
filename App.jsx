@@ -345,7 +345,7 @@ const PosterTaskCard = ({ task, onClaim }) => {
         <div className="mb-4">
           <p className="text-gray-400 text-sm mb-2">EARN</p>
           <p className="text-3xl font-bold text-[#82E23E]">
-            {task.points.toLocaleString()} POINTS
+            {task.base_points?.toLocaleString() || task.base_naira?.toLocaleString() || 0} POINTS
           </p>
         </div>
 
@@ -355,9 +355,9 @@ const PosterTaskCard = ({ task, onClaim }) => {
 
         {/* Footer */}
         <div className="flex items-center justify-between">
-          {task.days_left && (
+          {task.expires_at && (
             <span className="text-xs bg-[#82E23E] bg-opacity-20 text-[#82E23E] px-3 py-1 rounded-full">
-              {task.days_left} days left
+              Expires soon
             </span>
           )}
           <button 
@@ -403,9 +403,11 @@ export default function App() {
 
   const loadTasks = async () => {
     try {
+      // Query custom_tasks instead of tasks
       const { data, error } = await supabase
-        .from('tasks')
+        .from('custom_tasks')
         .select('*')
+        .eq('active', true)
         .order('created_at', { ascending: false });
       
       if (error) throw error;
@@ -477,11 +479,17 @@ export default function App() {
         {/* Featured Tasks */}
         <div className="mb-12">
           <h2 className="text-2xl font-bold mb-6">Featured Tasks</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {tasks.slice(0, 3).map(task => (
-              <PosterTaskCard key={task.id} task={task} />
-            ))}
-          </div>
+          {tasks.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {tasks.slice(0, 3).map(task => (
+                <PosterTaskCard key={task.id} task={task} />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-gray-400">No tasks available yet. Check back soon!</p>
+            </div>
+          )}
         </div>
 
         {/* All Tasks */}
@@ -493,12 +501,6 @@ export default function App() {
                 <PosterTaskCard key={task.id} task={task} />
               ))}
             </div>
-          </div>
-        )}
-
-        {tasks.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-gray-400">No tasks available yet. Check back soon!</p>
           </div>
         )}
       </div>
