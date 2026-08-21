@@ -6,7 +6,24 @@ const supabase = createClient(
   import.meta.env.VITE_SUPABASE_ANON_KEY
 );
 
-// ============ DRIFTING ELEMENTS ============
+// ============ SVG ICONS ============
+const DashboardIcon = () => <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>;
+const TasksIcon = () => <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>;
+const BonusIcon = () => <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm0-13c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5z"/></svg>;
+const StreaksIcon = () => <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M13 2.05V9h7V2.05A10.957 10.957 0 0012 1c-5.523 0-10 4.477-10 10s4.477 10 10 10 10-4.477 10-10h-7V2.05z"/></svg>;
+const RewardsIcon = () => <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>;
+const ReferralsIcon = () => <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.89 1.97 1.74 1.97 2.95V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>;
+const LeaderboardIcon = () => <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>;
+const WalletIcon = () => <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h9v-8h-9v8zm4-3c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/></svg>;
+const HistoryIcon = () => <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M13 3a9 9 0 0 0-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.8-4.92-2.05l-1.42 1.42A8.954 8.954 0 0 0 13 21a9 9 0 0 0 0-18zm-1 5v6l5.25 3.15.75-1.23-4-2.42z"/></svg>;
+const ProfileIcon = () => <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>;
+const SettingsIcon = () => <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.64l-1.92-3.32c-.12-.23-.37-.29-.59-.17l-2.39 1.83c-.52-.4-1.08-.73-1.69-.98l-.38-3.05c-.04-.24-.24-.42-.49-.42h-3.84c-.25 0-.45.18-.49.42l-.38 3.05c-.61.25-1.17.59-1.69.98l-2.39-1.83c-.23-.13-.47-.06-.59.17L2.74 8.87c-.12.23-.07.5.12.64l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.64l1.92 3.32c.12.23.37.29.59.17l2.39-1.83c.52.4 1.08.73 1.69.98l.38 3.05c.05.24.24.42.49.42h3.84c.25 0 .45-.18.49-.42l.38-3.05c.61-.25 1.17-.59 1.69-.98l2.39 1.83c.23.13.47.06.59-.17l1.92-3.32c.12-.23.07-.5-.12-.64l-2.03-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>;
+const HelpIcon = () => <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>;
+const FireIcon = () => <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.3 4 13c0 4.08 3.32 7.44 7.44 7.44s7.46-3.36 7.46-7.44c0-1.25-.19-2.40-.48-3.41.48.78 1.48 2.21 1.48 2.91 0 2.3-1.15 4.26-2.87 5.03 1.02-1.29 1.62-2.91 1.62-4.66 0-3.59-2.67-6.59-6-6.59s-6 2.91-6 6.59c0 1.66.67 3.15 1.46 4.3-1.65-.67-2.66-2.04-2.66-3.74 0-2.64 2.05-4.79 4.79-4.79 1.76 0 3.27.79 4.25 2.03.40-.75 1.19-1.86 1.19-1.86s-1.55-1.25-1.55-1.25V.67z"/></svg>;
+const TrophyIcon = () => <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3C7.59 3 4 6.59 4 11c0 2.64 1.35 4.97 3.36 6.39C7.16 19.29 8.08 20.73 8.08 20.73h7.84s.92-1.44 1.72-3.34C18.65 15.97 20 13.64 20 11c0-4.41-3.59-8-8-8zm0 14c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6z"/></svg>;
+const StarIcon = () => <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>;
+
+// ============ DRIFTING DOLLARS ============
 const DriftingDollars = () => {
   const dollars = Array.from({ length: 40 }).map((_, i) => ({
     id: i,
@@ -28,6 +45,7 @@ const DriftingDollars = () => {
           font-size: 28px;
           position: absolute;
           animation: drift linear infinite;
+          font-weight: bold;
         }
       `}</style>
       {dollars.map(d => (
@@ -50,7 +68,7 @@ const DriftingDollars = () => {
 };
 
 // ============ ANIMATED RING ============
-const AnimatedRing = ({ value, max = 100, color = '#82E23E', size = 120, icon = '🔥' }) => {
+const AnimatedRing = ({ value, max = 100, color = '#82E23E', size = 120, icon }) => {
   const percentage = (value / max) * 100;
   const circumference = 2 * Math.PI * 45;
   const strokeDashoffset = circumference - (percentage / 100) * circumference;
@@ -189,12 +207,12 @@ const GlassCard = ({ children, className = '' }) => (
   </div>
 );
 
-// ============ STAT CARD WITH COLOR ============
-const StatCard = ({ icon, label, value, color = '#82E23E', subtext = '' }) => (
+// ============ STAT CARD ============
+const StatCard = ({ icon: Icon, label, value, color = '#82E23E', subtext = '' }) => (
   <GlassCard className="p-6">
     <div className="flex items-center justify-between mb-3">
       <p className="text-gray-400 text-sm">{label}</p>
-      <div className="text-2xl">{icon}</div>
+      <Icon />
     </div>
     <p className="text-3xl font-bold" style={{ color }}>{value}</p>
     {subtext && <p className="text-xs text-gray-400 mt-2">{subtext}</p>}
@@ -206,21 +224,21 @@ const Dashboard = ({ user, onLogout, tasks }) => {
   const [activeNav, setActiveNav] = useState('dashboard');
 
   const navItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: '📊' },
-    { id: 'tasks', label: 'Tasks', icon: '✅' },
-    { id: 'bonus', label: 'Daily Bonus', icon: '🎁' },
-    { id: 'streaks', label: 'Streaks', icon: '🔥' },
-    { id: 'rewards', label: 'Rewards', icon: '⭐' },
-    { id: 'referrals', label: 'Referrals', icon: '👥' },
-    { id: 'leaderboard', label: 'Leaderboard', icon: '🏆' },
-    { id: 'wallet', label: 'Wallet', icon: '💰' },
-    { id: 'history', label: 'History', icon: '📜' },
-    { id: 'profile', label: 'Profile', icon: '👤' },
-    { id: 'settings', label: 'Settings', icon: '⚙️' },
-    { id: 'help', label: 'Help', icon: '❓' },
+    { id: 'dashboard', label: 'Dashboard', icon: DashboardIcon },
+    { id: 'tasks', label: 'Tasks', icon: TasksIcon },
+    { id: 'bonus', label: 'Daily Bonus', icon: BonusIcon },
+    { id: 'streaks', label: 'Streaks', icon: StreaksIcon },
+    { id: 'rewards', label: 'Rewards', icon: RewardsIcon },
+    { id: 'referrals', label: 'Referrals', icon: ReferralsIcon },
+    { id: 'leaderboard', label: 'Leaderboard', icon: LeaderboardIcon },
+    { id: 'wallet', label: 'Wallet', icon: WalletIcon },
+    { id: 'history', label: 'History', icon: HistoryIcon },
+    { id: 'profile', label: 'Profile', icon: ProfileIcon },
+    { id: 'settings', label: 'Settings', icon: SettingsIcon },
+    { id: 'help', label: 'Help', icon: HelpIcon },
   ];
 
-  // ============ RENDER TABS ============
+  // ============ DASHBOARD TAB ============
   const renderDashboard = () => (
     <div className="space-y-8">
       <div>
@@ -229,10 +247,10 @@ const Dashboard = ({ user, onLogout, tasks }) => {
       </div>
 
       <div className="grid grid-cols-4 gap-6">
-        <StatCard icon="⭐" label="Total Points" value="1,250" color="#82E23E" subtext="+150 from yesterday" />
-        <StatCard icon="✅" label="Tasks Completed" value="18" color="#FCD34D" subtext="+3 from yesterday" />
-        <StatCard icon="🔥" label="Current Streak" value="7 Days" color="#F97316" subtext="Keep it up!" />
-        <StatCard icon="💎" label="Total Earned" value="$12.50" color="#A78BFA" subtext="Redeemable balance" />
+        <StatCard icon={StarIcon} label="Total Points" value="1,250" color="#82E23E" subtext="+150 from yesterday" />
+        <StatCard icon={TasksIcon} label="Tasks Completed" value="18" color="#FCD34D" subtext="+3 from yesterday" />
+        <StatCard icon={StreaksIcon} label="Current Streak" value="7 Days" color="#F97316" subtext="Keep it up!" />
+        <StatCard icon={RewardsIcon} label="Total Earned" value="$12.50" color="#A78BFA" subtext="Redeemable balance" />
       </div>
 
       <div>
@@ -259,6 +277,7 @@ const Dashboard = ({ user, onLogout, tasks }) => {
     </div>
   );
 
+  // ============ STREAKS TAB ============
   const renderStreaks = () => (
     <div className="space-y-8">
       <h1 className="text-4xl font-bold">Your Streaks</h1>
@@ -266,19 +285,19 @@ const Dashboard = ({ user, onLogout, tasks }) => {
       <div className="grid grid-cols-3 gap-6">
         <GlassCard className="p-8">
           <p className="text-gray-400 text-sm mb-4">Current Streak</p>
-          <AnimatedRing value={7} max={30} color="#F97316" size={140} icon="🔥" />
+          <AnimatedRing value={7} max={30} color="#F97316" size={140} icon={<FireIcon />} />
           <p className="text-gray-400 text-xs text-center mt-4">Keep it up!</p>
         </GlassCard>
 
         <GlassCard className="p-8">
           <p className="text-gray-400 text-sm mb-4">Longest Streak</p>
-          <AnimatedRing value={7} max={30} color="#FCD34D" size={140} icon="👑" />
+          <AnimatedRing value={7} max={30} color="#FCD34D" size={140} icon={<TrophyIcon />} />
           <p className="text-gray-400 text-xs text-center mt-4">Your best so far!</p>
         </GlassCard>
 
         <GlassCard className="p-8">
           <p className="text-gray-400 text-sm mb-4">Tasks This Week</p>
-          <AnimatedRing value={100} max={100} color="#82E23E" size={140} icon="✅" />
+          <AnimatedRing value={100} max={100} color="#82E23E" size={140} icon={<TasksIcon />} />
           <p className="text-gray-400 text-xs text-center mt-4">100% complete!</p>
         </GlassCard>
       </div>
@@ -292,7 +311,7 @@ const Dashboard = ({ user, onLogout, tasks }) => {
                 <div className={`w-12 h-12 rounded-lg flex items-center justify-center font-bold mb-2 transform hover:scale-110 transition-transform ${
                   i < 7 ? 'bg-gradient-to-br from-[#82E23E] to-[#FCD34D] text-[#0A0B0D] shadow-lg' : 'bg-gray-700 text-gray-400'
                 }`}>
-                  {i < 7 ? '✓' : '○'}
+                  {i < 7 ? <TasksIcon /> : '○'}
                 </div>
                 <p className="text-xs text-gray-400">{day}</p>
               </div>
@@ -303,6 +322,7 @@ const Dashboard = ({ user, onLogout, tasks }) => {
     </div>
   );
 
+  // ============ REWARDS TAB ============
   const renderRewards = () => (
     <div className="space-y-8">
       <h1 className="text-4xl font-bold">Redeem Rewards</h1>
@@ -329,15 +349,16 @@ const Dashboard = ({ user, onLogout, tasks }) => {
     </div>
   );
 
+  // ============ LEADERBOARD TAB ============
   const renderLeaderboard = () => (
     <div className="space-y-8">
       <h1 className="text-4xl font-bold">Leaderboard</h1>
 
       <div className="grid grid-cols-3 gap-6 mb-8">
         {[
-          { rank: 2, name: 'TaskMaster', points: '8,230', color: '#C0C0C0', icon: '🥈' },
-          { rank: 1, name: 'TopWinner', points: '12,450', color: '#FFD700', icon: '🏆' },
-          { rank: 3, name: 'EarnQueen', points: '6,780', color: '#CD7F32', icon: '🥉' },
+          { rank: 2, name: 'TaskMaster', points: '8,230', color: '#C0C0C0', icon: <div>🥈</div> },
+          { rank: 1, name: 'TopWinner', points: '12,450', color: '#FFD700', icon: <TrophyIcon /> },
+          { rank: 3, name: 'EarnQueen', points: '6,780', color: '#CD7F32', icon: <div>🥉</div> },
         ].map(user => (
           <GlassCard key={user.rank} className="p-8 text-center transform hover:scale-105 transition-transform">
             <div className="text-5xl mb-3">{user.icon}</div>
@@ -375,6 +396,7 @@ const Dashboard = ({ user, onLogout, tasks }) => {
     </div>
   );
 
+  // ============ PROFILE TAB ============
   const renderProfile = () => (
     <div className="space-y-8">
       <h1 className="text-4xl font-bold">My Profile</h1>
@@ -416,14 +438,14 @@ const Dashboard = ({ user, onLogout, tasks }) => {
         <GlassCard className="p-6">
           <div className="grid grid-cols-5 gap-4">
             {[
-              { emoji: '✓', label: 'First Steps' },
-              { emoji: '7', label: 'Week Warrior' },
-              { emoji: '🔥', label: 'Streak Master' },
-              { emoji: '🏆', label: 'Task Master' },
-              { emoji: '💎', label: 'High Earner' },
+              { icon: <TasksIcon />, label: 'First Steps' },
+              { icon: <StreaksIcon />, label: 'Week Warrior' },
+              { icon: <FireIcon />, label: 'Streak Master' },
+              { icon: <TrophyIcon />, label: 'Task Master' },
+              { icon: <StarIcon />, label: 'High Earner' },
             ].map((achievement, i) => (
               <div key={i} className="text-center p-3 bg-[#0A0B0D] bg-opacity-40 backdrop-blur-md border border-[#82E23E] border-opacity-20 rounded-lg hover:border-opacity-40 transition-all transform hover:scale-110">
-                <div className="text-3xl mb-2">{achievement.emoji}</div>
+                <div className="text-3xl mb-2">{achievement.icon}</div>
                 <p className="text-xs text-gray-400">{achievement.label}</p>
               </div>
             ))}
@@ -468,7 +490,7 @@ const Dashboard = ({ user, onLogout, tasks }) => {
                   : 'text-gray-400 hover:text-white hover:bg-[#0A0B0D] hover:bg-opacity-60'
               }`}
             >
-              <span className="text-lg">{item.icon}</span>
+              <item.icon />
               {item.label}
             </button>
           ))}
@@ -518,19 +540,19 @@ const Dashboard = ({ user, onLogout, tasks }) => {
           <h3 className="font-bold text-white mb-4">Quick Stats</h3>
           <div className="space-y-3 text-sm">
             <div className="flex justify-between items-center">
-              <span className="text-gray-400">🎮 Tasks Today</span>
+              <span className="text-gray-400 flex items-center gap-2"><TasksIcon /> Tasks Today</span>
               <span className="font-bold text-[#82E23E]">3 / 5</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-gray-400">🎁 Daily Bonus</span>
+              <span className="text-gray-400 flex items-center gap-2"><RewardsIcon /> Daily Bonus</span>
               <span className="font-bold text-[#FCD34D]">+150</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-gray-400">🔥 Streak Days</span>
+              <span className="text-gray-400 flex items-center gap-2"><StreaksIcon /> Streak Days</span>
               <span className="font-bold text-[#F97316]">7</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-gray-400">👥 Referrals</span>
+              <span className="text-gray-400 flex items-center gap-2"><ReferralsIcon /> Referrals</span>
               <span className="font-bold text-[#A78BFA]">12</span>
             </div>
           </div>
